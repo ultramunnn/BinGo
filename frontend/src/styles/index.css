@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Tambahin ini juga buat animasi scannya */
+@keyframes scan-move {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+.animate-scan-move {
+  position: absolute;
+  animation: scan-move 3s linear infinite;
+}
