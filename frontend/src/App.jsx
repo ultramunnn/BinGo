@@ -7,7 +7,7 @@ import Footer from "./layouts/sections/Footer";
 
 const App = () => {
   return (
-    <div className="h-screen overflow-y-auto scroll-smooth">
+    <div>
       <main>
         <Hero />
         <Usage />

@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* FIX: Ensure scroll works on html and body */
+html, body {
+  scroll-behavior: smooth;
+}
+
 /* Tambahin ini juga buat animasi scannya */
 @keyframes scan-move {
   0% { top: 0; }
