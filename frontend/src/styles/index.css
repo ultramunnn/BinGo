@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
 @import "tailwindcss";
 
+<<<<<<< HEAD
 /* Fade-in for wizard questions */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(6px); }
@@ -11,6 +12,14 @@
 }
 
 /* Scanning laser animation */
+=======
+/* FIX: Ensure scroll works on html and body */
+html, body {
+  scroll-behavior: smooth;
+}
+
+/* Tambahin ini juga buat animasi scannya */
+>>>>>>> cb448e3 (feat: finish hero section & usage section)
 @keyframes scan-move {
   0% { top: 0; }
   100% { top: 100%; }
