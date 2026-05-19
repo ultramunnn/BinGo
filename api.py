@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import tensorflow as tf
 import numpy as np
 import pickle
@@ -7,26 +7,35 @@ import uvicorn
 import os
 
 app = FastAPI(
-    title="BinGo ML API",
-    description="API untuk prediksi Material, Recyclability, dan Treatment dari Sampah Pantai",
-    version="1.0.0"
+    title="BinGo ML API - Hybrid Decision System",
+    description="API untuk klasifikasi daur ulang berdasarkan material CV dan fitur kontekstual.",
+    version="2.0.0"
 )
 
-# Global variables untuk model dan encoders
 model = None
 encoders = None
 
+cols_input = ['category', 'Hardness', 'is_multilayer', 'is_dry', 'is_clean', 
+              'is_container', 'is_fragment', 'is_hazardous', 'is_foam', 'is_small_item']
+
 class PredictionRequest(BaseModel):
-    jenis_barang: str
-    hardness: str
+    category: str = Field(..., description="Hasil deteksi Computer Vision (Plastic, Paper, Glass, Metal, Textile)")
+    Hardness: str = Field(default="Unknown", description="'Hard', 'Flexible', atau 'Unknown'")
+    is_multilayer: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
+    is_dry: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
+    is_clean: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
+    is_container: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
+    is_fragment: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
+    is_hazardous: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
+    is_foam: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
+    is_small_item: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
 
 class ConfidenceResponse(BaseModel):
-    material: float
     recyclable: float
     treatment: float
 
 class PredictionResponse(BaseModel):
-    material: str
+    category: str
     recyclable: str
     treatment: str
     confidence: ConfidenceResponse
@@ -38,18 +47,18 @@ async def load_model_and_encoders():
     model_path = r'c:\ML_BinGo\bingo_model.keras'
     encoders_path = r'c:\ML_BinGo\label_encoders.pkl'
     
-    if not os.path.exists(model_path):
-        print(f"Warning: Model tidak ditemukan di {model_path}")
-    else:
+    if os.path.exists(model_path):
         model = tf.keras.models.load_model(model_path)
         print("Model berhasil diload.")
-        
-    if not os.path.exists(encoders_path):
-        print(f"Warning: Encoders tidak ditemukan di {encoders_path}")
     else:
+        print(f"ERROR: Model tidak ditemukan di {model_path}")
+        
+    if os.path.exists(encoders_path):
         with open(encoders_path, 'rb') as f:
             encoders = pickle.load(f)
         print("Encoders berhasil diload.")
+    else:
+        print(f"ERROR: Encoders tidak ditemukan di {encoders_path}")
 
 @app.post("/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
@@ -57,45 +66,41 @@ async def predict(request: PredictionRequest):
         raise HTTPException(status_code=500, detail="Model atau encoder belum siap.")
     
     try:
-        # Load encoders
-        le_generalname = encoders['le_generalname']
-        le_hardness = encoders['le_hardness']
-        le_category = encoders['le_category']
-        le_recyclability = encoders['le_recyclability']
-        le_recyclemethod = encoders['le_recyclemethod']
+        req_dict = request.dict()
+        inputs = []
         
-        # Transform input
-        try:
-            item_enc = le_generalname.transform([request.jenis_barang])[0]
-        except ValueError:
-            raise HTTPException(status_code=400, detail=f"Jenis barang '{request.jenis_barang}' tidak dikenali dalam dataset.")
+        # Transform setiap fitur menggunakan LabelEncoder masing-masing
+        for col in cols_input:
+            val = req_dict.get(col, 'Unknown')
+            le = encoders.get(f'le_{col}')
+            if not le:
+                raise HTTPException(status_code=500, detail=f"Encoder untuk {col} tidak ditemukan.")
             
-        try:
-            hard_enc = le_hardness.transform([request.hardness])[0]
-        except ValueError:
-             raise HTTPException(status_code=400, detail=f"Tingkat kekerasan '{request.hardness}' tidak dikenali. Coba: 'Hard', 'Flexible', atau 'unknown'")
-        
-        # Prediksi
-        pred_mat, pred_rec, pred_met = model.predict(
-            [np.array([item_enc]), np.array([hard_enc])], verbose=0
-        )
+            # Aman dari unknown values (fall back ke 'Unknown' atau 0 jika error)
+            if val in le.classes_:
+                enc = le.transform([val])[0]
+            elif 'Unknown' in le.classes_:
+                enc = le.transform(['Unknown'])[0]
+            else:
+                enc = 0
+            inputs.append(np.array([enc]))
+            
+        # Prediksi (Model mengembalikan [out_recycle, out_method])
+        pred_rec, pred_met = model.predict(inputs, verbose=0)
         
         # Decode output
-        material = le_category.classes_[np.argmax(pred_mat)]
         recyclable = "Yes" if pred_rec[0][0] > 0.5 else "No"
-        treatment = le_recyclemethod.classes_[np.argmax(pred_met)]
+        treatment = encoders['le_recyclemethod'].classes_[np.argmax(pred_met)]
         
-        # Calculate confidence
-        conf_mat = float(np.max(pred_mat))
+        # Confidence
         conf_rec = float(max(pred_rec[0][0], 1 - pred_rec[0][0]))
         conf_met = float(np.max(pred_met))
         
         return PredictionResponse(
-            material=material,
+            category=request.category,
             recyclable=recyclable,
             treatment=treatment,
             confidence=ConfidenceResponse(
-                material=conf_mat,
                 recyclable=conf_rec,
                 treatment=conf_met
             )
@@ -106,9 +111,7 @@ async def predict(request: PredictionRequest):
 
 @app.get("/")
 async def root():
-    return {"message": "Selamat datang di BinGo ML API. Gunakan endpoint POST /predict untuk prediksi."}
+    return {"message": "Selamat datang di BinGo ML API - Hybrid Intelligent Decision System."}
 
 if __name__ == "__main__":
-    # Jalankan server
-    print("Menjalankan server FastAPI di http://127.0.0.0:8000")
     uvicorn.run("api:app", host="127.0.0.1", port=8000, reload=True)
