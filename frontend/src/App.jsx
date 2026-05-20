@@ -8,6 +8,11 @@ import CTA from "./layouts/sections/CTA";
 import Footer from "./layouts/sections/Footer";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import CheckEmail from "./pages/Auth/CheckEmail";
+import ResetPassword from "./pages/Auth/ResetPassword";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 
 const LandingPage = () => {
   return (
@@ -30,6 +35,11 @@ const App = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/check-email" element={<CheckEmail />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
       </Routes>
     </Router>
   );
