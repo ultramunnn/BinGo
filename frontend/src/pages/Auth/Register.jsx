@@ -134,13 +134,13 @@ const Register = () => {
           />
           <p className="text-[12px] text-gray-400">
             Saya setuju dengan{" "}
-            <span className="text-[#4BAFBC] font-bold cursor-pointer">
+            <Link to="/terms" className="text-[#4BAFBC] font-bold hover:underline">
               Syarat & Ketentuan
-            </span>{" "}
+            </Link>{" "}
             dan{" "}
-            <span className="text-[#4BAFBC] font-bold cursor-pointer">
+            <Link to="/privacy" className="text-[#4BAFBC] font-bold hover:underline">
               Kebijakan Privasi
-            </span>
+            </Link>
           </p>
         </div>
 

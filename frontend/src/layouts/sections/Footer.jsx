@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const footerData = [
@@ -102,12 +103,12 @@ const Footer = () => {
 
           {/* Legal Links di Pojok Kanan */}
           <div className="flex flex-col items-end gap-2 pb-[4vw] text-[10px] font-bold text-gray-400 tracking-widest uppercase opacity-60">
-            <a href="#" className="hover:text-white transition-colors">
+            <Link to="/terms" className="hover:text-white transition-colors">
               Terms of Use
-            </a>
-            <a href="#" className="hover:text-white transition-colors">
+            </Link>
+            <Link to="/privacy" className="hover:text-white transition-colors">
               Privacy Policy
-            </a>
+            </Link>
             <a href="#" className="hover:text-white transition-colors">
               Security
             </a>
