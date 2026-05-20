@@ -142,7 +142,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
       <NavbarDashboard activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
 
-      <main className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 lg:p-6 items-start">
+      <main className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 pb-28 lg:p-6 lg:pb-6 items-start">
 
         {/* ═══════════════════════════════════════════
             LEFT: DJI-STYLE CAMERA VIEWFINDER
@@ -151,7 +151,7 @@ const Dashboard = () => {
 
           {/* ── Viewfinder Container ── */}
           <div className="bg-black rounded-t-2xl overflow-hidden relative">
-            <div className="w-full aspect-[3/4] lg:aspect-video relative overflow-hidden">
+            <div className="w-full aspect-[4/5] lg:aspect-video relative overflow-hidden">
 
               {/* Layer 0: Camera Feed / Captured Image */}
               <video
