@@ -120,23 +120,9 @@ const Usage = () => {
   return (
     <section
       ref={containerRef}
-      className="relative h-[1000vh] bg-[#f5f5f5] font-sans antialiased"
+      className="relative h-[1000vh] bg-white font-sans antialiased"
     >
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
-        {/* ELEMEN STATIS */}
-        <div className="absolute top-12 right-16 z-20 opacity-80">
-          <Recycle size={32} strokeWidth={1.5} />
-        </div>
-        <div className="absolute left-[-60px] bottom-20 w-32 h-32 bg-[#7cfc00] rounded-full flex items-center justify-center shadow-sm z-20">
-          <span className="text-[10px] font-bold rotate-90 uppercase tracking-tighter text-slate-900">
-            Plastic Recycle
-          </span>
-        </div>
-        <div className="absolute right-[-60px] top-1/4 w-32 h-32 bg-[#7cfc00] rounded-full flex items-center justify-center shadow-sm z-20">
-          <span className="text-[10px] font-bold -rotate-90 uppercase tracking-tighter text-slate-900">
-            Plastic Recycle
-          </span>
-        </div>
 
         {/* 1. TULISAN */}
         <motion.div
