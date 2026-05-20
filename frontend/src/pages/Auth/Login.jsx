@@ -68,9 +68,9 @@ const Login = () => {
 
         {/* Forgot Password */}
         <div className="flex justify-end">
-          <a href="#" className="text-xs font-medium text-[#4BAFBC] hover:text-[#3a9da9] transition-colors">
+          <Link to="/forgot-password" className="text-xs font-medium text-[#4BAFBC] hover:text-[#3a9da9] transition-colors">
             Lupa kata sandi?
-          </a>
+          </Link>
         </div>
 
         {/* Submit Button */}
