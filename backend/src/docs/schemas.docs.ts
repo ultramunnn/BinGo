@@ -5,7 +5,6 @@ export const schemas = {
       id: { type: 'string', format: 'uuid', example: '123e4567-e89b-12d3-a456-426614174000' },
       email: { type: 'string', format: 'email', example: 'user@example.com' },
       full_name: { type: 'string', nullable: true, example: 'John Doe' },
-      role: { type: 'string', enum: ['user', 'admin'], example: 'user' },
       photo_url: { type: 'string', nullable: true, example: 'https://supabase.co/storage/v1/object/public/avatars/user-123.jpg' },
       created_at: { type: 'string', format: 'date-time' },
     },

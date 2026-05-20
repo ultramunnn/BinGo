@@ -205,7 +205,7 @@ export const authDocs = {
       get: {
         summary: 'Mendapatkan profil user saat ini',
         description: 'Mengambil data user berdasarkan token JWT',
-        tags: ['Authentication'],
+        tags: ['User Profile'],
         security: [{ bearerAuth: [] }],
         responses: {
           200: {
@@ -219,6 +219,121 @@ export const authDocs = {
                     user: { $ref: '#/components/schemas/User' },
                   },
                 },
+              },
+            },
+          },
+          401: {
+            description: 'Unauthorized',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+        },
+      },
+    },
+
+    '/api/auth/profile': {
+      put: {
+        summary: 'Update profil user',
+        description: 'Mengupdate nama dan/atau foto profil user',
+        tags: ['User Profile'],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                properties: {
+                  full_name: { type: 'string', example: 'John Doe' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: 'Profil berhasil diupdate',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean' },
+                    message: { type: 'string' },
+                    user: { $ref: '#/components/schemas/User' },
+                  },
+                },
+              },
+            },
+          },
+          400: {
+            description: 'Validasi gagal',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+          401: {
+            description: 'Unauthorized',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+        },
+      },
+    },
+
+    '/api/auth/photo': {
+      post: {
+        summary: 'Upload foto profil',
+        description: 'Upload foto profil ke Supabase Storage (max 5MB, format image)',
+        tags: ['User Profile'],
+        security: [{ bearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                properties: {
+                  photo: {
+                    type: 'string',
+                    format: 'binary',
+                    description: 'File foto (jpg, png, webp)',
+                  },
+                },
+                required: ['photo'],
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: 'Foto berhasil diupload',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean' },
+                    message: { type: 'string' },
+                    user: { $ref: '#/components/schemas/User' },
+                  },
+                },
+              },
+            },
+          },
+          400: {
+            description: 'File tidak valid atau melebihi 5MB',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
               },
             },
           },

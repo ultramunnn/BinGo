@@ -17,18 +17,15 @@ export const docs = {
     version: "1.0.0",
     description: `
       API Documentation untuk aplikasi BinGo: Your AI Lens for a Cleaner Beach
-      
-      BinGo adalah platform inovatif berbasis computer vision dan machine learning 
+
+      BinGo adalah platform inovatif berbasis computer vision dan machine learning
       yang mengidentifikasi dan mengklasifikasikan sampah di kawasan pantai.
-      
+
       Fitur API:
-      - 🔐 Authentication - Register, Login, Logout, Reset Password
-      - 👤 User Profile - CRUD profil dan foto profil
-      - 🗑️ Waste Classification - Identifikasi sampah (Vision + Text)
-      
-      Role:
-      - User - Akses semua fitur utama
-      - Admin - Tambahan akses CMS
+      - Authentication - Register, Login, Logout, Reset Password
+      - User Profile - CRUD profil dan foto profil
+      - Waste Classification - Identifikasi sampah via AI
+      - Social - Rating dan komentar pada scan history
     `,
     contact: {
       name: "BinGo Development Team",
@@ -54,7 +51,7 @@ export const docs = {
     { name: "Authentication", description: "Endpoint autentikasi" },
     { name: "User Profile", description: "Manajemen profil pengguna" },
     { name: "Waste Classification", description: "Klasifikasi sampah" },
-    { name: "CMS", description: "Manajemen konten (Admin only)" },
+    { name: "Social", description: "Rating dan komentar" },
   ],
   paths,
 };
