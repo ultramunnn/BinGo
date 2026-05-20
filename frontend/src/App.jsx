@@ -13,6 +13,7 @@ import CheckEmail from "./pages/Auth/CheckEmail";
 import ResetPassword from "./pages/Auth/ResetPassword";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
+import Dashboard from "./pages/Dashboard";
 
 const LandingPage = () => {
   return (
@@ -40,6 +41,7 @@ const App = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<Privacy />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
   );
