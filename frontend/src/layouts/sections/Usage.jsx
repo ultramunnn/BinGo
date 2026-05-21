@@ -136,7 +136,7 @@ const Usage = () => {
 
         <motion.div
           style={{ x: text2X }}
-          className="absolute top-[30%] left-16 max-w-[200px] z-20"
+          className="absolute top-[40%] left-16 max-w-[200px] z-20"
         >
           <p className="text-[14px] font-medium leading-tight text-slate-800">
             2) <br /> tins, jars, old clothes, paper, gift wrapping paper
