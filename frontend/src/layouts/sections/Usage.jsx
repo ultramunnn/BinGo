@@ -127,7 +127,7 @@ const Usage = () => {
         {/* 1. TULISAN */}
         <motion.div
           style={{ x: textX }}
-          className="absolute top-16 left-30 max-w-[200px] z-20"
+          className="absolute top-28 left-30 max-w-[200px] z-20"
         >
           <p className="text-[14px] font-medium leading-tight text-slate-800">
             1) <br /> we can help recycling when we go shopping
@@ -169,7 +169,7 @@ const Usage = () => {
         >
           <img
             src="assets/images/botol-scan.png"
-            className="w-[85%] max-w-5xl"
+            className="w-[60%] max-w-5xl"
             alt="bg-bottle"
           />
         </motion.div>
@@ -285,7 +285,7 @@ const Usage = () => {
             </motion.div>
           </div>
 
-          <div className="w-[300px] h-[600px] rounded-[3.5rem] border-[10px] border-black shadow-[0_40px_80px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col relative bg-transparent">
+          <div className="w-[280px] h-[550px] top-8 rounded-[3.5rem] border-[10px] border-black shadow-[0_40px_80px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col relative bg-transparent">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-b-2xl z-50"></div>
 
             <div className="flex-1 relative flex flex-col z-10">

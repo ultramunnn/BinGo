@@ -6,8 +6,6 @@ import Impact from "./layouts/sections/Impact";
 import Testimoni from "./layouts/sections/Testimoni";
 import CTA from "./layouts/sections/CTA";
 import Footer from "./layouts/sections/Footer";
-import Login from "./pages/Auth/Login";
-import Register from "./pages/Auth/Register";
 
 const LandingPage = () => {
   return (
@@ -28,8 +26,6 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );
