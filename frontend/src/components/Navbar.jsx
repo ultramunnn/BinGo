@@ -83,14 +83,7 @@ const Navbar = () => {
           <div className="flex items-center justify-between px-10 py-5 max-w-[1400px] mx-auto">
             {/* Logo BinGo */}
             <div className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors ${isFullState ? 'border-black' : 'border-[#4BAFBC]'}`}>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className={`w-4 h-4 ${isFullState ? 'text-black' : 'text-[#4BAFBC]'}`}>
-                   <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                </svg>
-              </div>
-              <span className={`text-2xl font-black tracking-tighter transition-colors ${isFullState ? 'text-black' : 'text-[#4BAFBC]'}`}>
-                BINGO
-              </span>
+              <img src="/assets/images/logo-black.svg" alt="BinGo" className="h-8 w-auto" />
             </div>
 
             {/* Desktop Navigation Links */}
