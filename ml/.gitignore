@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.ipynb_checkpoints/
+.DS_Store
+CV_Dataset_BinGo/
+Data_Sampah_Engineered.csv
+Data_Sampah.csv
