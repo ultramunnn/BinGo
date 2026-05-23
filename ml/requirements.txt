@@ -5,3 +5,4 @@ tensorflow
 numpy
 scikit-learn
 pandas
+google-generativeai

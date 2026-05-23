@@ -5,6 +5,10 @@ import numpy as np
 import pickle
 import uvicorn
 import os
+import google.generativeai as genai
+
+# Konfigurasi Gemini API
+genai.configure(api_key=os.environ.get("GEMINI_API_KEY", "DUMMY_KEY"))
 
 app = FastAPI(
     title="BinGo ML API - Hybrid Decision System",
@@ -29,6 +33,7 @@ class PredictionRequest(BaseModel):
     is_hazardous: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
     is_foam: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
     is_small_item: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
+    generate_tips: bool = Field(default=False, description="Set True untuk mendapatkan tips daur ulang dari Generative AI")
 
 class ConfidenceResponse(BaseModel):
     recyclable: float
@@ -39,6 +44,7 @@ class PredictionResponse(BaseModel):
     recyclable: str
     treatment: str
     confidence: ConfidenceResponse
+    ai_recommendation: str = Field(None, description="Rekomendasi dari Generative AI (Gemini) jika diminta")
 
 @app.on_event("startup")
 async def load_model_and_encoders():
@@ -96,6 +102,17 @@ async def predict(request: PredictionRequest):
         conf_rec = float(max(pred_rec[0][0], 1 - pred_rec[0][0]))
         conf_met = float(np.max(pred_met))
         
+        # Generative AI RAG / Tips
+        ai_recommendation = None
+        if request.generate_tips:
+            prompt = f"Benda terdeteksi sebagai {request.category}. Status bisa didaur ulang: {recyclable}. Metode treatment pabrik: {treatment}. Berikan maksimal 2 kalimat tips singkat dan ramah untuk pengguna awam tentang bagaimana sebaiknya menangani sampah ini di rumah sebelum dibuang."
+            try:
+                model_genai = genai.GenerativeModel('gemini-1.5-flash')
+                response = model_genai.generate_content(prompt)
+                ai_recommendation = response.text.strip()
+            except Exception as e:
+                ai_recommendation = f"[Sistem AI Sedang Sibuk / API Key belum diset] - Pastikan Anda membuangnya di tempat sampah yang tepat."
+
         return PredictionResponse(
             category=request.category,
             recyclable=recyclable,
@@ -103,7 +120,8 @@ async def predict(request: PredictionRequest):
             confidence=ConfidenceResponse(
                 recyclable=conf_rec,
                 treatment=conf_met
-            )
+            ),
+            ai_recommendation=ai_recommendation
         )
         
     except Exception as e:

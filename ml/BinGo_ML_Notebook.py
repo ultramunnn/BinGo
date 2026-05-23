@@ -204,8 +204,28 @@ out_recycle = Dense(1, activation='sigmoid', name='output_recyclability')(out_re
 out_method = Dense(32, activation='relu')(x)
 out_method = Dense(NUM_METHODS, activation='softmax', name='output_treatment')(out_method)
 
+# Custom Model Subclassing (Mengimplementasikan GradientTape secara manual)
+class BingoHybridModel(tf.keras.Model):
+    def train_step(self, data):
+        x, y = data
+        with tf.GradientTape() as tape:
+            y_pred = self(x, training=True)
+            loss = self.compiled_loss(y, y_pred, regularization_losses=self.losses)
+            
+        gradients = tape.gradient(loss, self.trainable_variables)
+        self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
+        self.compute_metrics(x, y, y_pred, sample_weight=None)
+        return {m.name: m.result() for m in self.metrics}
+
+    def test_step(self, data):
+        x, y = data
+        y_pred = self(x, training=False)
+        loss = self.compiled_loss(y, y_pred, regularization_losses=self.losses)
+        self.compute_metrics(x, y, y_pred, sample_weight=None)
+        return {m.name: m.result() for m in self.metrics}
+
 # Compile model
-model = Model(
+model = BingoHybridModel(
     inputs=input_layers,
     outputs=[out_recycle, out_method]
 )
@@ -221,8 +241,8 @@ model.compile(
         'output_treatment': 1.0
     },
     metrics={
-        'output_recyclability': 'accuracy',
-        'output_treatment': 'accuracy'
+        'output_recyclability': ['accuracy', 'mae'],
+        'output_treatment': ['accuracy', 'mae']
     }
 )
 
@@ -239,10 +259,15 @@ class BingoTrainingCallback(tf.keras.callbacks.Callback):
             print(f"\n[Custom Callback] Target akurasi >99% tercapai pada epoch {epoch+1}. Menghentikan training!")
             self.model.stop_training = True
 
+import datetime
+log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+
 callbacks = [
     BingoTrainingCallback(),
     EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True, verbose=1),
-    ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, verbose=1)
+    ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, verbose=1),
+    tensorboard_callback
 ]
 
 history = model.fit(
@@ -259,11 +284,14 @@ history = model.fit(
 print("\n" + "="*60)
 print("EVALUASI MODEL PADA TEST SET")
 print("="*60)
-
 results = model.evaluate(X_test, [y_rec_test, y_met_test], verbose=0)
 print(f"Total Loss: {results[0]:.4f}")
+print(f"Recyclability Loss: {results[1]:.4f}")
+print(f"Treatment Loss: {results[2]:.4f}")
 print(f"Recyclability Accuracy: {results[3]:.4f} ({results[3]*100:.2f}%)")
-print(f"Treatment Accuracy: {results[4]:.4f} ({results[4]*100:.2f}%)")
+print(f"Recyclability MAE: {results[4]:.4f}")
+print(f"Treatment Accuracy: {results[5]:.4f} ({results[5]*100:.2f}%)")
+print(f"Treatment MAE: {results[6]:.4f}")
 
 # %% [10] CLASSIFICATION REPORTS
 pred_recycle, pred_method = model.predict(X_test)
