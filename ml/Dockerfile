@@ -13,8 +13,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy semua file ke dalam container (termasuk api.py, model, dan encoders)
 COPY . .
 
-# Expose port yang digunakan oleh FastAPI
-EXPOSE 8000
+# Expose port yang digunakan oleh Hugging Face Spaces (wajib 7860)
+EXPOSE 7860
 
-# Perintah untuk menjalankan aplikasi
-CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Perintah untuk menjalankan aplikasi FastAPI
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "7860"]
