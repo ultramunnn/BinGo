@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // --- Reusable Icons Inside Component ---
 const IconSearch = ({ className = "w-5 h-5" }) => (
@@ -151,17 +152,22 @@ const IconArticle = ({ className = "w-5 h-5" }) => (
 );
 
 const navItems = [
-  { name: "Dashboard", Icon: IconDashboard },
-  { name: "Riwayat", Icon: IconHistory },
-  { name: "Peta", Icon: IconMap },
-  { name: "Artikel", Icon: IconArticle },
+  { name: "Dashboard", Icon: IconDashboard, path: "/dashboard" },
+  { name: "Riwayat", Icon: IconHistory, path: "/dashboard" },
+  { name: "Peta", Icon: IconMap, path: "/maps" },
+  { name: "Artikel", Icon: IconArticle, path: "/dashboard" },
 ];
 
-const NavbarDashboard = ({ activeMenu, setActiveMenu }) => {
+const NavbarDashboard = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const searchRef = useRef(null);
   const profileRef = useRef(null);
+
+  // Derive active menu from current path
+  const activeMenu = navItems.find((item) => item.path === location.pathname)?.name || "Dashboard";
 
   // Menangani penutupan dropdown jika klik di luar area komponen
   useEffect(() => {
@@ -192,10 +198,10 @@ const NavbarDashboard = ({ activeMenu, setActiveMenu }) => {
 
           {/* DYNAMIC NAV LINKS — desktop */}
           <nav className="hidden lg:flex items-center gap-1">
-            {navItems.map(({ name }) => (
+            {navItems.map(({ name, path }) => (
               <button
                 key={name}
-                onClick={() => setActiveMenu(name)}
+                onClick={() => navigate(path)}
                 className={`group cursor-pointer relative px-4 py-2 text-sm font-medium transition-colors ${
                   activeMenu === name
                     ? "text-slate-900 font-semibold"
@@ -292,10 +298,10 @@ const NavbarDashboard = ({ activeMenu, setActiveMenu }) => {
       {/* MOBILE BOTTOM NAV */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/90 backdrop-blur-md border-t border-slate-200/60 safe-area-inset">
         <div className="flex items-center justify-around h-16 px-2">
-          {navItems.map(({ name, Icon }) => (
+          {navItems.map(({ name, Icon, path }) => (
             <button
               key={name}
-              onClick={() => setActiveMenu(name)}
+              onClick={() => navigate(path)}
               className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 transition-colors ${
                 activeMenu === name ? "text-slate-900" : "text-slate-400"
               }`}
