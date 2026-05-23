@@ -6,6 +6,10 @@ import pickle
 import uvicorn
 import os
 import google.generativeai as genai
+from dotenv import load_dotenv
+
+# Load variable dari .env
+load_dotenv()
 
 # Konfigurasi Gemini API
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY", "DUMMY_KEY"))

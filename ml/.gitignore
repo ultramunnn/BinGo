@@ -5,3 +5,6 @@ __pycache__/
 CV_Dataset_BinGo/
 Data_Sampah_Engineered.csv
 Data_Sampah.csv
+
+# Environment variables
+.env

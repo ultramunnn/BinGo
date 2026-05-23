@@ -6,3 +6,4 @@ numpy
 scikit-learn
 pandas
 google-generativeai
+python-dotenv
