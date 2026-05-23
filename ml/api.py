@@ -82,17 +82,32 @@ async def predict(request: PredictionRequest):
         # Transform setiap fitur menggunakan LabelEncoder masing-masing
         for col in cols_input:
             val = req_dict.get(col, 'Unknown')
+            
+            # Normalisasi tipe data (Frontend mungkin kirim boolean true/false)
+            if isinstance(val, bool):
+                val = 'Yes' if val else 'No'
+            elif str(val).strip().lower() == 'true':
+                val = 'Yes'
+            elif str(val).strip().lower() == 'false':
+                val = 'No'
+                
             le = encoders.get(f'le_{col}')
             if not le:
                 raise HTTPException(status_code=500, detail=f"Encoder untuk {col} tidak ditemukan.")
             
-            # Aman dari unknown values (fall back ke 'Unknown' atau 0 jika error)
-            if val in le.classes_:
-                enc = le.transform([val])[0]
-            elif 'Unknown' in le.classes_:
-                enc = le.transform(['Unknown'])[0]
+            # Case-insensitive matching untuk menghindari bug huruf besar/kecil
+            val_lower = str(val).strip().lower()
+            classes_lower = [str(c).lower() for c in le.classes_]
+            
+            if val_lower in classes_lower:
+                real_class = le.classes_[classes_lower.index(val_lower)]
+                enc = le.transform([real_class])[0]
+            elif 'unknown' in classes_lower:
+                real_class = le.classes_[classes_lower.index('unknown')]
+                enc = le.transform([real_class])[0]
             else:
                 enc = 0
+            
             inputs.append(np.array([enc]))
             
         # Prediksi (Model mengembalikan [out_recycle, out_method])
