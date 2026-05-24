@@ -1,10 +1,6 @@
-/**
- * Skeleton loader matching ArticleCard layout.
- * Renders `count` placeholder cards with pulse animation.
- */
 export default function LoadingSkeleton({ count = 3, featured = true }) {
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <section className="grid grid-cols-2 lg:grid-cols-3 gap-5">
       {featured && <FeaturedSkeleton />}
       {Array.from({ length: count }).map((_, i) => (
         <CardSkeleton key={i} />
@@ -15,7 +11,7 @@ export default function LoadingSkeleton({ count = 3, featured = true }) {
 
 function FeaturedSkeleton() {
   return (
-    <div className="sm:col-span-2 lg:col-span-2 bg-white rounded-xl border border-slate-200/60 overflow-hidden">
+    <div className="sm:col-span-2 lg:col-span-2 bg-white rounded-md border border-slate-200/60 overflow-hidden">
       <div className="flex flex-col md:flex-row">
         <div className="md:w-2/5 h-48 md:h-auto bg-slate-100 animate-pulse" />
         <div className="md:w-3/5 p-6 sm:p-8 flex flex-col justify-center gap-4">
@@ -38,7 +34,7 @@ function FeaturedSkeleton() {
 
 function CardSkeleton() {
   return (
-    <div className="bg-white rounded-xl border border-slate-200/60 overflow-hidden">
+    <div className="bg-white rounded-md border border-slate-200/60 overflow-hidden">
       <div className="h-0.5 bg-slate-100" />
       <div className="h-36 bg-slate-100 animate-pulse" />
       <div className="p-5 space-y-3">
