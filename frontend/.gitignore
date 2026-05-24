@@ -26,3 +26,7 @@ dist-ssr
 # file document
 *.md
 claude.md
+
+# file skills agent
+.agents/
+skills-lock.json
