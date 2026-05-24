@@ -155,7 +155,7 @@ const navItems = [
   { name: "Dashboard", Icon: IconDashboard, path: "/dashboard" },
   { name: "Riwayat", Icon: IconHistory, path: "/history" },
   { name: "Peta", Icon: IconMap, path: "/maps" },
-  { name: "Artikel", Icon: IconArticle, path: "/dashboard" },
+  { name: "Artikel", Icon: IconArticle, path: "/article" },
 ];
 
 const NavbarDashboard = () => {
