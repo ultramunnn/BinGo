@@ -163,12 +163,14 @@ const NavbarDashboard = () => {
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const searchRef = useRef(null);
   const profileRef = useRef(null);
 
   // Derive active menu from current path
   const activeMenu = navItems.find((item) => item.path === location.pathname)?.name || null;
   const isProfilePage = location.pathname === "/profile";
+  const isSettingsPage = location.pathname === "/settings";
 
   // Menangani penutupan dropdown jika klik di luar area komponen
   useEffect(() => {
@@ -291,7 +293,14 @@ const NavbarDashboard = () => {
                   >
                     <IconUser className={`w-4 h-4 ${isProfilePage ? "text-slate-700" : "text-slate-400"}`} /> Profile
                   </button>
-                  <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                  <button
+                    onClick={() => { navigate("/settings"); setSettingsOpen(false); }}
+                     className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+                      isSettingsPage
+                        ? "bg-slate-100 text-slate-900 font-semibold"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                  >
                     <IconSettings className="w-4 h-4 text-slate-400" /> Settings
                   </button>
                 </div>

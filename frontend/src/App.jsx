@@ -18,6 +18,7 @@ import Maps from "./pages/Maps";
 import History from "./pages/History";
 import Article from "./pages/Article";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 const LandingPage = () => {
   return (
@@ -50,6 +51,7 @@ const App = () => {
         <Route path="/history" element={<History />} />
         <Route path="/article" element={<Article />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </Router>
   );
