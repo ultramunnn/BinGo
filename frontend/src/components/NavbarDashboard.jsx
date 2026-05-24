@@ -167,7 +167,8 @@ const NavbarDashboard = () => {
   const profileRef = useRef(null);
 
   // Derive active menu from current path
-  const activeMenu = navItems.find((item) => item.path === location.pathname)?.name || "Dashboard";
+  const activeMenu = navItems.find((item) => item.path === location.pathname)?.name || null;
+  const isProfilePage = location.pathname === "/profile";
 
   // Menangani penutupan dropdown jika klik di luar area komponen
   useEffect(() => {
@@ -253,7 +254,9 @@ const NavbarDashboard = () => {
                 <img
                   src="https://i.pravatar.cc/150?u=ruben"
                   alt="Avatar"
-                  className="w-8 h-8 rounded-full ring-2 ring-white shadow-sm"
+                  className={`w-8 h-8 rounded-full ring-2 shadow-sm transition-all ${
+                    isProfilePage ? "ring-slate-900" : "ring-white"
+                  }`}
                 />
                 <IconChevronDown
                   className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${profileOpen ? "rotate-180" : ""}`}
@@ -278,8 +281,15 @@ const NavbarDashboard = () => {
                   </p>
                 </div>
                 <div className="py-1.5">
-                  <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                    <IconUser className="w-4 h-4 text-slate-400" /> Profile
+                  <button
+                    onClick={() => { navigate("/profile"); setProfileOpen(false); }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-colors ${
+                      isProfilePage
+                        ? "bg-slate-100 text-slate-900 font-semibold"
+                        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                    }`}
+                  >
+                    <IconUser className={`w-4 h-4 ${isProfilePage ? "text-slate-700" : "text-slate-400"}`} /> Profile
                   </button>
                   <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
                     <IconSettings className="w-4 h-4 text-slate-400" /> Settings
