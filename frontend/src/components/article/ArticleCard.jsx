@@ -3,42 +3,36 @@ import { ExternalLink } from "lucide-react";
 const colorMap = {
   emerald: {
     badge: "text-emerald-700 bg-emerald-50 border-emerald-100",
-    bullet: "bg-emerald-400 shadow-emerald-400/40",
     hover: "group-hover:text-emerald-700",
     accent: "from-emerald-400 to-emerald-200",
     icon: "text-emerald-300/70",
   },
   slate: {
     badge: "text-slate-600 bg-slate-50 border-slate-100",
-    bullet: "bg-slate-400 shadow-slate-400/40",
     hover: "group-hover:text-slate-700",
     accent: "from-slate-400 to-slate-200",
     icon: "text-slate-300/70",
   },
   amber: {
     badge: "text-amber-700 bg-amber-50 border-amber-100",
-    bullet: "bg-amber-400 shadow-amber-400/40",
     hover: "group-hover:text-amber-700",
     accent: "from-amber-400 to-amber-200",
     icon: "text-amber-300/70",
   },
   lime: {
     badge: "text-lime-700 bg-lime-50 border-lime-100",
-    bullet: "bg-lime-400 shadow-lime-400/40",
     hover: "group-hover:text-lime-700",
     accent: "from-lime-400 to-lime-200",
     icon: "text-lime-300/70",
   },
   sky: {
     badge: "text-sky-700 bg-sky-50 border-sky-100",
-    bullet: "bg-sky-400 shadow-sky-400/40",
     hover: "group-hover:text-sky-700",
     accent: "from-sky-400 to-sky-200",
     icon: "text-sky-300/70",
   },
   orange: {
     badge: "text-orange-700 bg-orange-50 border-orange-100",
-    bullet: "bg-orange-400 shadow-orange-400/40",
     hover: "group-hover:text-orange-700",
     accent: "from-orange-400 to-orange-200",
     icon: "text-orange-300/70",
@@ -49,11 +43,6 @@ function getColors(color) {
   return colorMap[color] || colorMap.emerald;
 }
 
-/**
- * Reusable article card with thumbnail, category badge, extract, and link.
- *
- * @param {{ article: Object, index?: number, featured?: boolean }} props
- */
 export default function ArticleCard({ article, index = 0, featured = false }) {
   const colors = getColors(article.color);
 
@@ -63,7 +52,7 @@ export default function ArticleCard({ article, index = 0, featured = false }) {
 
   return (
     <article
-      className="group relative bg-white rounded-xl border border-slate-200/60 overflow-hidden hover:shadow-md hover:border-slate-300/60 transition-all duration-300 flex flex-col animate-[fadeInUp_0.5s_ease-out_both]"
+      className="group relative bg-white rounded-md border border-slate-200/60 overflow-hidden hover:shadow-md hover:border-slate-300/60 transition-all duration-300 flex flex-col animate-[fadeInUp_0.5s_ease-out_both]"
       style={{ animationDelay: `${index * 80}ms` }}
     >
       <div className={`h-0.5 bg-linear-to-r ${colors.accent}`} />
@@ -109,10 +98,7 @@ export default function ArticleCard({ article, index = 0, featured = false }) {
           {article.title}
         </h3>
 
-        <div className="flex gap-2.5 mb-4 flex-1">
-          <span
-            className={`mt-1.5 w-2 h-2 rounded-full shrink-0 shadow-sm ${colors.bullet}`}
-          />
+        <div className="mb-4 flex-1">
           <p className="text-[13px] text-slate-500 leading-relaxed line-clamp-3">
             {article.extract}
           </p>
@@ -126,7 +112,7 @@ export default function ArticleCard({ article, index = 0, featured = false }) {
             href={article.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300"
+            className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 opacity-100 translate-x-0 md:opacity-0 md:group-hover:opacity-100 md:translate-x-2 md:group-hover:translate-x-0 transition-all duration-300"
           >
             Baca
             <ExternalLink className="w-3 h-3" />
@@ -139,7 +125,7 @@ export default function ArticleCard({ article, index = 0, featured = false }) {
 
 function FeaturedArticleCard({ article, colors }) {
   return (
-    <article className="group relative sm:col-span-2 lg:col-span-2 bg-white rounded-xl border border-slate-200/60 overflow-hidden hover:shadow-md transition-all duration-300">
+    <article className="group relative bg-white rounded-md border border-slate-200/60 overflow-hidden hover:shadow-md transition-all duration-300">
       <div className="flex flex-col md:flex-row">
         <div className="md:w-2/5 h-48 md:h-auto bg-linear-to-br from-slate-100 to-slate-50 flex items-center justify-center relative overflow-hidden">
           {article.thumbnail ? (
@@ -184,14 +170,9 @@ function FeaturedArticleCard({ article, colors }) {
             {article.title}
           </h2>
 
-          <div className="flex gap-3 mb-5">
-            <span
-              className={`mt-2 w-2.5 h-2.5 rounded-full shrink-0 shadow-sm ${colors.bullet}`}
-            />
-            <p className="text-sm text-slate-500 leading-relaxed line-clamp-3">
-              {article.extract}
-            </p>
-          </div>
+          <p className="text-sm text-slate-500 leading-relaxed line-clamp-3 mb-5">
+            {article.extract}
+          </p>
 
           <div className="flex items-center justify-between">
             <span className="text-xs text-slate-400 capitalize">

@@ -79,8 +79,11 @@ export function useWikipediaArticles(activeTopicId = "all", articlesPerTopic = 2
       }
 
       if (!controller.signal.aborted) {
-        setCache(cacheKey, allResults);
-        setArticles(allResults);
+        const unique = Array.from(
+          new Map(allResults.map((a) => [a.id, a])).values()
+        );
+        setCache(cacheKey, unique);
+        setArticles(unique);
       }
     } catch (err) {
       if (err.name !== "CanceledError" && err.name !== "AbortError") {
