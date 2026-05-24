@@ -103,68 +103,6 @@ export async function searchAndGetSummaries(query, limit = 5, signal) {
 }
 
 /**
- * Fetch full article sections from Wikipedia REST API.
- * Returns structured sections with titles and HTML content.
- *
- * @param {string} title - Article title
- * @param {AbortSignal} signal - AbortController signal
- * @returns {Promise<Object|null>} Article detail with sections or null
- */
-export async function getArticleSections(title, signal) {
-  try {
-    const encodedTitle = encodeURIComponent(title);
-    const { data } = await wikiClient.get(
-      `${WIKI_REST_BASE}/page/mobile-sections/${encodedTitle}`,
-      { signal }
-    );
-
-    return normalizeSections(data, title);
-  } catch (err) {
-    if (axios.isCancel(err)) throw err;
-    return null;
-  }
-}
-
-/**
- * Fetch complete article detail: summary + sections.
- *
- * @param {string} title - Article title
- * @param {AbortSignal} signal - AbortController signal
- * @returns {Promise<Object|null>} Full article detail or null
- */
-export async function getArticleDetail(title, signal) {
-  const [summary, sections] = await Promise.all([
-    getArticleSummary(title, signal),
-    getArticleSections(title, signal),
-  ]);
-
-  if (!summary) return null;
-
-  return {
-    ...summary,
-    sections: sections?.sections || [],
-    lead: sections?.lead || "",
-  };
-}
-
-/**
- * Normalize mobile-sections response into structured data.
- */
-function normalizeSections(raw, title) {
-  const lead = raw.lead?.sections?.[0]?.text || "";
-  const sections = (raw.remaining?.sections || [])
-    .filter((s) => s.line && s.text)
-    .map((s) => ({
-      id: s.id,
-      title: s.line,
-      level: s.toclevel || 1,
-      content: s.text,
-    }));
-
-  return { lead, sections };
-}
-
-/**
  * Normalize Wikipedia REST summary response into a consistent shape.
  */
 function normalizeSummary(raw) {

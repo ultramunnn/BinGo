@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { ExternalLink } from "lucide-react";
 
 const colorMap = {
@@ -123,13 +122,15 @@ export default function ArticleCard({ article, index = 0, featured = false }) {
           <span className="text-[11px] text-slate-400 capitalize">
             {article.description}
           </span>
-          <Link
-            to={`/article/${encodeURIComponent(article.title)}`}
+          <a
+            href={article.url}
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300"
           >
             Baca
             <ExternalLink className="w-3 h-3" />
-          </Link>
+          </a>
         </div>
       </div>
     </article>
@@ -196,13 +197,15 @@ function FeaturedArticleCard({ article, colors }) {
             <span className="text-xs text-slate-400 capitalize">
               {article.description}
             </span>
-            <Link
-              to={`/article/${encodeURIComponent(article.title)}`}
+            <a
+              href={article.url}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 group-hover:gap-2.5 transition-all duration-300"
             >
-              Baca Selengkapnya
+              Baca di Wikipedia
               <ExternalLink className="w-3.5 h-3.5" />
-            </Link>
+            </a>
           </div>
         </div>
       </div>
