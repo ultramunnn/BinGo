@@ -211,19 +211,19 @@ const OutputBox = ({ type, title, items }) => {
 
 const HeroSection = () => (
   <section className="relative mb-10">
-    <div className="relative rounded-md overflow-hidden bg-linear-to-br from-emerald-950 to-teal-950">
+    <div className="relative rounded-md overflow-hidden bg-linear-to-br from-slate-950 to-teal-950">
       <div className="absolute inset-0 opacity-[0.06] bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%221%22%3E%3Ccircle%20cx%3D%223%22%20cy%3D%223%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')]" />
-      <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-emerald-500/[0.06]" />
+      <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-slate-500/[0.06]" />
       <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-teal-500/[0.05]" />
 
       <div className="relative px-5 sm:px-8 lg:px-10 py-8 sm:py-10 lg:py-12">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white text-center leading-[1.2] tracking-tight mb-3 max-w-3xl mx-auto">
           MEMAHAMI JALUR SAMPAH:{" "}
-          <span className="text-emerald-300">JANGAN SALAH PILIH,</span> JANGAN
+          <span className="text-slate-400">JANGAN SALAH PILIH,</span> JANGAN
           SAMPAI JADI RESIDU!
         </h1>
 
-        <p className="text-sm sm:text-base text-emerald-200/60 text-center max-w-xl mx-auto leading-relaxed">
+        <p className="text-sm sm:text-base text-slate-200/60 text-center max-w-xl mx-auto leading-relaxed">
           Pusat Edukasi BinGo: Pahami, Pilah, dan Kurangi Sampah demi Pesisir
           yang Lebih Bersih.
         </p>
