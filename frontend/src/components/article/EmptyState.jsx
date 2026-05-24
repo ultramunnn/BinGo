@@ -1,8 +1,5 @@
 import { FileSearch, RefreshCw } from "lucide-react";
 
-/**
- * Empty state shown when no articles match the filter or search.
- */
 export function EmptyState({ message = "Belum ada artikel untuk kategori ini." }) {
   return (
     <div className="text-center py-20">
@@ -14,9 +11,6 @@ export function EmptyState({ message = "Belum ada artikel untuk kategori ini." }
   );
 }
 
-/**
- * Error state with retry button.
- */
 export function ErrorState({ message, onRetry }) {
   return (
     <div className="text-center py-20">
