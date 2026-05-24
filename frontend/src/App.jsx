@@ -15,6 +15,7 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Dashboard from "./pages/Dashboard";
 import Maps from "./pages/Maps";
+import History from "./pages/History";
 
 const LandingPage = () => {
   return (
@@ -44,6 +45,7 @@ const App = () => {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/maps" element={<Maps />} />
+        <Route path="/history" element={<History />} />
       </Routes>
     </Router>
   );
