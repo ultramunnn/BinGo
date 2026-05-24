@@ -17,6 +17,7 @@ import Dashboard from "./pages/Dashboard";
 import Maps from "./pages/Maps";
 import History from "./pages/History";
 import Article from "./pages/Article";
+import ArticleDetail from "./pages/ArticleDetail";
 
 const LandingPage = () => {
   return (
@@ -48,6 +49,7 @@ const App = () => {
         <Route path="/maps" element={<Maps />} />
         <Route path="/history" element={<History />} />
         <Route path="/article" element={<Article />} />
+        <Route path="/article/:title" element={<ArticleDetail />} />
       </Routes>
     </Router>
   );
