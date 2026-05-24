@@ -153,7 +153,7 @@ const IconArticle = ({ className = "w-5 h-5" }) => (
 
 const navItems = [
   { name: "Dashboard", Icon: IconDashboard, path: "/dashboard" },
-  { name: "Riwayat", Icon: IconHistory, path: "/dashboard" },
+  { name: "Riwayat", Icon: IconHistory, path: "/history" },
   { name: "Peta", Icon: IconMap, path: "/maps" },
   { name: "Artikel", Icon: IconArticle, path: "/dashboard" },
 ];
