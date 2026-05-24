@@ -16,6 +16,7 @@ import Privacy from "./pages/Privacy";
 import Dashboard from "./pages/Dashboard";
 import Maps from "./pages/Maps";
 import History from "./pages/History";
+import Article from "./pages/Article";
 
 const LandingPage = () => {
   return (
@@ -46,6 +47,7 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/maps" element={<Maps />} />
         <Route path="/history" element={<History />} />
+        <Route path="/article" element={<Article />} />
       </Routes>
     </Router>
   );
