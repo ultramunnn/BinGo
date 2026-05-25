@@ -50,7 +50,7 @@ class PredictionResponse(BaseModel):
     confidence: ConfidenceResponse
     ai_recommendation: str = Field(None, description="Rekomendasi dari Generative AI (Gemini) jika diminta")
 
-@tf.keras.utils.register_keras_serializable()
+@tf.keras.utils.register_keras_serializable(package="Custom", name="BingoHybridModel")
 class BingoHybridModel(tf.keras.Model):
     def train_step(self, data):
         x, y = data
@@ -74,13 +74,16 @@ class BingoHybridModel(tf.keras.Model):
 async def load_model_and_encoders():
     global model, encoders
     
-    model_path = r'bingo_model.h5'
+    model_path = r'bingo_model.keras'
     encoders_path = r'label_encoders.pkl'
     
     if os.path.exists(model_path):
         model = tf.keras.models.load_model(
             model_path,
-            custom_objects={"BingoHybridModel": BingoHybridModel}
+            custom_objects={
+                "BingoHybridModel": BingoHybridModel,
+                "Custom>BingoHybridModel": BingoHybridModel
+            }
         )
         print("Model berhasil diload.")
     else:
