@@ -50,15 +50,38 @@ class PredictionResponse(BaseModel):
     confidence: ConfidenceResponse
     ai_recommendation: str = Field(None, description="Rekomendasi dari Generative AI (Gemini) jika diminta")
 
+@tf.keras.utils.register_keras_serializable()
+class BingoHybridModel(tf.keras.Model):
+    def train_step(self, data):
+        x, y = data
+        with tf.GradientTape() as tape:
+            y_pred = self(x, training=True)
+            loss = self.compiled_loss(y, y_pred, regularization_losses=self.losses)
+            
+        gradients = tape.gradient(loss, self.trainable_variables)
+        self.optimizer.apply_gradients(zip(gradients, self.trainable_variables))
+        self.compute_metrics(x, y, y_pred, sample_weight=None)
+        return {m.name: m.result() for m in self.metrics}
+
+    def test_step(self, data):
+        x, y = data
+        y_pred = self(x, training=False)
+        loss = self.compiled_loss(y, y_pred, regularization_losses=self.losses)
+        self.compute_metrics(x, y, y_pred, sample_weight=None)
+        return {m.name: m.result() for m in self.metrics}
+
 @app.on_event("startup")
 async def load_model_and_encoders():
     global model, encoders
     
-    model_path = r'bingo_model.keras'
+    model_path = r'bingo_model.h5'
     encoders_path = r'label_encoders.pkl'
     
     if os.path.exists(model_path):
-        model = tf.keras.models.load_model(model_path)
+        model = tf.keras.models.load_model(
+            model_path,
+            custom_objects={"BingoHybridModel": BingoHybridModel}
+        )
         print("Model berhasil diload.")
     else:
         print(f"ERROR: Model tidak ditemukan di {model_path}")
