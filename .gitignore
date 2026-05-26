@@ -44,3 +44,13 @@ coverage/
 benchmarks/graphs/
 
 *.gz
+
+.agents
+skills-lock.json
+.mcp.json
+.claude
+
+*.h5
+*.jpeg
+postman/
+test/

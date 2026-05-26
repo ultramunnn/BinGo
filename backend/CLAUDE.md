@@ -20,31 +20,45 @@ No test runner or linter is configured.
 
 ## Environment Setup
 
-A `.env` file in `backend/` is required with: `PORT`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `JWT_SECRET`, `JWT_EXPIRES_IN`. See `backend/.env.example` for the template.
+A `.env` file in `backend/` is required with: `PORT`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `CV_API_URL`, `ML_API_URL`. See `backend/.env.example` for the template.
 
 ## Architecture
 
 Express MVC pattern in `backend/src/`:
 
-- **Routes** → **Controllers** → **Models** (Supabase data access) → **Types** (shared interfaces)
-- **Middleware**: JWT auth (`authenticate`) in `src/middleware/auth.ts`
-- **Models** are singleton class instances exported as `default` — follow this pattern for new models
+- **Routes** → **Controllers** → **Services** → **Models** (Supabase data access) → **Types** (shared interfaces)
+- **Middleware**: JWT auth (`authenticate`) in `src/middleware/auth.ts`, file upload (`multer`) in `src/middleware/upload.ts`
+- **Models** export named functions (not classes) — follow this pattern for new models
+- **Services** contain business logic and orchestrate external API calls
 - **Docs**: OpenAPI spec is defined programmatically in TypeScript under `src/docs/`, not YAML files. Add new endpoint docs there.
 
 ### Core User Flow
 
 1. User takes a photo of beach waste → mobile app captures GPS coordinates (latitude, longitude)
-2. Photo sent to backend → forwarded to AI model (YOLO11m) for classification
-3. Classification result (waste_type, confidence, lat, lng, image_url) saved to `classification_history`
-4. Other users can view anyone's scan history, rate it (1-5), and leave comments
+2. Photo uploaded to backend → saved to Supabase Storage (`scans` bucket)
+3. Image sent to **CV API** (port 7860) → returns `waste_type` (glass/metal/paper/plastic/textile) + `confidence`
+4. Backend auto-derives 9 ML features from category using rule-based logic (`src/utils/feature-derivation.ts`)
+5. Features sent to **ML API** (port 8000) → returns `recyclable` (Yes/No) + `treatment` method + confidence scores
+6. Full result saved to `classification_history` and returned to user
+7. Other users can view anyone's scan history, rate it (1-5), and leave comments
+
+### Two-Stage AI Pipeline
+
+The classification uses two external Python services:
+
+- **CV API** (`cv/`, port 7860): EfficientNetB0 image classifier → 5 waste categories
+- **ML API** (`ml/`, port 8000): Hybrid decision model → recyclability + treatment recommendation
+
+The backend acts as the orchestrator: `cv.service.ts` → `feature-derivation.ts` → `ml.service.ts`. Users only upload an image + GPS; all ML features are auto-derived from the CV category (no user input needed for contextual features).
 
 ### Adding a new resource
 
-1. Create model in `src/models/` (singleton class, Supabase client)
-2. Create controller in `src/controllers/`
-3. Create routes in `src/routes/` and register in `src/server.ts`
-4. Add OpenAPI docs in `src/docs/` (new file + register in `src/docs/index.ts`)
-5. Add types in `src/types/`
+1. Create model in `src/models/` (named export functions, Supabase client)
+2. Create service in `src/services/` (business logic, external API calls)
+3. Create controller in `src/controllers/` (thin, delegates to service)
+4. Create routes in `src/routes/` and register in `src/server.ts`
+5. Add OpenAPI docs in `src/docs/` (new file + register in `src/docs/index.ts`)
+6. Add types in `src/types/`
 
 ## Database Schema
 
@@ -55,7 +69,7 @@ All tables use UUID primary keys. Timestamps use `TIMESTAMPTZ`. Single role: `us
 | `users` | id, email, password_hash, full_name, photo_url, created_at, updated_at |
 | `token_blacklist` | token, expires_at |
 | `password_resets` | user_id, token, expires_at, used |
-| `classification_history` | id, user_id (FK users), image_url, waste_type, confidence, latitude, longitude, location_name, created_at |
+| `classification_history` | id, user_id (FK users), image_url, waste_type, confidence, latitude, longitude, location_name, recyclable, treatment, recyclable_confidence, treatment_confidence, created_at |
 | `ratings` | id, classification_id (FK classification_history), user_id (FK users), score (1-5), created_at |
 | `comments` | id, classification_id (FK classification_history), user_id (FK users), message, created_at |
 
@@ -64,6 +78,30 @@ All tables use UUID primary keys. Timestamps use `TIMESTAMPTZ`. Single role: `us
 - `ratings`: UNIQUE(classification_id, user_id) — one rating per user per scan
 - `ratings.score`: CHECK (score BETWEEN 1 AND 5)
 - `classification_history`: latitude/longitude are FLOAT, captured from the device at scan time
+- `classification_history`: recyclable/treatment are ML predictions, recyclable_confidence/treatment_confidence are FLOAT
+
+## Scan API Endpoints
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/api/scans` | Yes | Upload image + GPS → full classification pipeline |
+| GET | `/api/scans` | No | All scans (public feed, paginated) |
+| GET | `/api/scans/me` | Yes | Current user's scan history |
+| GET | `/api/scans/:id` | No | Single scan by ID |
+| DELETE | `/api/scans/:id` | Yes | Delete own scan |
+
+### POST /api/scans (multipart/form-data)
+
+Required fields: `photo` (image file), `latitude` (number), `longitude` (number)
+Optional: `location_name` (string)
+
+Response includes: waste_type, confidence, recyclable, treatment, recyclable_confidence, treatment_confidence, image_url, GPS data.
+
+## Supabase Storage
+
+Two buckets are used:
+- `avatars` — user profile photos (via `uploadPhoto` in `storage.service.ts`)
+- `scans` — scan images (via classification service, must be created manually in Supabase dashboard)
 
 ## Migrations
 
@@ -119,14 +157,18 @@ CREATE OR REPLACE FUNCTION submit_scan_with_rating(
   p_confidence FLOAT,
   p_latitude FLOAT,
   p_longitude FLOAT,
-  p_location_name TEXT
+  p_location_name TEXT,
+  p_recyclable TEXT,
+  p_treatment TEXT,
+  p_recyclable_confidence FLOAT,
+  p_treatment_confidence FLOAT
 )
 RETURNS UUID AS $$
 DECLARE
   v_classification_id UUID;
 BEGIN
-  INSERT INTO classification_history (user_id, image_url, waste_type, confidence, latitude, longitude, location_name)
-  VALUES (p_user_id, p_image_url, p_waste_type, p_confidence, p_latitude, p_longitude, p_location_name)
+  INSERT INTO classification_history (user_id, image_url, waste_type, confidence, latitude, longitude, location_name, recyclable, treatment, recyclable_confidence, treatment_confidence)
+  VALUES (p_user_id, p_image_url, p_waste_type, p_confidence, p_latitude, p_longitude, p_location_name, p_recyclable, p_treatment, p_recyclable_confidence, p_treatment_confidence)
   RETURNING id INTO v_classification_id;
 
   RETURN v_classification_id;
@@ -145,6 +187,10 @@ const { data, error } = await supabase.rpc('submit_scan_with_rating', {
   p_latitude: lat,
   p_longitude: lng,
   p_location_name: locationName,
+  p_recyclable: recyclable,
+  p_treatment: treatment,
+  p_recyclable_confidence: recyclableConfidence,
+  p_treatment_confidence: treatmentConfidence,
 });
 ```
 

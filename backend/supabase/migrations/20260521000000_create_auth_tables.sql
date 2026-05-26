@@ -1,5 +1,5 @@
 -- Users table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
@@ -11,16 +11,18 @@ CREATE TABLE users (
 
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can view own profile" ON users;
 CREATE POLICY "Users can view own profile"
   ON users FOR SELECT
   USING (auth.uid() = id);
 
+DROP POLICY IF EXISTS "Users can update own profile" ON users;
 CREATE POLICY "Users can update own profile"
   ON users FOR UPDATE
   USING (auth.uid() = id);
 
 -- Token blacklist table (for JWT logout)
-CREATE TABLE token_blacklist (
+CREATE TABLE IF NOT EXISTS token_blacklist (
   token TEXT PRIMARY KEY,
   expires_at TIMESTAMPTZ NOT NULL
 );
@@ -28,7 +30,7 @@ CREATE TABLE token_blacklist (
 ALTER TABLE token_blacklist ENABLE ROW LEVEL SECURITY;
 
 -- Password resets table
-CREATE TABLE password_resets (
+CREATE TABLE IF NOT EXISTS password_resets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   token TEXT UNIQUE NOT NULL,
@@ -39,5 +41,5 @@ CREATE TABLE password_resets (
 ALTER TABLE password_resets ENABLE ROW LEVEL SECURITY;
 
 -- Index for cleanup
-CREATE INDEX idx_token_blacklist_expires ON token_blacklist(expires_at);
-CREATE INDEX idx_password_resets_token ON password_resets(token);
+CREATE INDEX IF NOT EXISTS idx_token_blacklist_expires ON token_blacklist(expires_at);
+CREATE INDEX IF NOT EXISTS idx_password_resets_token ON password_resets(token);

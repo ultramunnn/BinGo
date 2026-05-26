@@ -29,6 +29,7 @@ class PredictionRequest(BaseModel):
     is_hazardous: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
     is_foam: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
     is_small_item: str = Field(default="Unknown", description="'Yes', 'No', atau 'Unknown'")
+    cv_confidence: float = Field(default=1.0, ge=0.0, le=1.0, description="Confidence dari CV model (0-1), digunakan untuk kalibrasi output")
 
 class ConfidenceResponse(BaseModel):
     recyclable: float
@@ -91,10 +92,17 @@ async def predict(request: PredictionRequest):
         # Decode output
         recyclable = "Yes" if pred_rec[0][0] > 0.5 else "No"
         treatment = encoders['le_recyclemethod'].classes_[np.argmax(pred_met)]
-        
-        # Confidence
+
+        # Raw confidence
         conf_rec = float(max(pred_rec[0][0], 1 - pred_rec[0][0]))
         conf_met = float(np.max(pred_met))
+
+        # Calibrate confidence using CV confidence
+        # When CV is uncertain, dampen ML confidence to reflect overall uncertainty
+        cv_conf = request.cv_confidence
+        calibrate_factor = 0.5 + 0.5 * cv_conf  # range: [0.5, 1.0]
+        conf_rec = conf_rec * calibrate_factor
+        conf_met = conf_met * calibrate_factor
         
         return PredictionResponse(
             category=request.category,
