@@ -65,7 +65,11 @@ export async function create(input: UserCreateInput): Promise<UserResponse | nul
     .select(SAFE_COLUMNS)
     .single();
 
-  return error ? null : (data as UserResponse);
+  if (error) {
+    console.error("Supabase create user error:", JSON.stringify(error, null, 2));
+    return null;
+  }
+  return data as UserResponse;
 }
 
 export async function updatePassword(id: string, newPassword: string): Promise<boolean> {

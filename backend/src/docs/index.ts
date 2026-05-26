@@ -1,13 +1,10 @@
 import { authDocs } from "./auth.docs";
+import { classificationDocs } from "./classification.docs";
 import { schemas } from "./schemas.docs";
-// import { userDocs } from './user.docs';  // nanti ditambahkan
-// import { wasteDocs } from './waste.docs'; // nanti ditambahkan
 
-// Gabungkan semua paths dari berbagai modul
 const paths = {
   ...authDocs.paths,
-  // ...userDocs.paths,
-  // ...wasteDocs.paths,
+  ...classificationDocs.paths,
 };
 
 export const docs = {
