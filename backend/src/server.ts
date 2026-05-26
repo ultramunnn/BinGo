@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes";
+import scanRoutes from "./routes/scanRoutes";
 import { setupSwagger } from "./config/swagger";
 import { AuthError } from "./services/auth.service";
 
@@ -19,6 +20,7 @@ app.use(morgan("dev"));
 setupSwagger(app);
 
 app.use("/api/auth", authRoutes);
+app.use("/api/scans", scanRoutes);
 
 app.get("/health", (_req, res) => {
   res.json({
