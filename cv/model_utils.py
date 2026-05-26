@@ -18,9 +18,8 @@ class CustomNormalization(tf.keras.layers.Layer):
         super(CustomNormalization, self).__init__(**kwargs)
 
     def call(self, inputs):
-        # Example custom normalization (scaling by 1/255 is already done in preprocessing, 
-        # but this represents a custom logic layer)
-        return inputs / tf.constant(1.0, dtype=tf.float32)
+        # Match original behavior
+        return inputs / tf.constant(255.0, dtype=tf.float32)
 
     def get_config(self):
         config = super(CustomNormalization, self).get_config()
@@ -67,9 +66,8 @@ def preprocess_image(image_bytes):
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
     image = image.resize(IMG_SIZE)
     
-    # Convert to numpy array and normalize
+    # Convert to numpy array (EfficientNet expects [0, 255])
     img_array = np.array(image, dtype=np.float32)
-    img_array = img_array / 255.0
     
     # Add batch dimension
     img_array = np.expand_dims(img_array, axis=0)

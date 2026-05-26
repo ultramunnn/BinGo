@@ -39,7 +39,7 @@ def create_gradio_app(keras_model):
             return "Tidak ada gambar", 0.0, "Silakan unggah gambar terlebih dahulu."
         
         img = image.convert("RGB").resize((224, 224))
-        img_array = np.array(img, dtype=np.float32) / 255.0
+        img_array = np.array(img, dtype=np.float32)
         img_array = np.expand_dims(img_array, axis=0)
         
         if keras_model is None:

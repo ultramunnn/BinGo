@@ -33,7 +33,7 @@ def custom_loss(y_true, y_pred):
 
 model = tf.keras.models.load_model(
 
-    "waste_classifier_final.keras",
+    "waste_classifier.keras",
 
     custom_objects={
 
