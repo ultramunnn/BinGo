@@ -1,9 +1,37 @@
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import { Link } from 'react-router-dom';
 import AuthLayout from '../../layouts/AuthLayout';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+=======
+import { Link, useNavigate } from 'react-router-dom';
+import AuthLayout from '../../layouts/AuthLayout';
+import { login } from '../../services/authService';
+
+const Login = () => {
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      await login(email, password);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Login gagal. Coba lagi.');
+    } finally {
+      setLoading(false);
+    }
+  };
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 
   return (
     <AuthLayout>
@@ -26,6 +54,7 @@ const Login = () => {
         </p>
       </div>
 
+<<<<<<< HEAD
       {/* Form */}
       <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
         <div>
@@ -35,6 +64,27 @@ const Login = () => {
           <input
             type="text"
             placeholder="contoh@email.com"
+=======
+      {/* Error */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600">
+          {error}
+        </div>
+      )}
+
+      {/* Form */}
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        <div>
+          <label className="block text-xs font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">
+            Email
+          </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="contoh@email.com"
+            required
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
             className="w-full px-5 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4BAFBC]/20 focus:border-[#4BAFBC] transition-all text-gray-700 bg-white placeholder:text-gray-300"
           />
         </div>
@@ -45,7 +95,14 @@ const Login = () => {
           </label>
           <input
             type={showPassword ? 'text' : 'password'}
+<<<<<<< HEAD
             placeholder="Masukkan kata sandi"
+=======
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Masukkan kata sandi"
+            required
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
             className="w-full px-5 py-3 pr-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4BAFBC]/20 focus:border-[#4BAFBC] transition-all text-gray-700 bg-white placeholder:text-gray-300"
           />
           <button
@@ -74,6 +131,7 @@ const Login = () => {
         </div>
 
         {/* Submit Button */}
+<<<<<<< HEAD
         <button className="w-full bg-[#333c4d] text-white py-3.5 rounded-xl font-bold text-sm hover:bg-[#28303f] active:scale-[0.98] transition-all shadow-sm">
           Masuk
         </button>
@@ -111,6 +169,17 @@ const Login = () => {
         </button>
       </div>
 
+=======
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[#333c4d] text-white py-3.5 rounded-xl font-bold text-sm hover:bg-[#28303f] active:scale-[0.98] transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Masuk...' : 'Masuk'}
+        </button>
+      </form>
+
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
       {/* Register Link */}
       <div className="text-center mt-8 space-y-3">
         <p className="text-sm text-gray-400">

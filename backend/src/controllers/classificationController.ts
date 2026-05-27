@@ -1,6 +1,10 @@
 import { Response, NextFunction } from "express";
 import * as ClassificationService from "../services/classification.service";
 import * as ClassificationModel from "../models/classification.model";
+<<<<<<< HEAD
+=======
+import * as MLService from "../services/ml.service";
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 import { AuthRequest } from "../types/auth";
 import type { QuestionnaireInput } from "../types/classification";
 
@@ -16,6 +20,20 @@ function parseBool(val: unknown): boolean | undefined {
   return undefined;
 }
 
+<<<<<<< HEAD
+=======
+export const preClassify = async (req: AuthRequest, res: Response) => {
+  const file = req.file;
+  if (!file) {
+    return res.status(400).json({ error: "Image file is required" });
+  }
+
+  console.log("[preClassify] File received:", file.originalname, file.mimetype, file.size, "bytes");
+  const result = await ClassificationService.preClassify(file.buffer, file.mimetype);
+  res.json({ success: true, data: result });
+};
+
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 export const scan = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const file = req.file;
   if (!file) {
@@ -27,7 +45,11 @@ export const scan = async (req: AuthRequest, res: Response, next: NextFunction) 
     return res.status(400).json({ error: "latitude and longitude are required" });
   }
 
+<<<<<<< HEAD
   // Parse questionnaire (fields are optional per category)
+=======
+  // Parse questionnaire — all fields are REQUIRED
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   const questionnaire: QuestionnaireInput = {};
   for (const field of QUESTIONNAIRE_FIELDS) {
     const parsed = parseBool(req.body[field]);
@@ -36,6 +58,21 @@ export const scan = async (req: AuthRequest, res: Response, next: NextFunction) 
     }
   }
 
+<<<<<<< HEAD
+=======
+  // Validate: base questions (is_clean, is_dry) are mandatory for all categories
+  const missing: string[] = [];
+  if (questionnaire.is_clean === undefined) missing.push("is_clean");
+  if (questionnaire.is_dry === undefined) missing.push("is_dry");
+
+  if (missing.length > 0) {
+    return res.status(400).json({
+      error: `Questionnaire wajib diisi. Field berikut belum diisi: ${missing.join(", ")}. ` +
+        `Silakan isi questionnaire terlebih dahulu melalui GET /api/scans/questionnaire?category=<kategori>.`,
+    });
+  }
+
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   const result = await ClassificationService.scan(
     req.user!.id,
     file.buffer,
@@ -77,6 +114,19 @@ export const deleteScan = async (req: AuthRequest, res: Response, next: NextFunc
   res.json({ success: true, message: "Scan deleted" });
 };
 
+<<<<<<< HEAD
+=======
+export const getQuestionnaire = async (req: AuthRequest, res: Response) => {
+  const { category } = req.query;
+  if (!category || typeof category !== "string") {
+    return res.status(400).json({ error: "category query parameter is required" });
+  }
+
+  const result = MLService.getQuestionnaire(category);
+  res.json({ success: true, data: result });
+};
+
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 function parsePagination(query: any): { page: number; limit: number } {
   return {
     page: parseInt(query.page) || 1,
