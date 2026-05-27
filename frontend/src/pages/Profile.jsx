@@ -79,7 +79,11 @@ const Profile = () => {
           >
             <span className="flex items-center gap-1.5">
               <IconEdit className="w-4 h-4" />
+<<<<<<< HEAD
               Edit Profile
+=======
+              Edit Profil
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
             </span>
           </button>
 

@@ -1,5 +1,59 @@
 export const classificationDocs = {
   paths: {
+<<<<<<< HEAD
+=======
+    '/api/scans/questionnaire': {
+      get: {
+        summary: 'Get questionnaire for material category',
+        description: 'Returns dynamic questionnaire fields based on the detected waste material category. Used by frontend to render category-specific form inputs before scanning.',
+        tags: ['Waste Classification'],
+        parameters: [
+          {
+            name: 'category',
+            in: 'query',
+            required: true,
+            schema: { type: 'string', enum: ['plastic', 'paper', 'glass', 'metal', 'textile'] },
+            description: 'Waste material category',
+          },
+        ],
+        responses: {
+          200: {
+            description: 'Questionnaire fields for the category',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    success: { type: 'boolean' },
+                    data: {
+                      type: 'object',
+                      properties: {
+                        category: { type: 'string' },
+                        questions: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              field: { type: 'string' },
+                              label: { type: 'string' },
+                              type: { type: 'string' },
+                              options: { type: 'array', items: { type: 'string' } },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          400: { description: 'Missing category parameter' },
+          502: { description: 'AI service unavailable' },
+        },
+      },
+    },
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
     '/api/scans': {
       post: {
         summary: 'Scan beach waste',
