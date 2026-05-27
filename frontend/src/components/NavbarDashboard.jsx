@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+<<<<<<< HEAD
+=======
+import { getStoredUser, logout, isAuthenticated } from "../services/authService";
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 
 // --- Reusable Icons Inside Component ---
 const IconSearch = ({ className = "w-5 h-5" }) => (
@@ -161,6 +165,10 @@ const navItems = [
 const NavbarDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
+<<<<<<< HEAD
+=======
+  const user = getStoredUser();
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   const [searchOpen, setSearchOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -276,10 +284,17 @@ const NavbarDashboard = () => {
               >
                 <div className="px-4 py-3 border-b border-slate-100">
                   <p className="text-sm font-semibold text-slate-900 leading-none">
+<<<<<<< HEAD
                     Ruben George
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
                     rubengeo@gmail.com
+=======
+                    {user?.full_name || "Pengguna"}
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1">
+                    {user?.email || ""}
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                   </p>
                 </div>
                 <div className="py-1.5">
@@ -291,7 +306,11 @@ const NavbarDashboard = () => {
                         : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
+<<<<<<< HEAD
                     <IconUser className={`w-4 h-4 ${isProfilePage ? "text-slate-700" : "text-slate-400"}`} /> Profile
+=======
+                    <IconUser className={`w-4 h-4 ${isProfilePage ? "text-slate-700" : "text-slate-400"}`} /> Profil
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                   </button>
                   <button
                     onClick={() => { navigate("/settings"); setSettingsOpen(false); }}
@@ -301,12 +320,27 @@ const NavbarDashboard = () => {
                         : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
+<<<<<<< HEAD
                     <IconSettings className="w-4 h-4 text-slate-400" /> Settings
                   </button>
                 </div>
                 <div className="border-t border-slate-100 py-1.5">
                   <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
                     <IconLogout className="w-4 h-4" /> Logout
+=======
+                    <IconSettings className="w-4 h-4 text-slate-400" /> Pengaturan
+                  </button>
+                </div>
+                <div className="border-t border-slate-100 py-1.5">
+                  <button
+                    onClick={async () => {
+                      await logout();
+                      navigate("/login");
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                  >
+                    <IconLogout className="w-4 h-4" /> Keluar
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                   </button>
                 </div>
               </div>

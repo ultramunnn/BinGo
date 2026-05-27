@@ -44,8 +44,8 @@ app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
     return res.status(400).json({ error: "File size must be under 5MB" });
   }
 
-  console.error(err);
-  res.status(500).json({ error: "Internal server error" });
+  console.error("[ERROR]", err.stack || err.message);
+  res.status(500).json({ error: err.message || "Internal server error", stack: err.stack?.split("\n").slice(0, 5) });
 });
 
 app.listen(PORT, () => {

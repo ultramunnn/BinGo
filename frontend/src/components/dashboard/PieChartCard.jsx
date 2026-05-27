@@ -7,7 +7,11 @@ const PieChartCard = () => {
     <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col flex-1">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xs font-bold tracking-tight text-slate-400 uppercase font-mono">Klasifikasi Sampah</h2>
+<<<<<<< HEAD
         <span className="text-[10px] font-mono text-slate-400">AI Result</span>
+=======
+        <span className="text-[10px] font-mono text-slate-400">Hasil AI</span>
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
       </div>
 
       <div className="flex-1 min-h-[200px] lg:min-h-0 flex items-center justify-center">

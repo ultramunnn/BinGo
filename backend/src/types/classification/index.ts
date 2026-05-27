@@ -45,6 +45,36 @@ export interface MLPredictionResponse {
   };
 }
 
+<<<<<<< HEAD
+=======
+/** Response from AI Orchestrator POST /predict_hybrid */
+export interface HybridPredictionResponse {
+  predicted_material: string;
+  cv_confidence: number;
+  recyclable: string;
+  treatment_method: string;
+  ml_confidence: {
+    recyclable: number;
+    treatment: number;
+  };
+  ai_recommendation: string;
+}
+
+/** Single question from GET /get_questionnaire */
+export interface QuestionnaireField {
+  field: string;
+  label: string;
+  type: string;
+  options: string[];
+}
+
+/** Response from GET /get_questionnaire */
+export interface QuestionnaireResponse {
+  category: string;
+  questions: QuestionnaireField[];
+}
+
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 export interface ClassificationRecord {
   id: string;
   user_id: string;
@@ -75,6 +105,10 @@ export interface ClassificationResult {
   treatment: string;
   recyclable_confidence: number;
   treatment_confidence: number;
+<<<<<<< HEAD
+=======
+  ai_recommendation?: string;
+>>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   created_at: string;
 }
 
