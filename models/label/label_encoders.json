@@ -1,0 +1,59 @@
+{
+  "le_category": [
+    "Glass",
+    "Metal",
+    "Paper",
+    "Plastic",
+    "Textile"
+  ],
+  "le_Hardness": [
+    "Flexible",
+    "Hard",
+    "unknown"
+  ],
+  "le_is_multilayer": [
+    "No",
+    "Unknown",
+    "Yes"
+  ],
+  "le_is_dry": [
+    "Unknown"
+  ],
+  "le_is_clean": [
+    "No",
+    "Unknown"
+  ],
+  "le_is_container": [
+    "No",
+    "Unknown",
+    "Yes"
+  ],
+  "le_is_fragment": [
+    "No",
+    "Unknown",
+    "Yes"
+  ],
+  "le_is_hazardous": [
+    "No",
+    "Yes"
+  ],
+  "le_is_foam": [
+    "No",
+    "Yes"
+  ],
+  "le_is_small_item": [
+    "No",
+    "Yes"
+  ],
+  "le_recyclability": [
+    "No",
+    "Yes"
+  ],
+  "le_recyclemethod": [
+    "Not Recycled",
+    "crush and melting",
+    "melt and pelletized",
+    "pulping",
+    "smelting and refining"
+  ]
+}
