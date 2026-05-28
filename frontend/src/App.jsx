@@ -24,21 +24,12 @@ const LandingPage = () => {
   return (
     <main className="relative bg-white">
       <Navbar />
-<<<<<<< HEAD
-      <Hero />
-      <Usage />
-      <Impact />
-      <CTA />
-      <Testimoni />
-      <Footer />
-=======
       <section id="hero"><Hero /></section>
       <section id="cara-penggunaan"><Usage /></section>
       <section id="dampak"><Impact /></section>
       <CTA />
       <section id="testimoni"><Testimoni /></section>
       <section id="footer"><Footer /></section>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
     </main>
   );
 };

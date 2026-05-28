@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes";
 import scanRoutes from "./routes/scanRoutes";
+import beachRoutes from "./routes/beachRoutes";
 import { setupSwagger } from "./config/swagger";
 import { AuthError } from "./services/auth.service";
 
@@ -21,6 +22,7 @@ setupSwagger(app);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/scans", scanRoutes);
+app.use("/api/beaches", beachRoutes);
 
 app.get("/health", (_req, res) => {
   res.json({

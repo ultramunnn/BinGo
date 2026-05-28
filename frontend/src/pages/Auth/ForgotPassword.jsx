@@ -1,8 +1,29 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout";
+import { forgotPassword } from "../../services/authService";
 
 const ForgotPassword = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+    setError("");
+    setLoading(true);
+    try {
+      await forgotPassword(email);
+      navigate("/check-email", { state: { email } });
+    } catch (err) {
+      setError(err.response?.data?.error || "Gagal mengirim email reset");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthLayout>
       {/* Back to Home */}
@@ -58,21 +79,35 @@ const ForgotPassword = () => {
         </p>
       </div>
 
+      {/* Error */}
+      {error && (
+        <div className="mb-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600">
+          {error}
+        </div>
+      )}
+
       {/* Form */}
-      <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+      <form className="space-y-5" onSubmit={handleSubmit}>
         <div>
           <label className="block text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-[0.1em]">
             Alamat Email
           </label>
           <input
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="contoh@email.com"
+            required
             className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC] transition-all text-gray-700 bg-white placeholder:text-gray-200"
           />
         </div>
 
-        <button className="w-full bg-[#3d4a5d] text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-slate-200 hover:bg-[#2f3948] transition-all">
-          Kirim Link Reset
+        <button
+          type="submit"
+          disabled={loading || !email.trim()}
+          className="w-full bg-[#3d4a5d] text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-slate-200 hover:bg-[#2f3948] disabled:bg-gray-300 disabled:cursor-not-allowed transition-all"
+        >
+          {loading ? "Mengirim..." : "Kirim Link Reset"}
         </button>
       </form>
 

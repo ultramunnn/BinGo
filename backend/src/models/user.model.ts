@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../config/supabase";
+import { supabase, supabaseAdmin } from "../config/supabase";
 import bcrypt from "bcrypt";
 
 export interface User {
@@ -31,7 +31,7 @@ export async function findByEmail(email: string): Promise<User | null> {
 }
 
 export async function existsById(id: string): Promise<boolean> {
-  const { data } = await supabaseAdmin
+  const { data } = await supabase
     .from("users")
     .select("id")
     .eq("id", id)
@@ -41,7 +41,7 @@ export async function existsById(id: string): Promise<boolean> {
 }
 
 export async function emailExists(email: string): Promise<boolean> {
-  const { data } = await supabaseAdmin
+  const { data } = await supabase
     .from("users")
     .select("id")
     .eq("email", email)
@@ -53,7 +53,7 @@ export async function emailExists(email: string): Promise<boolean> {
 export async function create(input: UserCreateInput): Promise<UserResponse | null> {
   const hashedPassword = await bcrypt.hash(input.password, 10);
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await supabase
     .from("users")
     .insert({
       email: input.email,
@@ -75,7 +75,7 @@ export async function create(input: UserCreateInput): Promise<UserResponse | nul
 export async function updatePassword(id: string, newPassword: string): Promise<boolean> {
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-  const { error } = await supabaseAdmin
+  const { error } = await supabase
     .from("users")
     .update({ password_hash: hashedPassword, updated_at: new Date().toISOString() })
     .eq("id", id);
@@ -86,7 +86,7 @@ export async function updatePassword(id: string, newPassword: string): Promise<b
 export type UserUpdateInput = Partial<Pick<User, "full_name" | "photo_url">>;
 
 export async function updateProfile(id: string, updates: UserUpdateInput): Promise<UserResponse | null> {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await supabase
     .from("users")
     .update({ ...updates, updated_at: new Date().toISOString() })
     .eq("id", id)
@@ -97,7 +97,7 @@ export async function updateProfile(id: string, updates: UserUpdateInput): Promi
 }
 
 export async function getSanitized(id: string): Promise<UserResponse | null> {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await supabase
     .from("users")
     .select(SAFE_COLUMNS)
     .eq("id", id)

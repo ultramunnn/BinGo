@@ -45,8 +45,6 @@ export interface MLPredictionResponse {
   };
 }
 
-<<<<<<< HEAD
-=======
 /** Response from AI Orchestrator POST /predict_hybrid */
 export interface HybridPredictionResponse {
   predicted_material: string;
@@ -74,7 +72,6 @@ export interface QuestionnaireResponse {
   questions: QuestionnaireField[];
 }
 
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 export interface ClassificationRecord {
   id: string;
   user_id: string;
@@ -85,6 +82,7 @@ export interface ClassificationRecord {
   latitude: number;
   longitude: number;
   location_name: string | null;
+  beach_id: string | null;
   recyclable: string | null;
   treatment: string | null;
   recyclable_confidence: number | null;
@@ -101,14 +99,13 @@ export interface ClassificationResult {
   latitude: number;
   longitude: number;
   location_name: string | null;
+  beach_id: string | null;
+  beach_name: string | null;
   recyclable: string;
   treatment: string;
   recyclable_confidence: number;
   treatment_confidence: number;
-<<<<<<< HEAD
-=======
   ai_recommendation?: string;
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   created_at: string;
 }
 

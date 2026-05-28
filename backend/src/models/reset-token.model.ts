@@ -1,4 +1,4 @@
-import { supabase } from "../config/supabase";
+import { supabaseAdmin } from "../config/supabase";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET!;
@@ -8,7 +8,7 @@ export async function create(userId: string): Promise<string | null> {
     expiresIn: "1h",
   });
 
-  const { error } = await supabase.from("password_resets").insert({
+  const { error } = await supabaseAdmin.from("password_resets").insert({
     user_id: userId,
     token,
     expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
@@ -19,7 +19,7 @@ export async function create(userId: string): Promise<string | null> {
 }
 
 export async function validate(token: string): Promise<string | null> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("password_resets")
     .select("user_id, used, expires_at")
     .eq("token", token)
@@ -32,7 +32,7 @@ export async function validate(token: string): Promise<string | null> {
 }
 
 export async function markUsed(token: string): Promise<boolean> {
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from("password_resets")
     .update({ used: true })
     .eq("token", token);
