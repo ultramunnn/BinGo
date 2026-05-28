@@ -7,11 +7,12 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // 1. Hitung tinggi Hero (100vh) untuk ganti style navbar
+  // Threshold scroll dalam pixel (sesuaikan angka ini)
+  const SCROLL_THRESHOLD = 1100;
+
   useEffect(() => {
     const handleScroll = () => {
-      // Jika scroll lebih dari tinggi layar (Hero Section)
-      if (window.scrollY >= window.innerHeight - 80) {
+      if (window.scrollY >= SCROLL_THRESHOLD) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
@@ -83,7 +84,7 @@ const Navbar = () => {
           <div className="flex items-center justify-between px-10 py-5 max-w-[1400px] mx-auto">
             {/* Logo BinGo */}
             <div className="flex items-center gap-2">
-              <img src="/assets/images/logo-black.svg" alt="BinGo" className="h-8 w-auto" />
+              <img src={isFullState ? "/assets/images/logo-black.svg" : "/assets/images/logo-white.svg"} alt="BinGo" className="h-8 w-auto" />
             </div>
 
             {/* Desktop Navigation Links */}
@@ -140,18 +141,14 @@ const Navbar = () => {
                     </div>
 
                     {/* Column 3: Promo Card Compact */}
-                    <div className="border border-gray-100 rounded-2xl p-5 flex items-center justify-between gap-4 bg-gray-50 shadow-sm">
+                    <div className="border border-gray-100 rounded-2xl p-7 flex items-center justify-between gap-6 bg-gray-50 shadow-sm">
                       <div className="flex-1">
-                        <h3 className="text-sm font-bold text-gray-900 leading-tight">
+                        <h3 className="text-lg font-bold text-gray-900 leading-tight">
                           Pemindaian kini makin penting & mudah diakses.
                         </h3>
-                        <a href="#" className="inline-block mt-3 text-[10px] font-bold text-gray-500 underline underline-offset-4 hover:text-black">
-                          Learn more
-                        </a>
                       </div>
-                      <div className="w-20 h-16 bg-white rounded-lg flex-shrink-0 flex items-center justify-center p-2 shadow-inner">
-                         {/* Placeholder ikon/gambar kecil */}
-                         <div className="w-full h-full bg-cyan-100 rounded opacity-50" />
+                      <div className="w-auto h-32 rounded-md flex-shrink-0 flex items-center justify-center">
+                         <img src="/assets/images/navbar-image.png" alt="icon" className="w-full h-full" />
                       </div>
                     </div>
                   </div>
