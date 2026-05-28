@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
 
-/* Tambahin ini juga buat animasi scannya */
 @keyframes scan-move {
   0% { top: 0; }
   100% { top: 100%; }
@@ -19,7 +18,6 @@ body {
   padding: 0;
 }
 
-/* Subtle Film Grain Overlay */
 .grain-overlay {
   pointer-events: none;
   position: fixed;
@@ -27,4 +25,13 @@ body {
   z-index: 99;
   background-image: url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Grain_Noise.png");
   opacity: 0.03; /* 3% Digital Noise */
+}
+
+.text-masked-ocean {
+  background-image: url('/assets/images/Mask-Quotes-Image.png');
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

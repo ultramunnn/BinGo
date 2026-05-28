@@ -14,7 +14,7 @@ const fadeUp = {
 
 const Hero = () => {
   return (
-    <section className="relative w-full min-h-screen overflow-hidden font-sans bg-black text-white">
+    <section id="hero" className="relative w-full min-h-screen overflow-hidden font-sans bg-black text-white">
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${backgroundImage})` }}
@@ -51,14 +51,12 @@ const Hero = () => {
           initial="hidden"
           animate="visible"
           custom={0}
-          className="text-4xl sm:text-5xl text-black font-serif lg:text-white lg:text-7xl font-bold mb-4 sm:mb-8 leading-tight lg:leading-16 tracking-tighter"
+          className="text-4xl sm:text-5xl font-serif lg:text-white lg:text-7xl font-bold mb-4 sm:mb-8 leading-tight lg:leading-16 tracking-tighter"
         >
-          Aksi Cerdas Demi
-          <br />
-          Kelestarian
-          <br />
+          <span className="block bg-black/60 px-3 py-1 mb-3 lg:bg-transparent lg:px-0 lg:py-0 lg:mb-0 text-white lg:text-inherit">Aksi Cerdas Demi</span>
+          <span className="block bg-black/60 px-3 py-1 mb-3 lg:bg-transparent lg:px-0 lg:py-0 lg:mb-0 text-white lg:text-inherit">Kelestarian</span>
           <span className="relative inline-block">
-            <span className="relative z-10 text-[#F2C94C]">Laut</span>
+            <span className="relative z-10 bg-black/60 px-3 py-1 lg:bg-transparent lg:px-0 lg:py-0 text-[#F2C94C]">Laut</span>
             <span className="absolute bottom-0 left-0 w-full h-2/5 bg-[#F2C94C] opacity-30 rounded-md -rotate-1"></span>
           </span>
         </motion.h1>
@@ -67,11 +65,13 @@ const Hero = () => {
           initial="hidden"
           animate="visible"
           custom={1}
-          className="text-base text-black font-sans lg:text-gray-400 mt-2 sm:mt-4 max-w-sm"
+          className="text-base font-sans lg:text-gray-400 mt-2 sm:mt-4 max-w-sm"
         >
-          BinGo memanfaatkan kecerdasan buatan untuk mendeteksi dan memisahkan
-          sampah organik serta anorganik secara instan melalui klasifikasi
-          gambar otomatis.
+          <span className="bg-black/60 px-3 py-1 lg:bg-transparent lg:px-0 lg:py-0 text-white lg:text-inherit">
+            BinGo memanfaatkan kecerdasan buatan untuk mendeteksi dan memisahkan
+            sampah organik serta anorganik secara instan melalui klasifikasi
+            gambar otomatis.
+          </span>
         </motion.p>
 
         <motion.div
@@ -81,13 +81,13 @@ const Hero = () => {
           custom={2}
           className="mt-8 sm:absolute sm:bottom-8 flex flex-col items-start gap-2"
         >
-          <span className="text-sm text-black lg:text-gray-400">
+          <span className="text-sm bg-black/60 px-3 py-1 lg:bg-transparent lg:px-0 lg:py-0 text-white lg:text-gray-400">
             Powered by.
           </span>
           <img
             src="/assets/images/logo-dicoding.svg"
             alt="Dicoding"
-            className="h-6 w-auto"
+            className="h-6 bg-black/60 w-auto"
           />
         </motion.div>
       </div>

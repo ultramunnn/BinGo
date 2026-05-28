@@ -15,7 +15,7 @@ const fadeUp = {
 const Mission = () => {
   return (
     <>
-      <section className="bg-black text-white py-12 sm:py-20 px-6 sm:px-10 lg:px-16">
+      <section id="mission" className="bg-black text-white py-12 sm:py-20 px-6 sm:px-10 lg:px-16">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-8 md:gap-12">
           <motion.div
             className="md:w-1/2"
