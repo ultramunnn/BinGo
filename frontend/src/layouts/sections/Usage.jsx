@@ -1,10 +1,5 @@
 import React, { useRef, useState } from "react";
-import {
-  motion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   ChevronLeft,
   Grid,
@@ -74,14 +69,10 @@ const Usage = () => {
     ],
   );
 
-  const headerText = useTransform(scrollYProgress,
+  const headerText = useTransform(
+    scrollYProgress,
     [0, 0.75, 0.95, 1],
-    [
-      "...",
-      "Scan",
-      "Analysis Result",
-      "Finding Location",
-    ],
+    ["...", "Scan", "Analysis Result", "Finding Location"],
   );
 
   // Motion Callout
@@ -123,7 +114,6 @@ const Usage = () => {
       className="relative h-[1000vh] bg-white font-sans antialiased"
     >
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
-
         {/* 1. TULISAN */}
         <motion.div
           style={{ x: textX }}
@@ -177,7 +167,6 @@ const Usage = () => {
         {/* HANDPHONE */}
         <motion.div style={{ y: phoneY }} className="relative z-10 scale-100">
           <div className="absolute inset-0 z-50 pointer-events-none hidden md:block">
-            {/* Callout Kiri 1 */}
             <motion.div
               style={{ opacity: objectOpacity }}
               className="absolute left-[-280px] top-[45%] flex items-center z-50 pointer-events-none"
@@ -217,7 +206,6 @@ const Usage = () => {
               </svg>
             </motion.div>
 
-            {/* Callout Kanan 2 */}
             <motion.div
               style={{ opacity: confidenceOpacity }}
               className="absolute left-[70%] top-[35%] flex items-center z-50 pointer-events-none"
@@ -250,7 +238,6 @@ const Usage = () => {
               </div>
             </motion.div>
 
-            {/* Callout Kanan 3 */}
             <motion.div
               style={{ opacity: recycleOpacity }}
               className="absolute left-[50%] top-[50%] flex items-center z-50 pointer-events-none"
@@ -483,7 +470,6 @@ const Usage = () => {
                     </motion.div>
                   </div>
 
-                  {/* Scanner */}
                   <motion.div
                     style={{ opacity: scanOpacity }}
                     className="absolute inset-0 z-20"
@@ -517,7 +503,6 @@ const Usage = () => {
                 </div>
               </div>
 
-              {/* Button */}
               <div className="p-5 pb-8 bg-white border-t border-slate-50">
                 <div className="grid grid-cols-1 items-center justify-items-stretch">
                   <motion.div
