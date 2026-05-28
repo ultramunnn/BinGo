@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -36,19 +32,11 @@ const Navbar = () => {
   }, [isOpen]);
 
   const navLinks = [
-<<<<<<< HEAD
-    { name: "Hero", href: "/#" },
-    { name: "Cara Penggunaan", href: "/#" },
-    { name: "Dampak", href: "/#" },
-    { name: "Testimoni", href: "/#" },
-    { name: "Footer", href: "/#" },
-=======
     { name: "Beranda", href: "/#hero" },
     { name: "Cara Penggunaan", href: "/#cara-penggunaan" },
     { name: "Dampak", href: "/#dampak" },
     { name: "Testimoni", href: "/#testimoni" },
     { name: "Kontak", href: "/#footer" },
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   ];
 
   // Logic: Navbar jadi Solid White jika di-scroll ke bawah ATAU sedang dibuka menu-nya
@@ -102,11 +90,6 @@ const Navbar = () => {
             <ul className={`hidden md:flex items-center gap-8 text-sm font-medium transition-colors ${isFullState ? 'text-black' : 'text-white'}`}>
               {navLinks.map((link) => (
                 <li key={link.name}>
-<<<<<<< HEAD
-                  <a href={link.href} className="hover:opacity-60 transition-opacity">
-                    {link.name}
-                  </a>
-=======
                   <button
                     onClick={() => {
                       const id = link.href.split("#")[1];
@@ -121,7 +104,6 @@ const Navbar = () => {
                   >
                     {link.name}
                   </button>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                 </li>
               ))}
             </ul>
@@ -129,11 +111,7 @@ const Navbar = () => {
             {/* Action Buttons */}
             <div className="flex items-center gap-4">
               <Link to="/login" className="bg-black text-white px-8 py-2.5 rounded-full text-xs font-bold shadow-lg active:scale-95 transition-transform">
-<<<<<<< HEAD
-                Login
-=======
                 Masuk
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
               </Link>
               <button 
                 onClick={() => setIsOpen(!isOpen)}
@@ -161,11 +139,7 @@ const Navbar = () => {
                     {/* Column 1 */}
                     <div className="space-y-3">
                       <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Perusahaan</h4>
-<<<<<<< HEAD
-                      <a href="#" className="block text-gray-800 text-sm font-medium hover:text-black hover:pl-1 transition-all">About Us</a>
-=======
                       <a href="#" className="block text-gray-800 text-sm font-medium hover:text-black hover:pl-1 transition-all">Tentang Kami</a>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                       <a href="#" className="block text-gray-800 text-sm font-medium hover:text-black hover:pl-1 transition-all">Visi & Misi</a>
                     </div>
 
@@ -183,11 +157,7 @@ const Navbar = () => {
                           Pemindaian kini makin penting & mudah diakses.
                         </h3>
                         <a href="#" className="inline-block mt-3 text-[10px] font-bold text-gray-500 underline underline-offset-4 hover:text-black">
-<<<<<<< HEAD
-                          Learn more
-=======
                           Selengkapnya
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                         </a>
                       </div>
                       <div className="w-20 h-16 bg-white rounded-lg flex-shrink-0 flex items-center justify-center p-2 shadow-inner">

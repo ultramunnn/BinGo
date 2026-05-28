@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "../config/supabase";
+import { supabase } from "../config/supabase";
 import type { ClassificationRecord } from "../types/classification";
 
 const TABLE = "classification_history";
@@ -12,6 +12,7 @@ export interface ClassificationCreateInput {
   latitude: number;
   longitude: number;
   location_name?: string;
+  beach_id?: string;
   recyclable: string;
   treatment: string;
   recyclable_confidence: number;
@@ -24,7 +25,7 @@ interface PaginatedResult {
 }
 
 export async function create(input: ClassificationCreateInput): Promise<ClassificationRecord | null> {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await supabase
     .from(TABLE)
     .insert(input)
     .select()
@@ -34,7 +35,7 @@ export async function create(input: ClassificationCreateInput): Promise<Classifi
 }
 
 export async function findById(id: string): Promise<ClassificationRecord | null> {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await supabase
     .from(TABLE)
     .select()
     .eq("id", id)
@@ -45,7 +46,7 @@ export async function findById(id: string): Promise<ClassificationRecord | null>
 
 export async function findByUserId(userId: string, page = 1, limit = 20): Promise<PaginatedResult> {
   return fetchPaginated(
-    supabaseAdmin.from(TABLE).select("*", { count: "exact" }).eq("user_id", userId),
+    supabase.from(TABLE).select("*", { count: "exact" }).eq("user_id", userId),
     page,
     limit
   );
@@ -53,14 +54,14 @@ export async function findByUserId(userId: string, page = 1, limit = 20): Promis
 
 export async function findAll(page = 1, limit = 20): Promise<PaginatedResult> {
   return fetchPaginated(
-    supabaseAdmin.from(TABLE).select("*", { count: "exact" }),
+    supabase.from(TABLE).select("*", { count: "exact" }),
     page,
     limit
   );
 }
 
 export async function remove(id: string, userId: string): Promise<boolean> {
-  const { error } = await supabaseAdmin
+  const { error } = await supabase
     .from(TABLE)
     .delete()
     .eq("id", id)

@@ -8,10 +8,13 @@ const ScannerViewfinder = ({
   isAnalyzing,
   cameraError,
   capturedImg,
-<<<<<<< HEAD
-=======
   scanResult,
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
+  showCategoryConfirm,
+  currentCategory,
+  onCategoryConfirm,
+  onCategoryReject,
+  nearbyBeach,
+  beachCheckDone,
 }) => {
   return (
     <div className="bg-black rounded-t-2xl overflow-hidden relative">
@@ -116,6 +119,30 @@ const ScannerViewfinder = ({
           </div>
         )}
 
+        {/* Beach Detection Badge */}
+        {scanStep === 1 && !isAnalyzing && beachCheckDone && (
+          <div className="absolute top-3 left-3 right-3 z-30">
+            {nearbyBeach ? (
+              <div className="bg-emerald-500/90 backdrop-blur-sm text-white px-3 py-2 rounded-xl flex items-center gap-2">
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" />
+                </svg>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold leading-tight truncate">{nearbyBeach.name}</p>
+                  <p className="text-[9px] opacity-80">{(nearbyBeach.distance * 1000).toFixed(0)}m dari lokasi Anda</p>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-red-500/90 backdrop-blur-sm text-white px-3 py-2 rounded-xl flex items-center gap-2">
+                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" />
+                </svg>
+                <p className="text-[10px] font-medium">Tidak ada pantai terdekat dalam radius 3 km</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Analyzing overlay */}
         {isAnalyzing && (
           <div className="absolute inset-0 flex flex-col items-center justify-center z-30">
@@ -124,19 +151,44 @@ const ScannerViewfinder = ({
           </div>
         )}
 
+        {/* ── Category Confirmation Card ── */}
+        {showCategoryConfirm && !isAnalyzing && (
+          <div className="absolute inset-0 flex items-center justify-center z-40 bg-black/50 backdrop-blur-sm">
+            <div className="bg-white rounded-2xl p-6 mx-4 max-w-xs w-full text-center shadow-2xl">
+              <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-emerald-600" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456Z" />
+                </svg>
+              </div>
+              <p className="text-sm text-slate-500 mb-1">Terdeteksi sebagai</p>
+              <p className="text-2xl font-extrabold text-slate-800 mb-4 capitalize">{currentCategory?.toLowerCase()}</p>
+              <p className="text-sm text-slate-600 mb-6">Apakah material ini sesuai dengan foto?</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={onCategoryReject}
+                  className="flex-1 px-4 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  Tidak
+                </button>
+                <button
+                  onClick={onCategoryConfirm}
+                  className="flex-1 px-4 py-2.5 rounded-xl bg-emerald-600 text-white font-semibold text-sm hover:bg-emerald-700 transition-colors cursor-pointer"
+                >
+                  Ya
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ── Step 2: Callout Lines + Labels ── */}
-        {scanStep === 2 && (
+        {scanStep === 2 && !showCategoryConfirm && (
           <div className="absolute inset-0 z-40 pointer-events-none">
             {/* OBJ (Left Side) */}
             <div className="absolute left-[5%] lg:left-[10%] top-[45%] flex items-center z-50 pointer-events-none">
               <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 lg:px-2 lg:py-1 rounded mr-1 lg:mr-2">
-<<<<<<< HEAD
-                <span className="text-[6px] lg:text-[8px] font-bold text-black/40 uppercase tracking-widest leading-none block">Obj</span>
-                <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight">Plastic Bottle</span>
-=======
                 <span className="text-[6px] lg:text-[8px] font-bold text-black/40 uppercase tracking-widest leading-none block">Objek</span>
                 <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight capitalize">{scanResult?.waste_type || "—"}</span>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
               </div>
               <svg width="80" height="40" viewBox="0 0 450 100" fill="none" className="overflow-visible lg:w-55 lg:h-20">
                 <path d="M0 10 H380 L420 70" stroke="black" strokeWidth="5" strokeLinecap="round" />
@@ -156,11 +208,7 @@ const ScannerViewfinder = ({
               </svg>
               <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 lg:px-2 lg:py-1 rounded ml-1 lg:ml-2">
                 <span className="text-[6px] lg:text-[8px] font-bold text-black/40 uppercase tracking-widest leading-none block">Conf</span>
-<<<<<<< HEAD
-                <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight">98.2%</span>
-=======
                 <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight">{scanResult?.confidence ? `${(scanResult.confidence * 100).toFixed(1)}%` : "—"}</span>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
               </div>
             </div>
 
@@ -173,13 +221,8 @@ const ScannerViewfinder = ({
                 <circle cx="450" cy="10" r="5" fill="black" />
               </svg>
               <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 lg:px-2 lg:py-1 rounded ml-1 lg:ml-2">
-<<<<<<< HEAD
-                <span className="text-[6px] lg:text-[8px] font-bold text-black/40 uppercase tracking-widest leading-none block">Recyc</span>
-                <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight">YES</span>
-=======
                 <span className="text-[6px] lg:text-[8px] font-bold text-black/40 uppercase tracking-widest leading-none block">Daur Ulang</span>
                 <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight">{scanResult?.recyclable === "Yes" ? "YA" : "TIDAK"}</span>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
               </div>
             </div>
           </div>
@@ -187,7 +230,7 @@ const ScannerViewfinder = ({
       </div>
 
       {/* Bouncing scroll arrow — mobile only, after scan */}
-      {scanStep >= 2 && (
+      {scanStep >= 2 && !showCategoryConfirm && (
         <button
           onClick={() => document.getElementById('result-section')?.scrollIntoView({ behavior: 'smooth' })}
           className="absolute bottom-4 left-1/2 -translate-x-1/2 z-50 lg:hidden cursor-pointer"

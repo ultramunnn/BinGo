@@ -38,6 +38,16 @@ export async function getMe() {
   return data.data;
 }
 
+export async function forgotPassword(email) {
+  const { data } = await api.post("/auth/reset-password", { email });
+  return data;
+}
+
+export async function resetPassword(token, newPassword) {
+  const { data } = await api.post("/auth/change-password", { token, new_password: newPassword });
+  return data;
+}
+
 export function getStoredUser() {
   return getUser();
 }

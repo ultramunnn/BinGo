@@ -151,11 +151,7 @@ function FeaturedArticleCard({ article, colors }) {
             </svg>
           )}
           <div className="absolute top-4 left-4 px-3 py-1 text-[10px] font-bold tracking-widest uppercase text-emerald-700 bg-white/80 backdrop-blur-sm rounded-full border border-emerald-200/50">
-<<<<<<< HEAD
-            Featured
-=======
             Unggulan
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
           </div>
         </div>
 

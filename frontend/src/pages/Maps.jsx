@@ -1,8 +1,11 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Tooltip, useMap } from "react-leaflet";
+import { useSearchParams } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import NavbarDashboard from "../components/NavbarDashboard";
+import { getAllBeaches, getBeachDetail, submitReview } from "../services/beachService";
+import { getStoredUser } from "../services/authService";
 
 // ── Red marker SVG ──
 const RED_MARKER_SVG = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 36'%3E%3Cdefs%3E%3Cfilter id='s' x='-50%25' y='-50%25' width='200%25' height='200%25'%3E%3CfeDropShadow dx='0' dy='1' stdDeviation='1.5' flood-color='%23000' flood-opacity='.25'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z' fill='%23dc2626' filter='url(%23s)'/%3E%3Ccircle cx='12' cy='11' r='4.5' fill='%23fff'/%3E%3C/svg%3E`;
@@ -23,44 +26,6 @@ const activeIcon = new L.Icon({
   tooltipAnchor: [0, -38],
 });
 
-// ── Dummy beach data (Malang area) ──
-const BEACH_PINS = [
-  { id: "beach_001", name: "Pantai Balekambang", lat: -8.3947, lng: 112.5431 },
-  { id: "beach_002", name: "Pantai Ngliyep", lat: -8.4012, lng: 112.5289 },
-  { id: "beach_003", name: "Pantai Sendang Biru", lat: -8.4367, lng: 112.6742 },
-  { id: "beach_004", name: "Pantai Goa Cina", lat: -8.4189, lng: 112.6103 },
-  { id: "beach_005", name: "Pantai Bajulmati", lat: -8.4125, lng: 112.5821 },
-  { id: "beach_006", name: "Pantai Teluk Asmara", lat: -8.4056, lng: 112.5612 },
-];
-
-// ── Mock detail data ──
-const MOCK_BEACH_DATA = {
-  id: "beach_001",
-  name: "Pantai Balekambang",
-  address: "Jl. Balekambang, Balaikambang, Srigonco, Kec. Bantur, Kabupaten Malang, Jawa Timur 65179",
-  latitude: -8.3947,
-  longitude: 112.5431,
-  summary: {
-    main_image:
-      "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&h=400&fit=crop",
-    average_rating: 4.2,
-    total_reviews: 128,
-  },
-  reviews: [
-    {
-      review_id: "rev_992",
-      user_name: "Rian Ardiansyah",
-      user_avatar:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop",
-      user_rating: 4,
-      comment:
-        "Pantainya lumayan bersih di area depan, tapi pas bergeser ke dekat pepohonan masih banyak saset plastik kecil tersembunyi. AI narasinya akurat banget membantu!",
-      evidence_image:
-        "https://images.unsplash.com/photo-1618477388954-7852f32655ec?w=400&h=300&fit=crop",
-      created_at: "2026-05-20",
-    },
-  ],
-};
 
 // ── Helper: Fly to marker ──
 const FlyToMarker = ({ position, offsetVh = 0 }) => {
@@ -96,15 +61,33 @@ const StarRating = ({ rating, size = "w-3.5 h-3.5" }) => (
   </div>
 );
 
+// Fallback beach images (Unsplash, free to use)
+const BEACH_FALLBACK_IMAGES = [
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1504681869696-d977211a5f4c?w=600&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1468413253725-0d5181091126?w=600&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1471922694854-ff1b63b20054?w=600&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?w=600&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1484821582734-6c6c9a6c6c6c?w=600&h=400&fit=crop",
+  "https://images.unsplash.com/photo-1476673160081-cf065607f449?w=600&h=400&fit=crop",
+];
+
+function getBeachImage(beach, index = 0) {
+  if (beach.image_url) return beach.image_url;
+  return BEACH_FALLBACK_IMAGES[index % BEACH_FALLBACK_IMAGES.length];
+}
+
 const MOBILE_MIN = 50;
 const MOBILE_MAX = 85;
 
 // ── Review Modal ──
-const ReviewModal = ({ open, onClose, beachName }) => {
+const ReviewModal = ({ open, onClose, beachName, onSubmit, user }) => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const [text, setText] = useState("");
   const [image, setImage] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef(null);
 
   const handleFile = (e) => {
@@ -118,6 +101,22 @@ const ReviewModal = ({ open, onClose, beachName }) => {
   const removeImage = () => {
     if (image) URL.revokeObjectURL(image.url);
     setImage(null);
+  };
+
+  const handleSubmit = async () => {
+    if (!rating || !text.trim()) return;
+    setSubmitting(true);
+    try {
+      await onSubmit({ rating, message: text.trim(), image: image?.file });
+      setRating(0);
+      setText("");
+      removeImage();
+      onClose();
+    } catch (err) {
+      alert(err.message || "Gagal mengirim ulasan");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (!open) return null;
@@ -141,12 +140,12 @@ const ReviewModal = ({ open, onClose, beachName }) => {
           {/* User identity */}
           <div className="flex items-center gap-3">
             <img
-              src="https://i.pravatar.cc/150?u=ruben"
+              src={user?.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.full_name || "User")}&background=0f172a&color=fff`}
               alt="Avatar"
               className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-sm"
             />
             <div>
-              <p className="text-xs font-bold text-slate-800">Ruben George</p>
+              <p className="text-xs font-bold text-slate-800">{user?.full_name || "User"}</p>
               <p className="text-[10px] text-slate-400">Ulasan publik</p>
             </div>
           </div>
@@ -196,7 +195,7 @@ const ReviewModal = ({ open, onClose, beachName }) => {
             </div>
           )}
 
-          {/* Media upload button */}
+          {/* Upload button */}
           <input
             ref={fileRef}
             type="file"
@@ -224,10 +223,11 @@ const ReviewModal = ({ open, onClose, beachName }) => {
             Batal
           </button>
           <button
-            disabled={!rating || !text.trim()}
+            onClick={handleSubmit}
+            disabled={!rating || !text.trim() || submitting}
             className="px-5 py-2 rounded-lg text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
-            Posting
+            {submitting ? "Mengirim..." : "Posting"}
           </button>
         </div>
       </div>
@@ -236,24 +236,75 @@ const ReviewModal = ({ open, onClose, beachName }) => {
 };
 
 const Maps = () => {
+  const [searchParams] = useSearchParams();
+  const [beaches, setBeaches] = useState([]);
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [selectedBeachId, setSelectedBeachId] = useState(null);
+  const [beachDetail, setBeachDetail] = useState(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
   const [flyTarget, setFlyTarget] = useState(null);
   const [dragging, setDragging] = useState(false);
   const [mobileHeight, setMobileHeight] = useState(MOBILE_MIN);
   const [reviewOpen, setReviewOpen] = useState(false);
   const touchStart = useRef({ y: 0, h: 0 });
   const scrollRef = useRef(null);
+  const searchRef = useRef(null);
 
-  const data = MOCK_BEACH_DATA;
+  const user = getStoredUser();
   const panelOpen = selectedBeachId !== null;
 
-  const handleMarkerClick = (beach) => {
+  const filteredBeaches = searchQuery.trim()
+    ? beaches.filter((b) =>
+        b.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : beaches;
+
+  // Fetch all beaches on mount
+  useEffect(() => {
+    getAllBeaches()
+      .then(setBeaches)
+      .catch((err) => console.error("Failed to load beaches:", err));
+  }, []);
+
+  // Sync search from URL params (from NavbarDashboard search)
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q) {
+      setSearchQuery(q);
+      // Auto-fly to first match
+      const match = beaches.find((b) =>
+        b.name.toLowerCase().includes(q.toLowerCase())
+      );
+      if (match) {
+        handleMarkerClick(match);
+      }
+    }
+  }, [searchParams, beaches]);
+
+  const handleMarkerClick = async (beach) => {
     setSelectedBeachId(beach.id);
-    setFlyTarget([beach.lat, beach.lng]);
+    setFlyTarget([beach.latitude, beach.longitude]);
+    setLoadingDetail(true);
+    try {
+      const detail = await getBeachDetail(beach.id);
+      setBeachDetail(detail);
+    } catch (err) {
+      console.error("Failed to load beach detail:", err);
+    } finally {
+      setLoadingDetail(false);
+    }
   };
 
+  const handleSubmitReview = async ({ rating, message, image }) => {
+    await submitReview(selectedBeachId, { rating, message, image });
+    // Refresh detail after submit
+    const detail = await getBeachDetail(selectedBeachId);
+    setBeachDetail(detail);
+  };
+  
   const handleClose = () => {
     setSelectedBeachId(null);
+    setBeachDetail(null);
     setFlyTarget(null);
     setMobileHeight(MOBILE_MIN);
   };
@@ -293,6 +344,54 @@ const Maps = () => {
   return (
     <div className="relative w-screen h-screen overflow-hidden">
       <NavbarDashboard />
+
+      {/* ── Search Bar ── */}
+      <div className="absolute top-18 left-1/2 -translate-x-1/2 z-[1000] w-full max-w-md px-4">
+        <div className="relative">
+          <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+          </svg>
+          <input
+            ref={searchRef}
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Cari pantai..."
+            className="w-full pl-10 pr-4 py-2.5 bg-white/90 backdrop-blur-md border border-slate-200/50 rounded-xl text-sm text-slate-700 placeholder:text-slate-400 outline-none focus:border-slate-400 shadow-lg transition-colors"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-slate-200 hover:bg-slate-300 transition-colors cursor-pointer"
+            >
+              <svg className="w-3 h-3 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+        {/* Search results dropdown */}
+        {searchQuery.trim() && filteredBeaches.length > 0 && (
+          <div className="mt-1 bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-slate-200/50 max-h-60 overflow-y-auto">
+            {filteredBeaches.slice(0, 10).map((beach) => (
+              <button
+                key={beach.id}
+                onClick={() => {
+                  handleMarkerClick(beach);
+                  setSearchQuery("");
+                }}
+                className="w-full text-left px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer flex items-center gap-2"
+              >
+                <svg className="w-3.5 h-3.5 text-red-500 shrink-0" viewBox="0 0 24 36" fill="currentColor">
+                  <path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" />
+                </svg>
+                <span className="truncate">{beach.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* ── Layer 1: Full Screen Map ── */}
       <MapContainer
         center={[-2, 118]}
@@ -306,10 +405,10 @@ const Maps = () => {
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
 
-        {BEACH_PINS.map((beach) => (
+        {filteredBeaches.map((beach) => (
           <Marker
             key={beach.id}
-            position={[beach.lat, beach.lng]}
+            position={[beach.latitude, beach.longitude]}
             icon={
               selectedBeachId === beach.id ? activeIcon : defaultIcon
             }
@@ -371,137 +470,153 @@ const Maps = () => {
               <path d="m6 6 12 12" />
             </svg>
           </button>
-          {/* Hero Image */}
-          <div className="relative">
-            <img
-              src={data.summary.main_image}
-              alt={data.name}
-              className="w-full h-48 object-cover"
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent p-4">
-              <h3 className="text-white font-bold text-base leading-tight">
-                {data.name}
-              </h3>
-              <div className="flex items-center gap-2 mt-1">
-                <StarRating rating={data.summary.average_rating} />
-                <span className="text-white/80 text-[10px] font-mono">
-                  {data.summary.average_rating} ({data.summary.total_reviews}{" "}
-<<<<<<< HEAD
-                  reviews)
-=======
-                  ulasan)
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
-                </span>
-              </div>
+          {loadingDetail ? (
+            <div className="flex items-center justify-center h-48">
+              <div className="w-8 h-8 border-2 border-slate-200 border-t-slate-800 rounded-full animate-spin" />
             </div>
-          </div>
-
-          {/* Location Info */}
-          <div className="px-5 pb-4 mt-4 flex flex-col gap-1.5">
-            <button
-              onClick={() => navigator.clipboard.writeText(`${data.latitude}, ${data.longitude}`)}
-              className="group w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer text-left"
-            >
-              <svg className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" /><path d="M12 2v4" /><path d="M12 18v4" /><path d="M2 12h4" /><path d="M18 12h4" />
-              </svg>
-              <span className="flex-1 text-xs font-mono text-slate-700">{data.latitude}, {data.longitude}</span>
-              <span className="relative shrink-0">
-                <svg className="w-3.5 h-3.5 text-slate-800 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-                </svg>
-                <span className="pointer-events-none absolute -top-8 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-white bg-slate-900 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                  Salin koordinat
-                </span>
-              </span>
-            </button>
-            <button
-              onClick={() => navigator.clipboard.writeText(data.address)}
-              className="group w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer text-left"
-            >
-              <svg className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" />
-              </svg>
-              <span className="flex-1 text-xs text-slate-600 leading-relaxed">{data.address}</span>
-              <span className="relative shrink-0">
-                <svg className="w-3.5 h-3.5 text-slate-800 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-                </svg>
-                <span className="pointer-events-none absolute -top-8 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-white bg-slate-900 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                  Salin alamat
-                </span>
-              </span>
-            </button>
-          </div>
-
-          {/* Divider */}
-          <div className="mx-5 border-t border-slate-100" />
-
-          {/* Reviews Section */}
-          <div className="px-5 py-4">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                Ulasan Relawan
-              </h4>
-              <button
-                onClick={() => setReviewOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-semibold transition-colors cursor-pointer"
-              >
-                <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 20h9" /><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z" />
-                </svg>
-                Tulis Ulasan
-              </button>
-            </div>
-
-            {data.reviews.map((review) => (
-              <div
-                key={review.review_id}
-                className="bg-slate-50 rounded-xl p-4 border border-slate-100"
-              >
-                {/* Reviewer Info */}
-                <div className="flex items-center gap-3 mb-3">
-                  <img
-                    src={review.user_avatar}
-                    alt={review.user_name}
-                    className="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-800 truncate">
-                      {review.user_name}
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <StarRating rating={review.user_rating} size="w-3 h-3" />
-                      <span className="text-[9px] text-slate-400 font-mono">
-                        {review.created_at}
-                      </span>
-                    </div>
+          ) : beachDetail ? (
+            <>
+              {/* Hero Image */}
+              <div className="relative">
+                <img
+                  src={beachDetail.image_url || BEACH_FALLBACK_IMAGES[0]}
+                  alt={beachDetail.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent p-4">
+                  <h3 className="text-white font-bold text-base leading-tight">
+                    {beachDetail.name}
+                  </h3>
+                  <div className="flex items-center gap-2 mt-1">
+                    <StarRating rating={beachDetail.average_rating || 0} />
+                    <span className="text-white/80 text-[10px] font-mono">
+                      {beachDetail.average_rating?.toFixed(1) || "0.0"} ({beachDetail.total_reviews || 0}{" "}
+                      ulasan)
+                    </span>
                   </div>
                 </div>
+              </div>
 
-                {/* Comment */}
-                <p className="text-[11px] text-slate-600 leading-relaxed mb-3">
-                  {review.comment}
-                </p>
-
-                {/* Evidence Image */}
-                {review.evidence_image && (
-                  <img
-                    src={review.evidence_image}
-                    alt="Bukti scan"
-                    className="w-full h-32 object-cover rounded-lg border border-slate-200/60"
-                  />
+              {/* Location Info */}
+              <div className="px-5 pb-4 mt-4 flex flex-col gap-1.5">
+                <button
+                  onClick={() => navigator.clipboard.writeText(`${beachDetail.latitude}, ${beachDetail.longitude}`)}
+                  className="group w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer text-left"
+                >
+                  <svg className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" /><path d="M12 2v4" /><path d="M12 18v4" /><path d="M2 12h4" /><path d="M18 12h4" />
+                  </svg>
+                  <span className="flex-1 text-xs font-mono text-slate-700">{beachDetail.latitude}, {beachDetail.longitude}</span>
+                  <span className="relative shrink-0">
+                    <svg className="w-3.5 h-3.5 text-slate-800 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                    </svg>
+                    <span className="pointer-events-none absolute -top-8 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-white bg-slate-900 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                      Salin koordinat
+                    </span>
+                  </span>
+                </button>
+                {beachDetail.address && (
+                  <button
+                    onClick={() => navigator.clipboard.writeText(beachDetail.address)}
+                    className="group w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer text-left"
+                  >
+                    <svg className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" />
+                    </svg>
+                    <span className="flex-1 text-xs text-slate-600 leading-relaxed">{beachDetail.address}</span>
+                    <span className="relative shrink-0">
+                      <svg className="w-3.5 h-3.5 text-slate-800 opacity-0 group-hover:opacity-100 transition-opacity" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="14" height="14" x="8" y="8" rx="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                      </svg>
+                      <span className="pointer-events-none absolute -top-8 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-white bg-slate-900 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                        Salin alamat
+                      </span>
+                    </span>
+                  </button>
                 )}
               </div>
-            ))}
-          </div>
+
+              {/* Divider */}
+              <div className="mx-5 border-t border-slate-100" />
+
+              {/* Reviews Section */}
+              <div className="px-5 py-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    Ulasan Relawan
+                  </h4>
+                  {user && (
+                    <button
+                      onClick={() => setReviewOpen(true)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-semibold transition-colors cursor-pointer"
+                    >
+                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 20h9" /><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z" />
+                      </svg>
+                      Tulis Ulasan
+                    </button>
+                  )}
+                </div>
+
+                {beachDetail.reviews?.length > 0 ? (
+                  beachDetail.reviews.map((review) => (
+                    <div
+                      key={review.id}
+                      className="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-3"
+                    >
+                      {/* Reviewer Info */}
+                      <div className="flex items-center gap-3 mb-3">
+                        <img
+                          src={review.user_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.user_name || "User")}&background=0f172a&color=fff`}
+                          alt={review.user_name}
+                          className="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-slate-800 truncate">
+                            {review.user_name || "User"}
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <StarRating rating={review.rating} size="w-3 h-3" />
+                            <span className="text-[9px] text-slate-400 font-mono">
+                              {new Date(review.created_at).toLocaleDateString("id-ID")}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Review Image */}
+                      {review.image_url && (
+                        <div className="mb-3 rounded-lg overflow-hidden">
+                          <img
+                            src={review.image_url}
+                            alt="Review"
+                            className="w-full h-40 object-cover"
+                          />
+                        </div>
+                      )}
+
+                      {/* Comment */}
+                      <p className="text-[11px] text-slate-600 leading-relaxed">
+                        {review.message}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-xs text-slate-400 text-center py-6">Belum ada ulasan</p>
+                )}
+              </div>
+            </>
+          ) : null}
         </div>
       </aside>
 
       <ReviewModal
         open={reviewOpen}
         onClose={() => setReviewOpen(false)}
-        beachName={data.name}
+        beachName={beachDetail?.name || ""}
+        onSubmit={handleSubmitReview}
+        user={user}
       />
     </div>
   );

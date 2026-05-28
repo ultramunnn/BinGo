@@ -1,27 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-<<<<<<< HEAD
-=======
 import { getStoredUser, logout, isAuthenticated } from "../services/authService";
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 
 // --- Reusable Icons Inside Component ---
-const IconSearch = ({ className = "w-5 h-5" }) => (
-  <svg
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <circle cx="11" cy="11" r="8" />
-    <path d="m21 21-4.3-4.3" />
-  </svg>
-);
-
 const IconUser = ({ className = "w-4 h-4" }) => (
   <svg
     className={className}
@@ -165,14 +146,9 @@ const navItems = [
 const NavbarDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
-<<<<<<< HEAD
-=======
   const user = getStoredUser();
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
-  const [searchOpen, setSearchOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const searchRef = useRef(null);
   const profileRef = useRef(null);
 
   // Derive active menu from current path
@@ -185,9 +161,6 @@ const NavbarDashboard = () => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
         setProfileOpen(false);
-      }
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
-        setSearchOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -231,30 +204,6 @@ const NavbarDashboard = () => {
 
           {/* RIGHT ACTIONS UTILITIES */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* SEARCH TRIGGER */}
-            <div ref={searchRef} className="relative flex items-center">
-              <div
-                className={`absolute right-10 top-1/2 -translate-y-1/2 flex items-center transition-all duration-300 ease-out overflow-hidden bg-white/80 backdrop-blur-sm rounded-lg ${
-                  searchOpen ? "w-40 sm:w-48 lg:w-56 opacity-100 px-2" : "w-0 opacity-0 px-0"
-                }`}
-              >
-                <input
-                  type="text"
-                  placeholder="Cari..."
-                  className="w-full bg-transparent border-b border-slate-300 pb-1 text-sm text-slate-800 placeholder:text-slate-400 outline-none focus:border-slate-900 transition-colors"
-                  autoFocus={searchOpen}
-                />
-              </div>
-              <button
-                onClick={() => setSearchOpen(!searchOpen)}
-                className="p-2 text-slate-500 cursor-pointer transition-colors hover:text-slate-900"
-              >
-                <IconSearch />
-              </button>
-            </div>
-
-            <div className="w-px h-6 bg-slate-200/60 mx-1"></div>
-
             {/* USER PROFILE DROPDOWN */}
             <div ref={profileRef} className="relative">
               <button
@@ -284,17 +233,10 @@ const NavbarDashboard = () => {
               >
                 <div className="px-4 py-3 border-b border-slate-100">
                   <p className="text-sm font-semibold text-slate-900 leading-none">
-<<<<<<< HEAD
-                    Ruben George
-                  </p>
-                  <p className="text-xs text-slate-400 mt-1">
-                    rubengeo@gmail.com
-=======
                     {user?.full_name || "Pengguna"}
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
                     {user?.email || ""}
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                   </p>
                 </div>
                 <div className="py-1.5">
@@ -306,11 +248,7 @@ const NavbarDashboard = () => {
                         : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
-<<<<<<< HEAD
-                    <IconUser className={`w-4 h-4 ${isProfilePage ? "text-slate-700" : "text-slate-400"}`} /> Profile
-=======
                     <IconUser className={`w-4 h-4 ${isProfilePage ? "text-slate-700" : "text-slate-400"}`} /> Profil
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                   </button>
                   <button
                     onClick={() => { navigate("/settings"); setSettingsOpen(false); }}
@@ -320,14 +258,6 @@ const NavbarDashboard = () => {
                         : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
-<<<<<<< HEAD
-                    <IconSettings className="w-4 h-4 text-slate-400" /> Settings
-                  </button>
-                </div>
-                <div className="border-t border-slate-100 py-1.5">
-                  <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors">
-                    <IconLogout className="w-4 h-4" /> Logout
-=======
                     <IconSettings className="w-4 h-4 text-slate-400" /> Pengaturan
                   </button>
                 </div>
@@ -340,7 +270,6 @@ const NavbarDashboard = () => {
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
                   >
                     <IconLogout className="w-4 h-4" /> Keluar
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                   </button>
                 </div>
               </div>
