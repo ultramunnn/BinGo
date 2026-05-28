@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const Priority = () => {
   return (
-    <section className="relative w-full min-h-screen bg-white flex flex-col items-center py-16 px-4 md:px-0 overflow-hidden">
+    <section id="priority" className="relative w-full min-h-screen bg-white flex flex-col items-center py-16 px-4 md:px-0 overflow-hidden">
       <div className="text-center mb-16 px-4">
         <h2 className="text-6xl font-extrabold font-serif text-gray-900 leading">
           Prioritas BinGo

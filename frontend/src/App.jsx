@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar";
 import Mission from "./layouts/sections/Mission";
 import Usage from "./layouts/sections/Usage";
 import Priority from "./layouts/sections/Priority";
-import Testimoni from "./layouts/sections/Testimoni";
+import Quotes from "./layouts/sections/Quotes";
 import CTA from "./layouts/sections/CTA";
 import Footer from "./layouts/sections/Footer";
 
@@ -17,7 +17,7 @@ const LandingPage = () => {
       <Priority />
       <Usage />
       <CTA />
-      <Testimoni />
+      <Quotes />
       <Footer />
     </main>
   );
