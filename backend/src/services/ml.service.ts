@@ -17,21 +17,20 @@ function getGenAI(): GoogleGenAI | null {
   return genai;
 }
 
-const SYSTEM_PROMPT = "Kamu adalah asisten edukasi pengelolaan sampah. Tugasmu adalah memberikan rekomendasi penanganan sampah yang LENGKAP, DETAIL, dan PANJANG (minimal 5 kalimat). Hanya gunakan data yang diberikan. Jangan pernah mengarang fakta, angka, atau statistik. Jangan sebutkan nama lembaga, organisasi, atau penelitian yang tidak disebutkan di data. JANGAN PERNAH memotong jawaban di tengah kalimat. Tulis sampai selesai.";
+const SYSTEM_PROMPT = "Kamu adalah asisten edukasi pengelolaan sampah. Tugasmu adalah memberikan rekomendasi penanganan sampah yang SINGKAT dan JELAS (3-4 kalimat). Hanya gunakan data yang diberikan. Jangan pernah mengarang fakta, angka, atau statistik. Jangan sebutkan nama lembaga, organisasi, atau penelitian yang tidak disebutkan di data. JANGAN PERNAH memotong jawaban di tengah kalimat. Tulis sampai selesai.";
 
 function buildPrompt(category: string,
   recyclable: string, treatment: string): string {
   return (
-    `Berdasarkan data sampah berikut, tulislah rekomendasi penanganan yang LENGKAP dan DETAIL dalam bahasa Indonesia.\n\n` +
+    `Berdasarkan data sampah berikut, tulislah rekomendasi penanganan SINGKAT dan JELAS dalam bahasa Indonesia.\n\n` +
     `DATA SAMPAH:\n` +
     `- Jenis: ${category}\n` +
     `- Dapat didaur ulang: ${recyclable}\n` +
     `- Metode treatment: ${treatment}\n\n` +
-    `Tulis rekomendasi dengan format berikut (WAJIB minimal 5 kalimat, jangan terlalu pendek):\n` +
-    `1. Paragraf pertama: Jelaskan apa itu sampah ${category} dan mengapa penting untuk ditangani dengan benar. Sebutkan juga apakah bisa didaur ulang atau tidak beserta alasannya.\n` +
-    `2. Paragraf kedua: Berikan langkah-langkah konkret yang bisa dilakukan di rumah untuk menangani sampah ini. Jelaskan secara detail, misalnya cara membersihkan, memisahkan, atau menyiapkan sebelum dibuang.\n` +
-    `3. Paragraf ketiga: Berikan tips tambahan seperti cara menyimpan sementara, alternatif penggunaan ulang, atau informasi tentang tempat penyerahan jika ada.\n\n` +
-    `PENTING: Jangan potong jawaban. Tulis sampai selesai. Gunakan bahasa yang ramah dan mudah dipahami.`
+    `Tulis rekomendasi 3-4 kalimat saja. Cukup jelaskan:\n` +
+    `1. Apa itu sampah ${category} dan apakah bisa didaur ulang.\n` +
+    `2. Satu tips praktis cara menangani di rumah.\n\n` +
+    `Jangan potong jawaban. Gunakan bahasa yang ramah dan mudah dipahami.`
   );
 }
 
@@ -42,7 +41,7 @@ async function generateFromGemini(prompt: string): Promise<string> {
   const models = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.0-flash-lite"];
   const config = {
     temperature: 0.5,
-    maxOutputTokens: 2000,
+    maxOutputTokens: 500,
     systemInstruction: SYSTEM_PROMPT,
     thinkingConfig: { thinkingBudget: 0 },
   };
@@ -77,7 +76,7 @@ async function generateFromGroq(prompt: string): Promise<string> {
       ],
       model: "llama-3.3-70b-versatile",
       temperature: 0.5,
-      max_tokens: 2000,
+      max_tokens: 500,
     });
     const finishReason = response.choices[0]?.finish_reason;
     const text = response.choices[0]?.message?.content?.trim();

@@ -1,11 +1,16 @@
 import api from "./api";
 import { getToken } from "./token";
 
+const MAX_FILE_SIZE = 600 * 1024; // 600KB
+
 /**
  * Step 1: Pre-classify image (CV only) → get category + confidence.
  * Sends photo as multipart/form-data.
  */
 export async function classifyImage(photoFile) {
+  if (photoFile.size > MAX_FILE_SIZE) {
+    throw new Error(`Ukuran foto maksimal 600KB. Foto kamu ${(photoFile.size / 1024).toFixed(0)}KB.`);
+  }
   const formData = new FormData();
   formData.append("photo", photoFile);
   const token = getToken();
@@ -29,6 +34,9 @@ export async function getQuestionnaire(category) {
  * Step 3: Submit full scan (photo + GPS + questionnaire).
  */
 export async function submitScan({ photoFile, latitude, longitude, locationName, answers }) {
+  if (photoFile.size > MAX_FILE_SIZE) {
+    throw new Error(`Ukuran foto maksimal 600KB. Foto kamu ${(photoFile.size / 1024).toFixed(0)}KB.`);
+  }
   const formData = new FormData();
   formData.append("photo", photoFile);
   formData.append("latitude", latitude);
