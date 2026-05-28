@@ -1,24 +1,3 @@
-<<<<<<< HEAD
-import type { MLDerivedFeatures, MLPredictionResponse } from "../types/classification";
-
-const ML_API_URL = process.env.ML_API_URL || "http://localhost:8000";
-
-export async function predictRecyclability(
-  features: MLDerivedFeatures
-): Promise<MLPredictionResponse> {
-  const res = await fetch(`${ML_API_URL}/predict`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...features, generate_tips: true }),
-  });
-
-  if (!res.ok) {
-    throw new Error(`ML API error: ${res.status} ${res.statusText}`);
-  }
-
-  return res.json() as Promise<MLPredictionResponse>;
-}
-=======
 import { GoogleGenAI } from "@google/genai";
 import Groq from "groq-sdk";
 import { predictTabular } from "./inference.service";
@@ -231,4 +210,3 @@ export function getQuestionnaire(
     questions: [...baseQuestions, ...specificQuestions],
   };
 }
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)

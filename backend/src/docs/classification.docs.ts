@@ -1,7 +1,5 @@
 export const classificationDocs = {
   paths: {
-<<<<<<< HEAD
-=======
     '/api/scans/questionnaire': {
       get: {
         summary: 'Get questionnaire for material category',
@@ -53,7 +51,6 @@ export const classificationDocs = {
         },
       },
     },
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
     '/api/scans': {
       post: {
         summary: 'Scan beach waste',
