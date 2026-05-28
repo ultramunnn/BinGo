@@ -21,259 +21,304 @@ const Usage = () => {
     restDelta: 0.001,
   });
 
-  // Motion Text
-  const textX = useTransform(smoothProgress, [0, 0.05], [-315, 0]);
-  const text2X = useTransform(smoothProgress, [0.3, 0.32], [-300, 1]);
-  const text3X = useTransform(smoothProgress, [0.67, 0.69], [300, 0]);
-  const text4X = useTransform(smoothProgress, [0.87, 0.89], [400, 0]);
-
-  // Motion Botol
   const bottleY = useTransform(
     smoothProgress,
-    [0.06, 0.1, 0.6, 0.65],
+    [0, 0.06, 0.48, 0.54],
     [-580, 0, 0, -580],
   );
+  const phoneY = useTransform(smoothProgress, [0, 0.06], [650, 0]);
 
-  // Motion Handphone
-  const phoneY = useTransform(smoothProgress, [0.12, 0.15], [650, 0]);
+  // ── Text 1: muncul pertama, stay ──
+  const textX = useTransform(smoothProgress, [0, 0.08], [-315, 0]);
+  const textOpacity = useTransform(smoothProgress, [0, 0.08], [0, 1]);
 
-  // Motion Sudut Scan
+  // ── Scan phase (setelah text 1) ──
   const cornerSize = useTransform(
-    scrollYProgress,
-    [0, 0.01, 0.48, 0.5],
+    smoothProgress,
+    [0.1, 0.14, 0.2, 0.24],
     [0, 1, 1, 0],
   );
-
-  // Motion Scan
   const scanOpacity = useTransform(
-    scrollYProgress,
-    [0.1, 0.15, 0.25, 0.3],
+    smoothProgress,
+    [0.1, 0.14, 0.2, 0.24],
     [0, 1, 1, 0],
   );
-  const laserTop = useTransform(scrollYProgress, [0.2, 0.35], ["0%", "100%"]);
-  const scanHeight = useTransform(scrollYProgress, [0.2, 0.35], ["0%", "100%"]);
+  const laserTop = useTransform(smoothProgress, [0.14, 0.22], ["0%", "100%"]);
+  const scanHeight = useTransform(smoothProgress, [0.14, 0.22], ["0%", "100%"]);
 
-  // Motion ProgressBar
-  const progressBar = useTransform(scrollYProgress, [0.2, 1], ["0%", "100%"]);
+  const text2X = useTransform(smoothProgress, [0.18, 0.26], [-300, 1]);
+  const text2Opacity = useTransform(smoothProgress, [0.18, 0.26], [0, 1]);
 
-  // Motion Text ProgressBar
+  const objectOpacity = useTransform(
+    smoothProgress,
+    [0.28, 0.34, 0.52, 0.56],
+    [0, 1, 1, 0],
+  );
+  const confidenceOpacity = useTransform(
+    smoothProgress,
+    [0.34, 0.4, 0.52, 0.56],
+    [0, 1, 1, 0],
+  );
+  const recycleOpacity = useTransform(
+    smoothProgress,
+    [0.4, 0.46, 0.52, 0.56],
+    [0, 1, 1, 0],
+  );
+
+  const text3X = useTransform(smoothProgress, [0.44, 0.52], [300, 0]);
+  const text3Opacity = useTransform(smoothProgress, [0.44, 0.52], [0, 1]);
+
+  const cardResultAIX = useTransform(
+    smoothProgress,
+    [0.54, 0.6, 0.68, 0.72],
+    [300, 0, 0, -300],
+  );
+  const buttonResultAIX = useTransform(smoothProgress, [0.54, 0.6], [300, 0]);
+
+  const text4X = useTransform(smoothProgress, [0.68, 0.76], [400, 0]);
+  const text4Opacity = useTransform(smoothProgress, [0.68, 0.76], [0, 1]);
+
+  const cardMapX = useTransform(smoothProgress, [0.78, 0.84], [300, 0]);
+
+  const progressBar = useTransform(smoothProgress, [0.1, 1], ["0%", "100%"]);
   const statusText = useTransform(
-    scrollYProgress,
-    [0, 0.4, 0.89, 0.97, 1],
+    smoothProgress,
+    [0, 0.1, 0.22, 0.54, 0.88, 1],
     [
       "...",
       "Memindai Objek...",
+      "Menganalisis Data...",
       "Menganalisis Data...",
       "Lokasi Ditemukan!",
       "Selesai",
     ],
   );
-
   const headerText = useTransform(
-    scrollYProgress,
-    [0, 0.75, 0.95, 1],
-    ["...", "Scan", "Hasil Analisis", "Mencari Lokasi"],
+    smoothProgress,
+    [0, 0.1, 0.54, 0.84, 1],
+    ["...", "Memindai", "Memindai", "Analisis Hasil", "Temukan Lokasi"],
   );
 
-  // Motion Callout
-  const objectOpacity = useTransform(
-    scrollYProgress,
-    [0.32, 0.36, 0.48, 0.5],
-    [0, 1, 1, 0],
-  );
-  const confidenceOpacity = useTransform(
-    scrollYProgress,
-    [0.37, 0.4, 0.48, 0.5],
-    [0, 1, 1, 0],
-  );
-  const recycleOpacity = useTransform(
-    scrollYProgress,
-    [0.42, 0.46, 0.48, 0.5],
-    [0, 1, 1, 0],
-  );
-
-  // Motion Card
-  const cardResultAIX = useTransform(
-    scrollYProgress,
-    [0.7, 0.76, 0.84, 0.87],
-    [300, 0, 0, -300],
-  );
-  const cardMapX = useTransform(scrollYProgress, [0.9, 0.96], [300, 0]);
-
-  // Motion Button
   const buttonCameraX = useTransform(
-    scrollYProgress,
-    [0, 0.01, 0.6, 0.65],
+    smoothProgress,
+    [0, 0.04, 0.48, 0.54],
     [-300, 0, 0, -300],
   );
-  const buttonResultAIX = useTransform(scrollYProgress, [0.7, 0.76], [300, 0]);
 
   return (
     <section
+      id="usage"
       ref={containerRef}
-      className="relative h-[1000vh] bg-white font-sans antialiased"
+      className="relative h-[1800vh] bg-white font-sans antialiased"
     >
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
-        {/* 1. TULISAN */}
         <motion.div
-          style={{ x: textX }}
-          className="absolute top-28 left-30 max-w-[200px] z-20"
+          style={{ opacity: textOpacity }}
+          className="absolute top-[15%] left-[5%] max-w-28 z-20 text-left md:hidden"
         >
-          <p className="text-[14px] font-medium leading-tight text-slate-800">
-            1) <br /> Arahkan kamera ke sampah di sekitarmu
+          <p className="text-[10px] font-medium leading-tight text-slate-800">
+            1) Memindai sampah untuk validasi material
+          </p>
+        </motion.div>
+        <motion.div
+          style={{ opacity: text2Opacity }}
+          className="absolute top-[30%] left-[5%] max-w-28 z-20 text-left md:hidden"
+        >
+          <p className="text-[10px] font-medium leading-tight text-slate-800">
+            2) Hasil sampah terungkap dengan garis kurva
+          </p>
+        </motion.div>
+        <motion.div
+          style={{ opacity: text3Opacity }}
+          className="absolute top-[50%] right-[5%] max-w-28 z-20 text-right md:hidden"
+        >
+          <p className="text-[10px] font-medium leading-tight text-slate-800">
+            3) Hasil daur ulang dan rekomendasi
+          </p>
+        </motion.div>
+        <motion.div
+          style={{ opacity: text4Opacity }}
+          className="absolute top-[70%] right-[5%] max-w-28 z-20 text-right md:hidden"
+        >
+          <p className="text-[10px] font-medium leading-tight text-slate-800">
+            4) Review pantai berdasarkan rating
           </p>
         </motion.div>
 
         <motion.div
-          style={{ x: text2X }}
-          className="absolute top-[40%] left-16 max-w-[200px] z-20"
+          style={{ x: textX, opacity: textOpacity }}
+          className="absolute top-28 left-30 max-w-50 z-20 hidden md:block"
         >
           <p className="text-[14px] font-medium leading-tight text-slate-800">
-            2) <br /> AI mengenali jenis sampah secara otomatis
+            1) <br /> Memindai sampah untuk validasi material
           </p>
         </motion.div>
-
         <motion.div
-          style={{ x: text3X }}
-          className="absolute top-[50%] right-16 max-w-[200px] z-20"
+          style={{ x: text2X, opacity: text2Opacity }}
+          className="absolute top-[40%] left-16 max-w-50 z-20 hidden md:block"
         >
           <p className="text-[14px] font-medium leading-tight text-slate-800">
-            3) <br /> Dapatkan tips daur ulang dari rekomendasi AI
+            2) <br /> Hasil sampah terungkap dengan garis kurva
           </p>
         </motion.div>
-
         <motion.div
-          style={{ x: text4X }}
-          className="absolute top-[70%] right-50 max-w-[200px] z-20"
+          style={{ x: text3X, opacity: text3Opacity }}
+          className="absolute top-[50%] right-16 max-w-50 z-20 hidden md:block"
         >
           <p className="text-[14px] font-medium leading-tight text-slate-800">
-            4) <br /> Lokasi pantai tercatat otomatis di peta
+            3) <br /> Hasil sampah apakah dapat di daur ulang, dan rekomendasi
+            perlakuan daur ulang sampah
+          </p>
+        </motion.div>
+        <motion.div
+          style={{ x: text4X, opacity: text4Opacity }}
+          className="absolute top-[70%] right-50 max-w-50 z-20 hidden md:block"
+        >
+          <p className="text-[14px] font-medium leading-tight text-slate-800">
+            4) <br /> Review pantai untuk berdasarkan rating pengguna
           </p>
         </motion.div>
 
-        {/* BOTOL */}
         <motion.div
           style={{ y: bottleY }}
           className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none"
         >
           <img
             src="assets/images/botol-scan.png"
-            className="w-[60%] max-w-5xl"
+            className="w-[80%] md:w-[60%] max-w-5xl"
             alt="bg-bottle"
           />
         </motion.div>
 
-        {/* HANDPHONE */}
-        <motion.div style={{ y: phoneY }} className="relative z-10 scale-100">
-          <div className="absolute inset-0 z-50 pointer-events-none hidden md:block">
-            {/* Callout Kiri 1 */}
-            <motion.div
-              style={{ opacity: objectOpacity }}
-              className="absolute left-[-280px] top-[45%] flex items-center z-50 pointer-events-none"
+        <div className="absolute inset-0 z-30 pointer-events-none hidden md:block">
+          <motion.div
+            style={{ opacity: objectOpacity }}
+            className="absolute right-[55%] top-[45%] flex items-center"
+          >
+            <div className="flex flex-col items-end mr-2">
+              <span className="text-black/40 text-[10px] font-medium uppercase tracking-widest leading-none">
+                Objek
+              </span>
+              <h2 className="text-xl font-semibold text-black whitespace-nowrap leading-tight">
+                Botol Plastik
+              </h2>
+            </div>
+            <svg
+              width="200"
+              height="60"
+              viewBox="0 0 200 60"
+              fill="none"
+              className="overflow-visible"
             >
-              <div className="flex flex-col items-end mr-2">
-                <span className="text-black/50 text-[10px] font-bold uppercase tracking-widest leading-none">
-                  Objek:
-                </span>
-                <h2 className="text-xl font-extrabold text-black whitespace-nowrap leading-tight">
-                  Botol Plastik
-                </h2>
-              </div>
+              <path
+                d="M5 10 H160 L190 50"
+                stroke="black"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              <circle cx="5" cy="10" r="4" fill="black" />
+              <circle cx="190" cy="50" r="8" fill="black" fillOpacity="0.2" />
+              <circle cx="190" cy="50" r="4" fill="black" />
+            </svg>
+          </motion.div>
 
-              <svg
-                width="250"
-                height="80"
-                viewBox="0 0 450 100"
-                fill="none"
-                className="overflow-visible"
-              >
-                <path
-                  d="M0 10 H380 L420 70"
-                  stroke="black"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-
-                <circle cx="0" cy="10" r="5" fill="black" />
-                <circle
-                  cx="420"
-                  cy="70"
-                  r="10"
-                  fill="black"
-                  fillOpacity="0.2"
-                />
-                <circle cx="420" cy="70" r="5" fill="black" />
-              </svg>
-            </motion.div>
-
-            {/* Callout Kanan 2 */}
-            <motion.div
-              style={{ opacity: confidenceOpacity }}
-              className="absolute left-[70%] top-[35%] flex items-center z-50 pointer-events-none"
+          <motion.div
+            style={{ opacity: confidenceOpacity }}
+            className="absolute left-[50%] translate-x-25 top-[35%] flex items-center"
+          >
+            <svg
+              width="200"
+              height="60"
+              viewBox="0 0 200 60"
+              fill="none"
+              className="overflow-visible"
             >
-              <svg
-                width="250"
-                height="80"
-                viewBox="0 0 450 100"
-                fill="none"
-                className="overflow-visible"
-              >
-                <path
-                  d="M30 70 L70 10 H450"
-                  stroke="black"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <circle cx="30" cy="70" r="10" fill="black" fillOpacity="0.2" />
-                <circle cx="30" cy="70" r="5" fill="black" />
-                <circle cx="450" cy="10" r="5" fill="black" />
-              </svg>
+              <path
+                d="M10 50 L40 10 H190"
+                stroke="black"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              <circle cx="10" cy="50" r="8" fill="black" fillOpacity="0.2" />
+              <circle cx="10" cy="50" r="4" fill="black" />
+              <circle cx="190" cy="10" r="4" fill="black" />
+            </svg>
+            <div className="flex flex-col items-start ml-2">
+              <span className="text-black/40 text-[10px] font-medium uppercase tracking-widest leading-none">
+                Kepercayaan
+              </span>
+              <h2 className="text-xl font-semibold text-black whitespace-nowrap leading-tight">
+                98.2%
+              </h2>
+            </div>
+          </motion.div>
 
-              <div className="flex flex-col items-start ml-2">
-                <span className="text-black/50 text-[10px] font-bold uppercase tracking-widest leading-none">
-                  Kepercayaan:
-                </span>
-                <h2 className="text-xl font-extrabold text-black whitespace-nowrap leading-tight">
-                  98.2%
-                </h2>
-              </div>
-            </motion.div>
-
-            {/* Callout Kanan 3 */}
-            <motion.div
-              style={{ opacity: recycleOpacity }}
-              className="absolute left-[50%] top-[50%] flex items-center z-50 pointer-events-none"
+          <motion.div
+            style={{ opacity: recycleOpacity }}
+            className="absolute left-[50%] translate-x-25 top-[50%] flex items-center"
+          >
+            <svg
+              width="200"
+              height="60"
+              viewBox="0 0 200 60"
+              fill="none"
+              className="overflow-visible"
             >
-              <svg
-                width="250"
-                height="80"
-                viewBox="0 0 450 100"
-                fill="none"
-                className="overflow-visible"
-              >
-                <path
-                  d="M30 70 L70 10 H450"
-                  stroke="black"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
+              <path
+                d="M10 50 L40 10 H190"
+                stroke="black"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              />
+              <circle cx="10" cy="50" r="8" fill="black" fillOpacity="0.2" />
+              <circle cx="10" cy="50" r="4" fill="black" />
+              <circle cx="190" cy="10" r="4" fill="black" />
+            </svg>
+            <div className="flex flex-col items-start ml-2">
+              <span className="text-black/40 text-[10px] font-medium uppercase tracking-widest leading-none">
+                Daur Ulang
+              </span>
+              <h2 className="text-xl font-semibold text-black whitespace-nowrap leading-tight">
+                Ya
+              </h2>
+            </div>
+          </motion.div>
+        </div>
 
-                <circle cx="30" cy="70" r="10" fill="black" fillOpacity="0.2" />
-                <circle cx="30" cy="70" r="5" fill="black" />
-                <circle cx="450" cy="10" r="5" fill="black" />
-              </svg>
+        <motion.div
+          style={{ opacity: objectOpacity }}
+          className="absolute left-[8%] top-[45%] z-30 flex flex-col items-end md:hidden pointer-events-none"
+        >
+          <span className="text-[8px] text-black/40 font-medium uppercase tracking-wider">
+            Objek
+          </span>
+          <span className="text-[11px] font-semibold text-black">
+            Botol Plastik
+          </span>
+        </motion.div>
+        <motion.div
+          style={{ opacity: confidenceOpacity }}
+          className="absolute right-[8%] top-[35%] z-30 flex flex-col items-start md:hidden pointer-events-none"
+        >
+          <span className="text-[8px] text-black/40 font-medium uppercase tracking-wider">
+            Kepercayaan
+          </span>
+          <span className="text-[11px] font-semibold text-black">98.2%</span>
+        </motion.div>
+        <motion.div
+          style={{ opacity: recycleOpacity }}
+          className="absolute right-[8%] top-[55%] z-30 flex flex-col items-start md:hidden pointer-events-none"
+        >
+          <span className="text-[8px] text-black/40 font-medium uppercase tracking-wider">
+            Daur Ulang
+          </span>
+          <span className="text-[11px] font-semibold text-black">Ya</span>
+        </motion.div>
 
-              <div className="flex flex-col items-start ml-2">
-                <span className="text-black/50 text-[10px] font-bold uppercase tracking-widest leading-none">
-                  Daur Ulang:
-                </span>
-                <h2 className="text-xl font-extrabold text-black whitespace-nowrap leading-tight">
-                  YA
-                </h2>
-              </div>
-            </motion.div>
-          </div>
-
+        <motion.div
+          style={{ y: phoneY }}
+          className="relative z-10 scale-[0.7] sm:scale-[0.85] md:scale-100 origin-center"
+        >
           <div className="w-[280px] h-[550px] top-8 rounded-[3.5rem] border-[10px] border-black shadow-[0_40px_80px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col relative bg-transparent">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-b-2xl z-50"></div>
 
@@ -286,12 +331,11 @@ const Usage = () => {
                 <Grid size={18} className="text-slate-800" />
               </div>
 
-              {/* ProgressBar */}
               <div className="bg-white px-8 py-2 flex flex-col items-center">
                 <div className="w-full bg-white bg-opacity h-2 overflow-hidden border border-black">
                   <motion.div
                     style={{ width: progressBar }}
-                    className="bg-[#b7eaf7] h-full"
+                    className="bg-slate-900 h-full"
                   />
                 </div>
                 <motion.p className="text-center text-[10px] text-gray-500 mt-1 uppercase tracking-tighter">
@@ -319,7 +363,7 @@ const Usage = () => {
                       <div className="absolute inset-0 flex flex-col p-6 animate-in fade-in duration-700">
                         <div className="flex items-center gap-2 mb-1">
                           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                          <h3 className="text-2xl font-black text-slate-800 tracking-tight">
+                          <h3 className="text-2xl font-bold text-slate-800 tracking-tight">
                             Hasil Ditemukan
                           </h3>
                         </div>
@@ -327,18 +371,18 @@ const Usage = () => {
                         <div className="space-y-4">
                           <div className="grid grid-cols-2 gap-3">
                             <div className="bg-slate-50 flex flex-col border border-slate-100 rounded-2xl p-4 shadow-sm">
-                              <p className="text-[10px] text-slate-400 font-bold uppercase mb-2">
-                                Sampah
+                              <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide mb-2">
+                                Material
                               </p>
                               <div className="flex flex-col">
-                                <h4 className="text-base font-bold text-slate-800">
-                                  PET Plastic
+                                <h4 className="text-base font-semibold text-slate-800">
+                                  Plastik PET
                                 </h4>
                               </div>
                             </div>
 
                             <div className="bg-slate-50 flex flex-col items-center justify-center border border-slate-100 rounded-2xl shadow-sm">
-                              <span className="text-[10px] text-slate-400 font-bold uppercase mb-2">
+                              <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wide mb-2">
                                 Daur Ulang
                               </span>
                               <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
@@ -361,7 +405,7 @@ const Usage = () => {
                         </div>
 
                         <div className="flex flex-col">
-                          <p className="text-[10px] font-black text-blue-600 uppercase tracking-wider mt-4 mb-0.5">
+                          <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wider mt-4 mb-0.5">
                             Rekomendasi AI
                           </p>
                           <p className="text-[11px] leading-relaxed text-slate-600 font-medium">
@@ -383,10 +427,10 @@ const Usage = () => {
                       <div className="absolute inset-0 flex flex-col p-5 animate-in fade-in duration-700">
                         <div className="flex justify-between items-start mb-3">
                           <div>
-                            <h3 className="text-xl font-black text-slate-800 leading-none">
+                            <h3 className="text-xl font-bold text-slate-800 leading-none">
                               Pantai Teluk Asmara
                             </h3>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">
+                            <p className="text-[10px] text-slate-400 font-medium uppercase tracking-wide mt-1">
                               Malang, Indonesia
                             </p>
                           </div>
@@ -440,21 +484,21 @@ const Usage = () => {
 
                         <div className="grid grid-cols-2 gap-2 mb-4">
                           <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                            <p className="text-[9px] font-bold text-slate-400 uppercase leading-none">
+                            <p className="text-[9px] font-medium text-slate-400 uppercase tracking-wide leading-none">
                               Total Pindai
                             </p>
-                            <p className="text-lg font-black text-slate-800">
-                              1,240{" "}
+                            <p className="text-lg font-bold text-slate-800">
+                              1.240{" "}
                               <span className="text-[10px] font-normal">
                                 pcs
                               </span>
                             </p>
                           </div>
                           <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                            <p className="text-[9px] font-bold text-slate-400 uppercase leading-none">
+                            <p className="text-[9px] font-medium text-slate-400 uppercase tracking-wide leading-none">
                               Tingkat Kebersihan
                             </p>
-                            <p className="text-lg font-black text-green-600">
+                            <p className="text-lg font-bold text-green-600">
                               Baik
                             </p>
                           </div>
@@ -472,7 +516,6 @@ const Usage = () => {
                     </motion.div>
                   </div>
 
-                  {/* Scanner */}
                   <motion.div
                     style={{ opacity: scanOpacity }}
                     className="absolute inset-0 z-20"
@@ -480,19 +523,19 @@ const Usage = () => {
                     <motion.div
                       style={{
                         height: scanHeight,
-                        backgroundImage: `linear-gradient(to right, rgba(83, 208, 236, 0.4) 1px, transparent 1px), linear-gradient(to bottom, rgba(83, 208, 236, 0.4) 1px, transparent 1px)`,
+                        backgroundImage: `linear-gradient(to right, rgba(15, 23, 42, 0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(15, 23, 42, 0.15) 1px, transparent 1px)`,
                         backgroundSize: "16px 16px",
                       }}
-                      className="absolute top-0 left-0 w-full bg-[#53d0ec]/10 backdrop-blur-[1px]"
+                      className="absolute top-0 left-0 w-full bg-slate-900/5 backdrop-blur-[1px]"
                     />
                     <motion.div
                       style={{ top: laserTop }}
-                      className="absolute left-0 w-full h-[3px] bg-[#b7eaf7] z-30"
+                      className="absolute left-0 w-full h-[3px] bg-slate-900 z-30"
                       animate={{
                         boxShadow: [
-                          "0 0 8px 2px rgba(83, 208, 236, 0.6)",
-                          "0 0 20px 6px rgba(83, 208, 236, 0.9)",
-                          "0 0 8px 2px rgba(83, 208, 236, 0.6)",
+                          "0 0 8px 2px rgba(15, 23, 42, 0.4)",
+                          "0 0 20px 6px rgba(15, 23, 42, 0.6)",
+                          "0 0 8px 2px rgba(15, 23, 42, 0.4)",
                         ],
                         opacity: [1, 0.5, 1, 0.8, 1],
                       }}
@@ -506,31 +549,32 @@ const Usage = () => {
                 </div>
               </div>
 
-              {/* Button */}
               <div className="p-5 pb-8 bg-white border-t border-slate-50">
                 <div className="grid grid-cols-1 items-center justify-items-stretch">
                   <motion.div
                     style={{ x: buttonCameraX, gridArea: "1 / 1" }}
-                    className="bg-[#b7eaf7] rounded-[1.5rem] p-3 flex items-center justify-between shadow-inner"
+                    className="bg-slate-900 rounded-[1.5rem] p-3 flex items-center justify-between shadow-inner"
                   >
-                    <button className="text-[10px] font-bold text-slate-700 px-2 uppercase">
+                    <button className="text-[10px] font-medium text-white/70 px-2 uppercase tracking-wide">
                       Batal
                     </button>
-                    <RotateCcw size={18} className="text-slate-600" />
-                    <div className="w-12 h-12 bg-[#4a5568] rounded-full border-[3px] border-white shadow-lg flex items-center justify-center">
+                    <RotateCcw size={18} className="text-white/60" />
+                    <div className="w-12 h-12 bg-white/20 rounded-full border-[3px] border-white shadow-lg flex items-center justify-center">
                       <div className="w-8 h-8 rounded-full border border-white/20"></div>
                     </div>
-                    <ImageIcon size={18} className="text-slate-600" />
-                    <button className="text-[10px] font-bold text-slate-700 px-2 uppercase">
+                    <ImageIcon size={18} className="text-white/60" />
+                    <button className="text-[10px] font-medium text-white/70 px-2 uppercase tracking-wide">
                       Selesai
                     </button>
                   </motion.div>
 
                   <motion.div
                     style={{ x: buttonResultAIX, gridArea: "1 / 1" }}
-                    className="bg-[#b7eaf7] rounded-[1.5rem] p-3 flex items-center justify-center shadow-inner"
+                    className="bg-slate-900 rounded-[1.5rem] p-3 flex items-center justify-center shadow-inner"
                   >
-                    Selesai
+                    <span className="text-white font-bold text-sm">
+                      Selesai
+                    </span>
                   </motion.div>
                 </div>
               </div>
