@@ -1,8 +1,28 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout";
+import { forgotPassword } from "../../services/authService";
 
 const CheckEmail = () => {
+  const location = useLocation();
+  const email = location.state?.email || "";
+  const [resending, setResending] = useState(false);
+  const [resent, setResent] = useState(false);
+
+  const handleResend = async () => {
+    if (!email) return;
+    setResending(true);
+    setResent(false);
+    try {
+      await forgotPassword(email);
+      setResent(true);
+    } catch {
+      // silent — same as backend security pattern
+    } finally {
+      setResending(false);
+    }
+  };
+
   return (
     <AuthLayout>
       {/* Back to Home */}
@@ -53,23 +73,31 @@ const CheckEmail = () => {
           Cek Email Anda
         </h1>
         <p className="text-sm text-gray-400 leading-relaxed">
-          Kami telah mengirimkan link reset kata sandi ke email Anda. Silakan
-          cek inbox atau folder spam.
+          Kami telah mengirimkan link reset kata sandi ke{" "}
+          {email ? (
+            <strong className="text-gray-500">{email}</strong>
+          ) : (
+            "email Anda"
+          )}
+          . Silakan cek inbox atau folder spam.
         </p>
       </div>
 
       {/* Actions */}
       <div className="space-y-4">
-        <Link
-          to="/reset-password"
-          className="block w-full bg-[#3d4a5d] text-white py-4 rounded-xl font-bold text-sm shadow-lg shadow-slate-200 hover:bg-[#2f3948] transition-all text-center"
+        <button
+          onClick={handleResend}
+          disabled={resending || !email}
+          className="w-full bg-white text-gray-500 py-4 rounded-xl font-bold text-sm border border-gray-200 hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed transition-all"
         >
-          Buka Link Reset
-        </Link>
-
-        <button className="w-full bg-white text-gray-500 py-4 rounded-xl font-bold text-sm border border-gray-200 hover:bg-gray-50 transition-all">
-          Kirim Ulang Email
+          {resending ? "Mengirim..." : "Kirim Ulang Email"}
         </button>
+
+        {resent && (
+          <p className="text-center text-sm text-green-600">
+            Email reset telah dikirim ulang!
+          </p>
+        )}
       </div>
 
       {/* Back to Login */}

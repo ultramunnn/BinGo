@@ -2,6 +2,7 @@ import { AuthError } from "./auth.service";
 import * as CVService from "./cv.service";
 import * as MLService from "./ml.service";
 import * as ClassificationModel from "../models/classification.model";
+import * as BeachModel from "../models/beach.model";
 import { uploadPhoto } from "./storage.service";
 import type {
   ClassificationResult,
@@ -63,7 +64,12 @@ export async function scan(
     );
   }
 
-  // 5. Save classification to database
+  // 5. Detect nearby beach (within 3km)
+  const nearbyBeach = await BeachModel.findNearestBeach(latitude, longitude, 3);
+  const beachId = nearbyBeach?.id || undefined;
+  const resolvedLocationName = nearbyBeach ? nearbyBeach.name : locationName;
+
+  // 6. Save classification to database
   const record = await saveClassification({
     user_id: userId,
     image_url: imageUrl,
@@ -72,14 +78,19 @@ export async function scan(
     cv_confidence: result.cv_confidence,
     latitude,
     longitude,
-    location_name: locationName,
+    location_name: resolvedLocationName,
+    beach_id: beachId,
     recyclable: result.recyclable,
     treatment: result.treatment_method,
     recyclable_confidence: result.ml_confidence.recyclable,
     treatment_confidence: result.ml_confidence.treatment,
   });
 
-  return { ...toResult(record), ai_recommendation: result.ai_recommendation };
+  return {
+    ...toResult(record),
+    beach_name: nearbyBeach?.name || null,
+    ai_recommendation: result.ai_recommendation,
+  };
 }
 
 /** Convert questionnaire booleans to "Yes"/"No" string features.
@@ -129,6 +140,8 @@ function toResult(record: ClassificationRecord): ClassificationResult {
     latitude: record.latitude,
     longitude: record.longitude,
     location_name: record.location_name,
+    beach_id: record.beach_id ?? null,
+    beach_name: null,
     recyclable: record.recyclable ?? "",
     treatment: record.treatment ?? "",
     recyclable_confidence: record.recyclable_confidence ?? 0,

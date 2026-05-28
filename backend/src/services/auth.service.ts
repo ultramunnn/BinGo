@@ -2,6 +2,7 @@ import * as UserModel from "../models/user.model";
 import * as BlacklistModel from "../models/token-blacklist.model";
 import * as ResetTokenModel from "../models/reset-token.model";
 import { generateToken } from "./jwt.service";
+import { sendPasswordResetEmail } from "./email.service";
 import type { UserUpdateInput } from "../models/user.model";
 
 export class AuthError extends Error {
@@ -53,8 +54,8 @@ export async function requestPasswordReset(email: string) {
     throw new AuthError(500, "Failed to generate reset token");
   }
 
-  // TODO: send email with reset link
-  return resetToken;
+  const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+  await sendPasswordResetEmail(user.email, resetLink);
 }
 
 export async function changePassword(token: string, newPassword: string) {

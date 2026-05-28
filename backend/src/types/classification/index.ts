@@ -82,6 +82,7 @@ export interface ClassificationRecord {
   latitude: number;
   longitude: number;
   location_name: string | null;
+  beach_id: string | null;
   recyclable: string | null;
   treatment: string | null;
   recyclable_confidence: number | null;
@@ -98,6 +99,8 @@ export interface ClassificationResult {
   latitude: number;
   longitude: number;
   location_name: string | null;
+  beach_id: string | null;
+  beach_name: string | null;
   recyclable: string;
   treatment: string;
   recyclable_confidence: number;
