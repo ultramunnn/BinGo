@@ -45,8 +45,6 @@ export interface MLPredictionResponse {
   };
 }
 
-<<<<<<< HEAD
-=======
 /** Response from AI Orchestrator POST /predict_hybrid */
 export interface HybridPredictionResponse {
   predicted_material: string;
@@ -74,7 +72,6 @@ export interface QuestionnaireResponse {
   questions: QuestionnaireField[];
 }
 
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 export interface ClassificationRecord {
   id: string;
   user_id: string;
@@ -105,10 +102,7 @@ export interface ClassificationResult {
   treatment: string;
   recyclable_confidence: number;
   treatment_confidence: number;
-<<<<<<< HEAD
-=======
   ai_recommendation?: string;
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   created_at: string;
 }
 

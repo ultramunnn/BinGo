@@ -6,12 +6,8 @@ import ResultConsole from "../components/dashboard/ResultConsole";
 import PieChartCard from "../components/dashboard/PieChartCard";
 import LeaderboardSection from "../components/dashboard/LeaderboardSection";
 import QuestionnaireModal from "../components/dashboard/QuestionnaireModal";
-<<<<<<< HEAD
-import { FOCUS_W, FOCUS_H, MATERIAL_RULES, leaderboardUsers, leaderboardBeaches } from "../constants/dashboardData";
-=======
 import { FOCUS_W, FOCUS_H, leaderboardUsers, leaderboardBeaches } from "../constants/dashboardData";
 import { classifyImage, getQuestionnaire, submitScan } from "../services/scanService";
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 
 const Dashboard = () => {
   const fileInputRef = useRef(null);
@@ -23,15 +19,6 @@ const Dashboard = () => {
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState(null);
   const [capturedImg, setCapturedImg] = useState(null);
-<<<<<<< HEAD
-
-  // ── Kuesioner Modal State ──
-  const [showModal, setShowModal] = useState(false);
-  const [currentMaterial, setCurrentMaterial] = useState(null);
-  const [questionnaireAnswers, setQuestionnaireAnswers] = useState({});
-  const [questionIndex, setQuestionIndex] = useState(0);
-
-=======
   const [capturedFile, setCapturedFile] = useState(null);
 
   // ── GPS State ──
@@ -83,7 +70,6 @@ const Dashboard = () => {
     );
   }, []);
 
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   // ── Camera auto-start ──
   useEffect(() => {
     let mounted = true;
@@ -110,38 +96,6 @@ const Dashboard = () => {
 
   const triggerFileUpload = () => fileInputRef.current?.click();
 
-<<<<<<< HEAD
-  // ═══════════════════════════════════════════════════════════════
-  // STEP 1 → STEP 2: Capture ROI → Kirim ke backend → Buka Modal
-  // ═══════════════════════════════════════════════════════════════
-  const handleStartAnalysis = async () => {
-    if (isAnalyzing) return;
-
-    // 1. ROI CROPPING — Ambil frame dari video, crop sesuai focus box
-    let croppedBase64 = null;
-    if (videoRef.current && streamRef.current) {
-      const video = videoRef.current;
-      const fullW = video.videoWidth;
-      const fullH = video.videoHeight;
-
-      if (fullW && fullH) {
-        const cropX = Math.round(((100 - FOCUS_W) / 2 / 100) * fullW);
-        const cropY = Math.round(((100 - FOCUS_H) / 2 / 100) * fullH);
-        const cropW = Math.round((FOCUS_W / 100) * fullW);
-        const cropH = Math.round((FOCUS_H / 100) * fullH);
-
-        const canvas = document.createElement("canvas");
-        canvas.width = cropW;
-        canvas.height = cropH;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(video, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
-        croppedBase64 = canvas.toDataURL("image/jpeg", 0.92);
-        setCapturedImg(croppedBase64);
-      }
-    }
-
-    // 2. Matikan kamera
-=======
   // ── Capture frame from video → File object ──
   const captureFrameAsFile = () => {
     if (!videoRef.current || !streamRef.current) return null;
@@ -200,34 +154,10 @@ const Dashboard = () => {
     setCapturedFile(photoFile);
 
     // Stop camera
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
     if (streamRef.current) { streamRef.current.getTracks().forEach((t) => t.stop()); streamRef.current = null; }
     if (videoRef.current) videoRef.current.srcObject = null;
     setCameraActive(false);
 
-<<<<<<< HEAD
-    // 3. Kirim gambar ke backend untuk klasifikasi awal
-    try {
-      const res = await fetch("/api/scan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image: croppedBase64 }),
-      });
-      const data = await res.json();
-
-      // 4. Set material dari response, buka modal kuesioner
-      const material = (data.material || "PLASTIC").toUpperCase();
-      setCurrentMaterial(material);
-      setQuestionnaireAnswers({});
-      setQuestionIndex(0);
-      setShowModal(true);
-    } catch {
-      // Fallback: buka modal dengan PLASTIC jika API gagal
-      setCurrentMaterial("PLASTIC");
-      setQuestionnaireAnswers({});
-      setQuestionIndex(0);
-      setShowModal(true);
-=======
     // Step 1: Classify image via backend
     setIsAnalyzing(true);
     try {
@@ -257,42 +187,10 @@ const Dashboard = () => {
       setShowModal(true);
     } finally {
       setIsAnalyzing(false);
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
     }
   };
 
   // ═══════════════════════════════════════════════════════════════
-<<<<<<< HEAD
-  // STEP 3 → STEP 4: Submit kuesioner → Render hasil analisis
-  // ═══════════════════════════════════════════════════════════════
-  const submitQuestionnaire = async () => {
-    const activeKeys = MATERIAL_RULES[currentMaterial] || [];
-    const allAnswered = activeKeys.every((k) => questionnaireAnswers[k]);
-    if (!allAnswered) return;
-
-    setShowModal(false);
-    setIsAnalyzing(true);
-
-    try {
-      const res = await fetch("/api/scan/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          image: capturedImg,
-          material: currentMaterial,
-          answers: questionnaireAnswers,
-        }),
-      });
-      const data = await res.json();
-      // TODO: setResults(data) ketika backend sudah siap
-      console.log("Analysis result:", data);
-    } catch {
-      // Lanjut ke step 2 meski API gagal (demo mode)
-    }
-
-    setIsAnalyzing(false);
-    setScanStep(2);
-=======
   // STEP 2 → STEP 3: Submit questionnaire + photo + GPS → Show results
   // ═══════════════════════════════════════════════════════════════
   const submitQuestionnaire = async () => {
@@ -325,21 +223,17 @@ const Dashboard = () => {
       setIsAnalyzing(false);
       setScanStep(2);
     }
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   };
 
   const handleResetScan = () => {
     setScanStep(1);
     setIsAnalyzing(false);
     setCapturedImg(null);
-<<<<<<< HEAD
-=======
     setCapturedFile(null);
     setScanResult(null);
     setCurrentCategory(null);
     setQuestionnaireQuestions([]);
     setQuestionnaireAnswers({});
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
     // Re-start camera
     const init = async () => {
       try {
@@ -378,12 +272,8 @@ const Dashboard = () => {
 
       <QuestionnaireModal
         showModal={showModal}
-<<<<<<< HEAD
-        currentMaterial={currentMaterial}
-=======
         currentCategory={currentCategory}
         questions={questionnaireQuestions}
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
         questionIndex={questionIndex}
         setQuestionIndex={setQuestionIndex}
         questionnaireAnswers={questionnaireAnswers}
@@ -393,13 +283,7 @@ const Dashboard = () => {
 
       <main className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 pb-28 lg:p-6 lg:pb-6 items-start">
 
-<<<<<<< HEAD
-        {/* ═══════════════════════════════════════════
-            LEFT: DJI-STYLE CAMERA VIEWFINDER
-            ═══════════════════════════════════════════ */}
-=======
         {/* LEFT: CAMERA VIEWFINDER */}
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
         <div className="lg:col-span-8 flex flex-col h-full">
           <ScannerViewfinder
             videoRef={videoRef}
@@ -408,10 +292,7 @@ const Dashboard = () => {
             isAnalyzing={isAnalyzing}
             cameraError={cameraError}
             capturedImg={capturedImg}
-<<<<<<< HEAD
-=======
             scanResult={scanResult}
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
           />
 
           <ControlBar
@@ -425,36 +306,21 @@ const Dashboard = () => {
           />
         </div>
 
-<<<<<<< HEAD
-        {/* ═══════════════════════════════════════════
-            RIGHT: RESULT CONSOLE
-            ═══════════════════════════════════════════ */}
-=======
         {/* RIGHT: RESULT CONSOLE */}
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
         <div id="result-section" className="lg:col-span-4 flex flex-col gap-6 h-full">
           <ResultConsole
             scanStep={scanStep}
             isAnalyzing={isAnalyzing}
-<<<<<<< HEAD
-=======
             scanResult={scanResult}
             gpsCoords={gpsCoords}
             gpsError={gpsError}
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
             onStepChange={setScanStep}
             onReset={handleResetScan}
           />
           <PieChartCard />
         </div>
 
-<<<<<<< HEAD
-        {/* ═══════════════════════════════════════════
-            BOTTOM: LEADERBOARD (FULL WIDTH)
-            ═══════════════════════════════════════════ */}
-=======
         {/* BOTTOM: LEADERBOARD */}
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
         <div className="col-span-full">
           <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col flex-1">
             <div className="flex items-center justify-between mb-8">
