@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
 @import "tailwindcss";
 
-<<<<<<< HEAD
 /* Fade-in for wizard questions */
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(6px); }
@@ -12,8 +11,6 @@
 }
 
 /* Scanning laser animation */
-=======
->>>>>>> feature/landing-page
 @keyframes scan-move {
   0% { top: 0; }
   100% { top: 100%; }
@@ -23,11 +20,10 @@
   animation: scan-move 3s linear infinite;
 }
 
-.animate-scan {
-  position: absolute;
-  left: 0;
-  right: 0;
-  animation: scan-move 2.5s ease-in-out infinite alternate;
+@layer theme {
+  :root {
+    --font-family: 'Inter', sans-serif;
+  }
 }
 
 body {
@@ -39,7 +35,6 @@ body {
   overflow-x: hidden;
 }
 
-<<<<<<< HEAD
 * {
   scrollbar-width: thin;
   scrollbar-color: #1e293b #ffffff;
@@ -56,33 +51,14 @@ body {
 
 *::-webkit-scrollbar-thumb {
   background-color: #1e293b;
-  border-radius: 9999px;
+  border-radius: 10px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background-color: #0f172a;
+  background-color: #334155;
 }
 
-*::-webkit-scrollbar-corner {
-  background: #ffffff;
-}
-
-/* Hide Leaflet attribution */
-.leaflet-control-attribution {
-  display: none !important;
-}
-
-/* Leaflet custom cursors */
 .leaflet-container {
-  cursor: default !important;
-}
-
-.leaflet-dragging .leaflet-container,
-.leaflet-dragging .leaflet-map-pane {
-  cursor: grabbing !important;
-}
-
-.leaflet-grab {
   cursor: grab !important;
 }
 
@@ -91,18 +67,13 @@ body {
   cursor: pointer !important;
 }
 
-=======
->>>>>>> feature/landing-page
 .grain-overlay {
   pointer-events: none;
   position: fixed;
   inset: 0;
   z-index: 99;
   background-image: url("https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Grain_Noise.png");
-<<<<<<< HEAD
   opacity: 0.03;
-=======
-  opacity: 0.03; /* 3% Digital Noise */
 }
 
 .text-masked-ocean {
@@ -112,5 +83,4 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
->>>>>>> feature/landing-page
 }
