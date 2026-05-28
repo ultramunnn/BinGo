@@ -18,11 +18,16 @@ npm start          # Run production build from dist/server.js
 
 No test runner or linter is configured.
 
+### Nodemon Configuration
+`nodemon.json` watches `src/`, `.env` files with extensions: `ts`, `json`, `env`. Changes to `.env` trigger auto-reload.
+
 ## Environment Setup
 
 A `.env` file in `backend/` is required. See `backend/.env.example` for the template.
 
 Required variables: `PORT`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `JWT_SECRET`, `JWT_EXPIRES_IN`, `GEMINI_API_KEY`
+
+Optional (for email): `SMTP_SERVER`, `SMTP_PORT`, `SMTP_EMAIL`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `FRONTEND_URL`
 
 ## Architecture
 
@@ -97,12 +102,12 @@ IMPORTANT: The ONNX model includes EfficientNet's `preprocess_input` inside the 
 
 **File:** `src/services/ml.service.ts` → `generateTips()`
 **Input:** category + recyclable + treatment
-**Output:** `ai_recommendation` — detailed practical tips in Indonesian (3 paragraphs, minimal 5 sentences)
+**Output:** `ai_recommendation` — short practical tips in Indonesian (3-4 sentences)
 
 Anti-hallucination measures:
 - System instruction: only use provided data, no fabricated facts/numbers
 - Temperature: 0.5
-- Max output: 2000 tokens (thinking disabled for Gemini 2.5)
+- Max output: 500 tokens (thinking disabled for Gemini 2.5)
 - Fallback models: gemini-2.5-flash → gemini-2.0-flash → gemini-2.0-flash-lite → Groq llama-3.3-70b-versatile
 - Graceful failure: returns empty string if all models fail, scan still completes
 
@@ -123,9 +128,22 @@ Contains rule-based feature defaults per category. Currently NOT used in the pip
 | POST | `/api/auth/login` | No | Login, returns JWT |
 | POST | `/api/auth/logout` | Yes | Invalidate token |
 | GET | `/api/auth/me` | Yes | Get current user profile |
-| PUT | `/api/auth/me` | Yes | Update profile |
-| POST | `/api/auth/forgot-password` | No | Send reset email |
-| POST | `/api/auth/reset-password` | No | Reset password with token |
+| PUT | `/api/auth/profile` | Yes | Update profile |
+| POST | `/api/auth/photo` | Yes | Upload profile photo |
+| POST | `/api/auth/reset-password` | No | Request password reset (sends email) |
+| POST | `/api/auth/change-password` | No | Reset password with token |
+
+### Beach Routes (`/api/beaches`)
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| GET | `/api/beaches` | No | All beaches with average rating |
+| GET | `/api/beaches/:id` | No | Beach detail with reviews |
+| POST | `/api/beaches/:id/reviews` | Yes | Submit review (with optional image) |
+| DELETE | `/api/beaches/:id/reviews` | Yes | Delete own review |
+
+Query params for `GET /api/beaches`:
+- `?refresh=true` — Force re-fetch from OSM Nominatim
 
 ### Scan Routes (`/api/scans`)
 
@@ -220,17 +238,23 @@ Error responses:
 |---|---|
 | `src/services/inference.service.ts` | ONNX Runtime inference for CV and Tabular models |
 | `src/services/ml.service.ts` | Orchestrator: CV → Tabular → Gemini tips + questionnaire logic |
-| `src/services/classification.service.ts` | Upload image, build features, call ML, save to DB |
+| `src/services/classification.service.ts` | Upload image, build features, call ML, save to DB, auto-detect nearby beach |
 | `src/services/cv.service.ts` | Thin wrapper for CV inference (legacy, delegates to inference.service) |
-| `src/services/auth.service.ts` | User auth, JWT, password reset |
+| `src/services/auth.service.ts` | User auth, JWT, password reset with email |
 | `src/services/jwt.service.ts` | JWT sign/verify |
 | `src/services/storage.service.ts` | Supabase Storage upload (avatars, scans) |
+| `src/services/email.service.ts` | SMTP email sending (Mailtrap/Brevo) for password reset |
+| `src/services/beach.service.ts` | Beach CRUD, OSM Nominatim fetch, Wikimedia images, reviews |
 | `src/controllers/classificationController.ts` | Request parsing, validation, response formatting |
 | `src/controllers/authController.ts` | Auth request handling |
+| `src/controllers/beachController.ts` | Beach and review request handling |
 | `src/middleware/auth.ts` | JWT authentication middleware |
 | `src/middleware/upload.ts` | Multer file upload middleware (memory storage, 5MB limit) |
 | `src/utils/feature-derivation.ts` | Rule-based feature defaults (unused — for reference) |
 | `src/models/classification.model.ts` | Supabase CRUD for classification_history |
+| `src/models/beach.model.ts` | Supabase CRUD for beaches and beach_reviews, Haversine distance |
+| `src/models/reset-token.model.ts` | Password reset token CRUD (uses supabaseAdmin) |
+| `src/models/user.model.ts` | User CRUD (uses supabaseAdmin for findByEmail) |
 
 ## Model Files
 
@@ -250,22 +274,63 @@ All tables use UUID primary keys. Timestamps use `TIMESTAMPTZ`. Single role: `us
 |---|---|
 | `users` | id, email, password_hash, full_name, photo_url, created_at, updated_at |
 | `token_blacklist` | token, expires_at |
-| `password_resets` | user_id, token, expires_at, used |
-| `classification_history` | id, user_id (FK users), image_url, waste_type, confidence, cv_confidence, latitude, longitude, location_name, recyclable, treatment, recyclable_confidence, treatment_confidence, created_at |
-| `ratings` | id, classification_id (FK classification_history), user_id (FK users), score (1-5), created_at |
-| `comments` | id, classification_id (FK classification_history), user_id (FK users), message, created_at |
+| `password_resets` | id, user_id (FK users), token, expires_at, used |
+| `classification_history` | id, user_id (FK users), image_url, waste_type, confidence, cv_confidence, latitude, longitude, location_name, beach_id (FK beaches), recyclable, treatment, recyclable_confidence, treatment_confidence, created_at |
+| `beaches` | id, name, latitude, longitude, address, image_url, created_at |
+| `beach_reviews` | id, beach_id (FK beaches), user_id (FK users), rating, message, image_url, created_at |
 
 ### Key constraints
 
-- `ratings`: UNIQUE(classification_id, user_id) — one rating per user per scan
-- `ratings.score`: CHECK (score BETWEEN 1 AND 5)
+- `beach_reviews`: UNIQUE(beach_id, user_id) — one review per user per beach
+- `beach_reviews.rating`: CHECK (score BETWEEN 1 AND 5)
 - `classification_history`: latitude/longitude are FLOAT, captured from the device at scan time
+- `classification_history.beach_id`: Auto-detected within 3km radius during scan
 
 ## Supabase Storage
 
 Two buckets are used:
 - `avatars` — user profile photos (via `uploadPhoto` in `storage.service.ts`)
 - `scans` — scan images (via classification service, must be created manually in Supabase dashboard)
+
+## Beach Features
+
+### Auto Beach Detection
+When user scans with GPS coordinates, the system automatically detects nearby beaches within 3km radius using Haversine distance formula. If a beach is found:
+- `beach_id` is set on the classification record
+- `location_name` is set to the beach name
+
+### Beach Data Source
+Beaches are fetched from OSM Nominatim API with viewbox filtering for East Java (111.0,-9.0,115.0,-6.5). Images are fetched from Wikimedia Commons API.
+
+### Beach Reviews
+Users can submit one review per beach with:
+- Rating (1-5 stars)
+- Text message
+- Optional image (uploaded to Supabase Storage)
+
+## Email Service
+
+Password reset emails are sent via SMTP (configurable for Mailtrap, Brevo, Gmail, etc.).
+
+### Configuration (.env)
+```
+SMTP_SERVER=sandbox.smtp.mailtrap.io
+SMTP_PORT=2525
+SMTP_EMAIL=your-sender@email.com
+SMTP_USERNAME=your-smtp-username
+SMTP_PASSWORD=your-smtp-password
+FRONTEND_URL=http://localhost:5173
+```
+
+### Flow
+1. User requests password reset → `POST /api/auth/reset-password { email }`
+2. Backend generates JWT token (1h expiry), stores in `password_resets` table
+3. Email sent with reset link: `{FRONTEND_URL}/reset-password?token={jwt}`
+4. User clicks link → frontend reads token from URL → `POST /api/auth/change-password { token, new_password }`
+5. Backend validates token, updates password, marks token as used
+
+### RLS Note
+`password_resets` and `users` tables have RLS enabled. Use `supabaseAdmin` (service role) for operations that need to bypass RLS.
 
 ## Migrations
 
@@ -279,6 +344,11 @@ npx supabase db reset                # Reset local DB and re-run all migrations
 
 Migration files are plain SQL (`.sql`), timestamped, and run in order. Always create a migration when adding/modifying tables, columns, RLS policies, or PostgreSQL functions.
 
+### Recent Migrations
+- `20260528000000_create_beach_tables.sql` — beaches and beach_reviews tables
+- `20260528000001_add_beach_id_to_scans.sql` — beach_id foreign key on classification_history
+- `20260528000002_add_image_to_beach_reviews.sql` — image_url column on beach_reviews
+
 ## Adding a new resource
 
 1. Create model in `src/models/` (named export functions, Supabase client)
@@ -287,6 +357,12 @@ Migration files are plain SQL (`.sql`), timestamped, and run in order. Always cr
 4. Create routes in `src/routes/` and register in `src/server.ts`
 5. Add OpenAPI docs in `src/docs/` (new file + register in `src/docs/index.ts`)
 6. Add types in `src/types/`
+
+### Supabase Client Usage
+- `supabase` (anon key) — for public data, subject to RLS
+- `supabaseAdmin` (service role) — bypasses RLS, for admin operations like user lookup, password resets
+
+Both exported from `src/config/supabase.ts`.
 
 ## Transactions
 

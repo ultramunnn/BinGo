@@ -1,10 +1,7 @@
 import { Response, NextFunction } from "express";
 import * as ClassificationService from "../services/classification.service";
 import * as ClassificationModel from "../models/classification.model";
-<<<<<<< HEAD
-=======
 import * as MLService from "../services/ml.service";
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 import { AuthRequest } from "../types/auth";
 import type { QuestionnaireInput } from "../types/classification";
 
@@ -20,8 +17,6 @@ function parseBool(val: unknown): boolean | undefined {
   return undefined;
 }
 
-<<<<<<< HEAD
-=======
 export const preClassify = async (req: AuthRequest, res: Response) => {
   const file = req.file;
   if (!file) {
@@ -33,7 +28,6 @@ export const preClassify = async (req: AuthRequest, res: Response) => {
   res.json({ success: true, data: result });
 };
 
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 export const scan = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const file = req.file;
   if (!file) {
@@ -45,11 +39,7 @@ export const scan = async (req: AuthRequest, res: Response, next: NextFunction) 
     return res.status(400).json({ error: "latitude and longitude are required" });
   }
 
-<<<<<<< HEAD
-  // Parse questionnaire (fields are optional per category)
-=======
   // Parse questionnaire — all fields are REQUIRED
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   const questionnaire: QuestionnaireInput = {};
   for (const field of QUESTIONNAIRE_FIELDS) {
     const parsed = parseBool(req.body[field]);
@@ -58,8 +48,6 @@ export const scan = async (req: AuthRequest, res: Response, next: NextFunction) 
     }
   }
 
-<<<<<<< HEAD
-=======
   // Validate: base questions (is_clean, is_dry) are mandatory for all categories
   const missing: string[] = [];
   if (questionnaire.is_clean === undefined) missing.push("is_clean");
@@ -72,7 +60,6 @@ export const scan = async (req: AuthRequest, res: Response, next: NextFunction) 
     });
   }
 
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   const result = await ClassificationService.scan(
     req.user!.id,
     file.buffer,
@@ -114,8 +101,6 @@ export const deleteScan = async (req: AuthRequest, res: Response, next: NextFunc
   res.json({ success: true, message: "Scan deleted" });
 };
 
-<<<<<<< HEAD
-=======
 export const getQuestionnaire = async (req: AuthRequest, res: Response) => {
   const { category } = req.query;
   if (!category || typeof category !== "string") {
@@ -126,7 +111,6 @@ export const getQuestionnaire = async (req: AuthRequest, res: Response) => {
   res.json({ success: true, data: result });
 };
 
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 function parsePagination(query: any): { page: number; limit: number } {
   return {
     page: parseInt(query.page) || 1,

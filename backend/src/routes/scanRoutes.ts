@@ -1,18 +1,12 @@
 import { Router, Request, Response, NextFunction } from "express";
 import {
-<<<<<<< HEAD
-=======
   preClassify,
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   scan,
   getScan,
   getMyScans,
   getAllScans,
   deleteScan,
-<<<<<<< HEAD
-=======
   getQuestionnaire,
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 } from "../controllers/classificationController";
 import { authenticate } from "../middleware/auth";
 import { uploadPhoto as uploadMiddleware } from "../middleware/upload";
@@ -24,9 +18,6 @@ const wrap = <Req extends Request>(fn: (req: Req, res: Response, next: NextFunct
     fn(req as Req, res, next).catch(next);
   };
 
-<<<<<<< HEAD
-// Protected: upload image + GPS for classification
-=======
 // Protected: pre-classify image (CV only, returns category + confidence)
 router.post("/classify", authenticate, uploadMiddleware, wrap(preClassify));
 
@@ -34,7 +25,6 @@ router.post("/classify", authenticate, uploadMiddleware, wrap(preClassify));
 router.get("/questionnaire", wrap(getQuestionnaire));
 
 // Protected: full scan (image + GPS + questionnaire → orchestrator)
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 router.post("/", authenticate, uploadMiddleware, wrap(scan));
 
 // Protected: get current user's scans
