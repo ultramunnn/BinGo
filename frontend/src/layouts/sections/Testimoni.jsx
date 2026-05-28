@@ -5,32 +5,14 @@ const Testimoni = () => {
   const testimonials = [
     {
       type: "text",
-<<<<<<< HEAD
-      quote: "Sodales ut etiam sit amet nisl. Semper feugiat nibh sed pulvinar proin amet nulla morbi eu non gravida.",
-      name: "James Brown",
-      role: "CEO Design Company - @YourHashtag",
-=======
       quote: "BinGo sangat membantu saat kami bersih-bersih pantai. Sekarang kami bisa langsung tahu jenis sampah dan cara daur ulangnya dengan tepat.",
       name: "Rian Ardiansyah",
       role: "Relawan Pantai - @BersihBersih",
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
       avatar: "https://i.pravatar.cc/150?u=1",
     },
     {
       type: "rating",
       stars: 5,
-<<<<<<< HEAD
-      title: "I really appreciate!!",
-      text: "Congue mauris rhoncus deaenean vel elit Morbi non arcu risus quis varius Tincidunt.",
-      name: "Hindley Earnshaw",
-      handle: "@Hindley.Es",
-    },
-    {
-      type: "image-large",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=500", 
-      caption: "Morbi non arcu risus quis varius. Tincidunt augue interdum velit euismod.",
-      signature: "Linda Brown",
-=======
       title: "Sangat Bermanfaat!!",
       text: "Aplikasinya mudah digunakan dan rekomendasi AI-nya akurat. Sekarang saya jadi lebih paham cara memilah sampah dengan benar.",
       name: "Dewi Lestari",
@@ -41,22 +23,10 @@ const Testimoni = () => {
       image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=500",
       caption: "Fitur pemetaan lokasi sangat membantu menemukan titik-titik pantai yang perlu dibersihkan.",
       signature: "Sari Wulandari",
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
     },
     {
       type: "top-avatar",
       avatar: "https://i.pravatar.cc/150?u=2",
-<<<<<<< HEAD
-      title: "Good Job!",
-      stars: 5,
-      text: "Semper feugiat nibh sed pulvinar proin gravida facilisi morbi tempus iaculis pharetra convallis posuere fermentum iaculis facilisi morbi.",
-    },
-    {
-      type: "wide-quote",
-      title: "I was very impressed!",
-      text: "Diam maecenas ultricies mi eget. In nulla posuere sollicitudin aliquam. Adiscing enim eu turpis egestas pretium aenean. Vitae ultricies leo integer malesuada nunc vel.",
-      name: "WILKINS MICAWBER",
-=======
       title: "Keren Banget!",
       stars: 5,
       text: "Sebagai mahasiswa lingkungan, BinGo jadi alat bantu yang luar biasa untuk riset dan aksi nyata di lapangan. Sangat direkomendasikan!",
@@ -66,19 +36,13 @@ const Testimoni = () => {
       title: "Saya Sangat Terkesan!",
       text: "Teknologi klasifikasi AI BinGo sangat akurat. Dengan satu foto, kami bisa langsung tahu jenis sampah dan cara penanganannya. Ini masa depan pengelolaan sampah.",
       name: "FAUZAN RAHMAN",
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
     },
     {
       type: "rating-center",
       avatar: "https://i.pravatar.cc/150?u=3",
       stars: 5,
-<<<<<<< HEAD
-      text: "Sodales ut etiam sit amet nisl. Semper feugiat nibh sed pulvinar proin amet nulla morbi eu non gravida",
-      signature: "Isabella Linton"
-=======
       text: "Aplikasi yang sangat inovatif! Membuat kegiatan bersih-bersih pantai jadi lebih terarah dan edukatif untuk semua kalangan.",
       signature: "Maya Putri"
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
     }
   ];
 

@@ -8,10 +8,7 @@ const ScannerViewfinder = ({
   isAnalyzing,
   cameraError,
   capturedImg,
-<<<<<<< HEAD
-=======
   scanResult,
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 }) => {
   return (
     <div className="bg-black rounded-t-2xl overflow-hidden relative">
@@ -130,13 +127,8 @@ const ScannerViewfinder = ({
             {/* OBJ (Left Side) */}
             <div className="absolute left-[5%] lg:left-[10%] top-[45%] flex items-center z-50 pointer-events-none">
               <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 lg:px-2 lg:py-1 rounded mr-1 lg:mr-2">
-<<<<<<< HEAD
-                <span className="text-[6px] lg:text-[8px] font-bold text-black/40 uppercase tracking-widest leading-none block">Obj</span>
-                <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight">Plastic Bottle</span>
-=======
                 <span className="text-[6px] lg:text-[8px] font-bold text-black/40 uppercase tracking-widest leading-none block">Objek</span>
                 <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight capitalize">{scanResult?.waste_type || "—"}</span>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
               </div>
               <svg width="80" height="40" viewBox="0 0 450 100" fill="none" className="overflow-visible lg:w-55 lg:h-20">
                 <path d="M0 10 H380 L420 70" stroke="black" strokeWidth="5" strokeLinecap="round" />
@@ -156,11 +148,7 @@ const ScannerViewfinder = ({
               </svg>
               <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 lg:px-2 lg:py-1 rounded ml-1 lg:ml-2">
                 <span className="text-[6px] lg:text-[8px] font-bold text-black/40 uppercase tracking-widest leading-none block">Conf</span>
-<<<<<<< HEAD
-                <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight">98.2%</span>
-=======
                 <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight">{scanResult?.confidence ? `${(scanResult.confidence * 100).toFixed(1)}%` : "—"}</span>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
               </div>
             </div>
 
@@ -173,13 +161,8 @@ const ScannerViewfinder = ({
                 <circle cx="450" cy="10" r="5" fill="black" />
               </svg>
               <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 lg:px-2 lg:py-1 rounded ml-1 lg:ml-2">
-<<<<<<< HEAD
-                <span className="text-[6px] lg:text-[8px] font-bold text-black/40 uppercase tracking-widest leading-none block">Recyc</span>
-                <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight">YES</span>
-=======
                 <span className="text-[6px] lg:text-[8px] font-bold text-black/40 uppercase tracking-widest leading-none block">Daur Ulang</span>
                 <span className="text-[10px] lg:text-xs font-extrabold text-black leading-tight">{scanResult?.recyclable === "Yes" ? "YA" : "TIDAK"}</span>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
               </div>
             </div>
           </div>

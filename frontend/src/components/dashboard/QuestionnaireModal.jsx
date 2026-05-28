@@ -1,33 +1,15 @@
 import React from "react";
-<<<<<<< HEAD
-import { MATERIAL_RULES, QUESTION_POOL } from "../../constants/dashboardData";
-
-const QuestionnaireModal = ({
-  showModal,
-  currentMaterial,
-=======
 
 const QuestionnaireModal = ({
   showModal,
   currentCategory,
   questions,
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
   questionIndex,
   setQuestionIndex,
   questionnaireAnswers,
   setQuestionnaireAnswers,
   onSubmit,
 }) => {
-<<<<<<< HEAD
-  if (!showModal || !currentMaterial) return null;
-
-  const activeFields = MATERIAL_RULES[currentMaterial] || [];
-  const progress = activeFields.length > 0
-    ? ((questionIndex + 1) / activeFields.length) * 100
-    : 0;
-  const currentKey = activeFields[questionIndex];
-  const currentQ = currentKey ? QUESTION_POOL[currentKey] : null;
-=======
   if (!showModal || !currentCategory) return null;
 
   // Use backend questions if available, otherwise show loading
@@ -48,7 +30,6 @@ const QuestionnaireModal = ({
     };
     return optionLabels[option] || option;
   };
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
@@ -63,11 +44,7 @@ const QuestionnaireModal = ({
             Kuesioner Pemilahan Sampah
           </h2>
           <p className="text-xs text-slate-400 mt-0.5">
-<<<<<<< HEAD
-            Jenis material: <span className="font-semibold text-slate-600">{currentMaterial}</span>
-=======
             Jenis material: <span className="font-semibold text-slate-600">{currentCategory}</span>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
           </p>
         </div>
 
@@ -75,11 +52,7 @@ const QuestionnaireModal = ({
         <div className="px-6 pt-3">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[10px] font-mono text-slate-400">
-<<<<<<< HEAD
-              Pertanyaan {questionIndex + 1} / {activeFields.length}
-=======
               Pertanyaan {questionIndex + 1} / {totalQuestions}
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
             </span>
             <span className="text-[10px] font-mono text-slate-400">
               {Math.round(progress)}%
@@ -95,13 +68,8 @@ const QuestionnaireModal = ({
 
         {/* Single question view */}
         <div className="flex-1 px-6 py-6 flex flex-col justify-center">
-<<<<<<< HEAD
-          {currentQ && (
-            <div key={`${currentKey}-${questionIndex}`} className="animate-fade-in">
-=======
           {currentQ ? (
             <div key={`${currentQ.field}-${questionIndex}`} className="animate-fade-in">
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
               {/* Back & Next navigation */}
               <div className="flex items-center justify-between mb-4 min-h-[20px]">
                 {questionIndex > 0 ? (
@@ -118,11 +86,7 @@ const QuestionnaireModal = ({
                   <span />
                 )}
 
-<<<<<<< HEAD
-                {questionIndex < activeFields.length - 1 && questionnaireAnswers[currentKey] && (
-=======
                 {questionIndex < totalQuestions - 1 && questionnaireAnswers[currentQ.field] && (
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                   <button
                     onClick={() => setQuestionIndex((i) => i + 1)}
                     className="flex items-center gap-1 text-[10px] text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
@@ -135,62 +99,36 @@ const QuestionnaireModal = ({
                 )}
               </div>
 
-<<<<<<< HEAD
-              <p className="text-sm font-semibold text-slate-800 mb-1">
-                {currentQ.question}
-              </p>
-              {currentQ.hint && (
-                <p className="text-[10px] text-slate-400 mb-4">{currentQ.hint}</p>
-              )}
-              {!currentQ.hint && <div className="mb-4" />}
-=======
               <p className="text-sm font-semibold text-slate-800 mb-4">
                 {currentQ.label}
               </p>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
 
               <div className="flex flex-col gap-2">
                 {currentQ.options.map((opt) => (
                   <button
                     key={opt}
                     onClick={() => {
-<<<<<<< HEAD
-                      setQuestionnaireAnswers((prev) => ({ ...prev, [currentKey]: opt }));
-                      if (questionIndex < activeFields.length - 1) {
-=======
                       setQuestionnaireAnswers((prev) => ({ ...prev, [currentQ.field]: opt }));
                       if (questionIndex < totalQuestions - 1) {
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                         setTimeout(() => setQuestionIndex((i) => i + 1), 200);
                       }
                     }}
                     className={`w-full text-left px-4 py-3 text-xs rounded-xl border transition-all cursor-pointer ${
-<<<<<<< HEAD
-                      questionnaireAnswers[currentKey] === opt
-=======
                       questionnaireAnswers[currentQ.field] === opt
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                         ? "bg-slate-900 text-white border-slate-900 shadow-sm"
                         : "bg-white text-slate-600 border-slate-200 hover:border-slate-400 hover:shadow-sm"
                     }`}
                   >
-<<<<<<< HEAD
-                    {opt}
-=======
                     {formatOption(currentQ.field, opt)}
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                   </button>
                 ))}
               </div>
             </div>
-<<<<<<< HEAD
-=======
           ) : (
             <div className="flex flex-col items-center gap-3 py-8">
               <div className="w-8 h-8 border-2 border-slate-200 border-t-slate-600 rounded-full animate-spin" />
               <p className="text-xs text-slate-400">Memuat pertanyaan...</p>
             </div>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
           )}
         </div>
 
@@ -198,11 +136,7 @@ const QuestionnaireModal = ({
         <div className="px-6 py-4 border-t border-slate-100">
           <button
             onClick={onSubmit}
-<<<<<<< HEAD
-            disabled={!activeFields.every((k) => questionnaireAnswers[k])}
-=======
             disabled={!questions.every((q) => questionnaireAnswers[q.field])}
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
             className="w-full bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl text-xs font-mono transition-all cursor-pointer"
           >
             KIRIM &amp; ANALISIS

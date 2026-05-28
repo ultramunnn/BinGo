@@ -21,11 +21,7 @@ const ControlBar = ({
         className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 text-slate-400 hover:text-white rounded-xl text-xs font-mono border border-white/10 transition-all active:scale-95"
       >
         <IconUpload className="w-4 h-4" />
-<<<<<<< HEAD
-        <span className="hidden sm:inline">UPLOAD</span>
-=======
         <span className="hidden sm:inline">UNGGAH</span>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
       </button>
 
       {/* Center: Shutter */}
@@ -51,11 +47,7 @@ const ControlBar = ({
         className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 disabled:opacity-30 text-slate-400 hover:text-white rounded-xl text-xs font-mono border border-white/10 transition-all active:scale-95"
       >
         <IconFlip className="w-4 h-4" />
-<<<<<<< HEAD
-        <span className="hidden sm:inline">FLIP</span>
-=======
         <span className="hidden sm:inline">BALIK</span>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
       </button>
     </div>
   );

@@ -386,11 +386,7 @@ const Maps = () => {
                 <StarRating rating={data.summary.average_rating} />
                 <span className="text-white/80 text-[10px] font-mono">
                   {data.summary.average_rating} ({data.summary.total_reviews}{" "}
-<<<<<<< HEAD
-                  reviews)
-=======
                   ulasan)
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                 </span>
               </div>
             </div>
