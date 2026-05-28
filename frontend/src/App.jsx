@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Hero from "./layouts/sections/Hero";
 import Navbar from "./components/Navbar";
+import Mission from "./layouts/sections/Mission";
 import Usage from "./layouts/sections/Usage";
-import Impact from "./layouts/sections/Impact";
+import Priority from "./layouts/sections/Priority";
 import Testimoni from "./layouts/sections/Testimoni";
 import CTA from "./layouts/sections/CTA";
 import Footer from "./layouts/sections/Footer";
@@ -12,8 +13,9 @@ const LandingPage = () => {
     <main className="relative bg-white">
       <Navbar />
       <Hero />
+      <Mission />
+      <Priority />
       <Usage />
-      <Impact />
       <CTA />
       <Testimoni />
       <Footer />
