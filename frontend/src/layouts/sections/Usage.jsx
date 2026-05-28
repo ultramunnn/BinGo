@@ -112,8 +112,6 @@ const Usage = () => {
       className="relative h-[1800vh] bg-white font-sans antialiased"
     >
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
-        {/* 1. TULISAN — chapter marker */}
-        {/* Mobile: fade only, di samping handphone */}
         <motion.div
           style={{ opacity: textOpacity }}
           className="absolute top-[15%] left-[5%] max-w-28 z-20 text-left md:hidden"
@@ -147,7 +145,6 @@ const Usage = () => {
           </p>
         </motion.div>
 
-        {/* Desktop: slide + fade, positioned at corners */}
         <motion.div
           style={{ x: textX, opacity: textOpacity }}
           className="absolute top-28 left-30 max-w-50 z-20 hidden md:block"
@@ -182,7 +179,6 @@ const Usage = () => {
           </p>
         </motion.div>
 
-        {/* BOTOL */}
         <motion.div
           style={{ y: bottleY }}
           className="absolute inset-0 flex items-center justify-center z-0 pointer-events-none"
