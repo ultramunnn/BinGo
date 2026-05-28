@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Hero from "./layouts/sections/Hero";
 import Navbar from "./components/Navbar";
+import Mission from "./layouts/sections/Mission";
 import Usage from "./layouts/sections/Usage";
-import Impact from "./layouts/sections/Impact";
-import Testimoni from "./layouts/sections/Testimoni";
+import Priority from "./layouts/sections/Priority";
+import Quotes from "./layouts/sections/Quotes";
 import CTA from "./layouts/sections/CTA";
 import Footer from "./layouts/sections/Footer";
 import Login from "./pages/Auth/Login";
@@ -22,14 +23,15 @@ import Settings from "./pages/Settings";
 
 const LandingPage = () => {
   return (
-    <main className="relative bg-white">
+    <main className="relative bg-white overflow-x-clip">
       <Navbar />
-      <section id="hero"><Hero /></section>
-      <section id="cara-penggunaan"><Usage /></section>
-      <section id="dampak"><Impact /></section>
+      <Hero />
+      <Mission />
+      <Priority />
+      <Usage />
       <CTA />
-      <section id="testimoni"><Testimoni /></section>
-      <section id="footer"><Footer /></section>
+      <Quotes />
+      <Footer />
     </main>
   );
 };
