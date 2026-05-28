@@ -10,7 +10,7 @@ import Footer from "./layouts/sections/Footer";
 
 const LandingPage = () => {
   return (
-    <main className="relative bg-white">
+    <main className="relative bg-white overflow-x-clip">
       <Navbar />
       <Hero />
       <Mission />
