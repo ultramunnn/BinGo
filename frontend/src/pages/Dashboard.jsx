@@ -8,6 +8,7 @@ import LeaderboardSection from "../components/dashboard/LeaderboardSection";
 import QuestionnaireModal from "../components/dashboard/QuestionnaireModal";
 import { FOCUS_W, FOCUS_H, leaderboardUsers, leaderboardBeaches } from "../constants/dashboardData";
 import { classifyImage, getQuestionnaire, submitScan } from "../services/scanService";
+import { getAllBeaches } from "../services/beachService";
 
 const Dashboard = () => {
   const fileInputRef = useRef(null);
@@ -36,6 +37,26 @@ const Dashboard = () => {
   // ── Scan Result ──
   const [scanResult, setScanResult] = useState(null);
 
+  // ── Category Confirmation State ──
+  const [showCategoryConfirm, setShowCategoryConfirm] = useState(false);
+
+  // ── Beach Detection State ──
+  const [nearbyBeach, setNearbyBeach] = useState(null);
+  const [beachCheckDone, setBeachCheckDone] = useState(false);
+
+  // Haversine distance in km
+  function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
   // ── GPS auto-capture on mount ──
   useEffect(() => {
     if (!navigator.geolocation) {
@@ -50,18 +71,34 @@ const Dashboard = () => {
         };
         setGpsCoords(coords);
 
-        // Reverse geocoding via Nominatim (OpenStreetMap)
-        try {
-          const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json&accept-language=id`
-          );
-          const data = await res.json();
-          if (data.display_name) {
-            setLocationName(data.display_name);
-          }
-        } catch {
-          // Silent fail — GPS coordinates still work
-        }
+        // Run reverse geocoding and beach fetch in parallel
+        const geocodePromise = fetch(
+          `https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json&accept-language=id`
+        )
+          .then((res) => res.json())
+          .then((data) => { if (data.display_name) setLocationName(data.display_name); })
+          .catch(() => {});
+
+        const beachTimeout = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("timeout")), 1000)
+        );
+        const beachPromise = Promise.race([getAllBeaches(), beachTimeout])
+          .then((beaches) => {
+            let closest = null;
+            let minDist = Infinity;
+            for (const beach of beaches) {
+              const dist = haversine(coords.latitude, coords.longitude, beach.latitude, beach.longitude);
+              if (dist <= 3 && dist < minDist) {
+                closest = { ...beach, distance: dist };
+                minDist = dist;
+              }
+            }
+            setNearbyBeach(closest);
+          })
+          .catch((err) => console.warn("Beach detection failed:", err))
+          .finally(() => setBeachCheckDone(true));
+
+        await Promise.all([geocodePromise, beachPromise]);
       },
       (err) => {
         setGpsError("Izin lokasi ditolak: " + err.message);
@@ -165,29 +202,50 @@ const Dashboard = () => {
       const category = cvResult.predicted_class; // e.g. "plastic"
       const categoryUpper = category.toUpperCase();
 
-      // Step 2: Fetch questionnaire from backend
-      try {
-        const questionnaireData = await getQuestionnaire(category);
-        setQuestionnaireQuestions(questionnaireData.questions || []);
-      } catch {
-        setQuestionnaireQuestions([]);
-      }
-
       setCurrentCategory(categoryUpper);
-      setQuestionnaireAnswers({});
-      setQuestionIndex(0);
-      setShowModal(true);
+      setScanStep(2);
+      setShowCategoryConfirm(true);
     } catch (err) {
       console.error("Classification failed:", err);
-      // Fallback: still open questionnaire with generic questions
-      setCurrentCategory("PLASTIC");
-      setQuestionnaireQuestions([]);
-      setQuestionnaireAnswers({});
-      setQuestionIndex(0);
-      setShowModal(true);
+      // File size validation error — show alert and reset
+      if (err.message?.includes("maksimal 600KB")) {
+        alert(err.message);
+        handleResetScan();
+        return;
+      }
+      setCurrentCategory("UNKNOWN");
+      setScanStep(2);
+      setShowCategoryConfirm(true);
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  // ═══════════════════════════════════════════════════════════════
+  // CONFIRMATION: User confirms category → fetch questionnaire → open modal
+  // ═══════════════════════════════════════════════════════════════
+  const handleCategoryConfirm = async () => {
+    setShowCategoryConfirm(false);
+    setIsAnalyzing(true);
+
+    try {
+      const questionnaireData = await getQuestionnaire(currentCategory.toLowerCase());
+      setQuestionnaireQuestions(questionnaireData.questions || []);
+    } catch {
+      setQuestionnaireQuestions([]);
+    }
+
+    setQuestionnaireAnswers({});
+    setQuestionIndex(0);
+    setShowModal(true);
+    setIsAnalyzing(false);
+  };
+
+  // ═══════════════════════════════════════════════════════════════
+  // REJECTION: User says category is wrong → retake photo
+  // ═══════════════════════════════════════════════════════════════
+  const handleCategoryReject = () => {
+    handleResetScan();
   };
 
   // ═══════════════════════════════════════════════════════════════
@@ -232,6 +290,7 @@ const Dashboard = () => {
     setCapturedFile(null);
     setScanResult(null);
     setCurrentCategory(null);
+    setShowCategoryConfirm(false);
     setQuestionnaireQuestions([]);
     setQuestionnaireAnswers({});
     // Re-start camera
@@ -293,6 +352,12 @@ const Dashboard = () => {
             cameraError={cameraError}
             capturedImg={capturedImg}
             scanResult={scanResult}
+            showCategoryConfirm={showCategoryConfirm}
+            currentCategory={currentCategory}
+            onCategoryConfirm={handleCategoryConfirm}
+            onCategoryReject={handleCategoryReject}
+            nearbyBeach={nearbyBeach}
+            beachCheckDone={beachCheckDone}
           />
 
           <ControlBar
