@@ -5,9 +5,6 @@ import { Menu } from "lucide-react";
 const Hero = () => {
   return (
     <section className="relative w-full h-screen overflow-hidden font-sans bg-black">
-<<<<<<< HEAD
-      
-=======
       {/* --- VIDEO BACKGROUND --- */}
       <div className="absolute inset-0 z-0">
         <video
@@ -39,7 +36,6 @@ const Hero = () => {
           JADILAH PERUBAHAN.
         </motion.h1>
       </div>
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
     </section>
   );
 };
