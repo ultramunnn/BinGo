@@ -1,10 +1,5 @@
 import React, { useRef, useState } from "react";
-import {
-  motion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from "framer-motion";
+import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import {
   ChevronLeft,
   Grid,
@@ -74,19 +69,10 @@ const Usage = () => {
     ],
   );
 
-  const headerText = useTransform(scrollYProgress,
+  const headerText = useTransform(
+    scrollYProgress,
     [0, 0.75, 0.95, 1],
-    [
-      "...",
-      "Scan",
-<<<<<<< HEAD
-      "Analysis Result",
-      "Finding Location",
-=======
-      "Hasil Analisis",
-      "Mencari Lokasi",
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
-    ],
+    ["...", "Scan", "Hasil Analisis", "Mencari Lokasi"],
   );
 
   // Motion Callout
@@ -128,18 +114,13 @@ const Usage = () => {
       className="relative h-[1000vh] bg-white font-sans antialiased"
     >
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
-
         {/* 1. TULISAN */}
         <motion.div
           style={{ x: textX }}
           className="absolute top-28 left-30 max-w-[200px] z-20"
         >
           <p className="text-[14px] font-medium leading-tight text-slate-800">
-<<<<<<< HEAD
-            1) <br /> we can help recycling when we go shopping
-=======
             1) <br /> Arahkan kamera ke sampah di sekitarmu
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
           </p>
         </motion.div>
 
@@ -148,11 +129,7 @@ const Usage = () => {
           className="absolute top-[40%] left-16 max-w-[200px] z-20"
         >
           <p className="text-[14px] font-medium leading-tight text-slate-800">
-<<<<<<< HEAD
-            2) <br /> tins, jars, old clothes, paper, gift wrapping paper
-=======
             2) <br /> AI mengenali jenis sampah secara otomatis
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
           </p>
         </motion.div>
 
@@ -161,11 +138,7 @@ const Usage = () => {
           className="absolute top-[50%] right-16 max-w-[200px] z-20"
         >
           <p className="text-[14px] font-medium leading-tight text-slate-800">
-<<<<<<< HEAD
-            3) <br /> we can reduce waste by reusing items
-=======
             3) <br /> Dapatkan tips daur ulang dari rekomendasi AI
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
           </p>
         </motion.div>
 
@@ -174,12 +147,7 @@ const Usage = () => {
           className="absolute top-[70%] right-50 max-w-[200px] z-20"
         >
           <p className="text-[14px] font-medium leading-tight text-slate-800">
-<<<<<<< HEAD
-            4) <br /> we’d better invest in rechargeable batteries and a battery
-            charger
-=======
             4) <br /> Lokasi pantai tercatat otomatis di peta
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
           </p>
         </motion.div>
 
@@ -205,17 +173,10 @@ const Usage = () => {
             >
               <div className="flex flex-col items-end mr-2">
                 <span className="text-black/50 text-[10px] font-bold uppercase tracking-widest leading-none">
-<<<<<<< HEAD
-                  Object:
-                </span>
-                <h2 className="text-xl font-extrabold text-black whitespace-nowrap leading-tight">
-                  Plastic Bottle
-=======
                   Objek:
                 </span>
                 <h2 className="text-xl font-extrabold text-black whitespace-nowrap leading-tight">
                   Botol Plastik
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                 </h2>
               </div>
 
@@ -270,11 +231,7 @@ const Usage = () => {
 
               <div className="flex flex-col items-start ml-2">
                 <span className="text-black/50 text-[10px] font-bold uppercase tracking-widest leading-none">
-<<<<<<< HEAD
-                  Confidence:
-=======
                   Kepercayaan:
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                 </span>
                 <h2 className="text-xl font-extrabold text-black whitespace-nowrap leading-tight">
                   98.2%
@@ -308,17 +265,10 @@ const Usage = () => {
 
               <div className="flex flex-col items-start ml-2">
                 <span className="text-black/50 text-[10px] font-bold uppercase tracking-widest leading-none">
-<<<<<<< HEAD
-                  Recyclable:
-                </span>
-                <h2 className="text-xl font-extrabold text-black whitespace-nowrap leading-tight">
-                  YES
-=======
                   Daur Ulang:
                 </span>
                 <h2 className="text-xl font-extrabold text-black whitespace-nowrap leading-tight">
                   YA
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                 </h2>
               </div>
             </motion.div>
@@ -370,11 +320,7 @@ const Usage = () => {
                         <div className="flex items-center gap-2 mb-1">
                           <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                           <h3 className="text-2xl font-black text-slate-800 tracking-tight">
-<<<<<<< HEAD
-                            Result Found
-=======
                             Hasil Ditemukan
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                           </h3>
                         </div>
 
@@ -382,11 +328,7 @@ const Usage = () => {
                           <div className="grid grid-cols-2 gap-3">
                             <div className="bg-slate-50 flex flex-col border border-slate-100 rounded-2xl p-4 shadow-sm">
                               <p className="text-[10px] text-slate-400 font-bold uppercase mb-2">
-<<<<<<< HEAD
-                                Material
-=======
                                 Sampah
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                               </p>
                               <div className="flex flex-col">
                                 <h4 className="text-base font-bold text-slate-800">
@@ -397,11 +339,7 @@ const Usage = () => {
 
                             <div className="bg-slate-50 flex flex-col items-center justify-center border border-slate-100 rounded-2xl shadow-sm">
                               <span className="text-[10px] text-slate-400 font-bold uppercase mb-2">
-<<<<<<< HEAD
-                                Recyclable
-=======
                                 Daur Ulang
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                               </span>
                               <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
                                 <svg
@@ -424,11 +362,7 @@ const Usage = () => {
 
                         <div className="flex flex-col">
                           <p className="text-[10px] font-black text-blue-600 uppercase tracking-wider mt-4 mb-0.5">
-<<<<<<< HEAD
-                            AI Recommendation
-=======
                             Rekomendasi AI
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                           </p>
                           <p className="text-[11px] leading-relaxed text-slate-600 font-medium">
                             Botol PET ini bernilai tinggi.{" "}
@@ -507,11 +441,7 @@ const Usage = () => {
                         <div className="grid grid-cols-2 gap-2 mb-4">
                           <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
                             <p className="text-[9px] font-bold text-slate-400 uppercase leading-none">
-<<<<<<< HEAD
-                              Total Scanned
-=======
                               Total Pindai
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                             </p>
                             <p className="text-lg font-black text-slate-800">
                               1,240{" "}
@@ -522,17 +452,10 @@ const Usage = () => {
                           </div>
                           <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
                             <p className="text-[9px] font-bold text-slate-400 uppercase leading-none">
-<<<<<<< HEAD
-                              Cleanliness Level
-                            </p>
-                            <p className="text-lg font-black text-green-600">
-                              Good
-=======
                               Tingkat Kebersihan
                             </p>
                             <p className="text-lg font-black text-green-600">
                               Baik
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                             </p>
                           </div>
                         </div>
@@ -591,11 +514,7 @@ const Usage = () => {
                     className="bg-[#b7eaf7] rounded-[1.5rem] p-3 flex items-center justify-between shadow-inner"
                   >
                     <button className="text-[10px] font-bold text-slate-700 px-2 uppercase">
-<<<<<<< HEAD
-                      Cancel
-=======
                       Batal
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                     </button>
                     <RotateCcw size={18} className="text-slate-600" />
                     <div className="w-12 h-12 bg-[#4a5568] rounded-full border-[3px] border-white shadow-lg flex items-center justify-center">
@@ -603,11 +522,7 @@ const Usage = () => {
                     </div>
                     <ImageIcon size={18} className="text-slate-600" />
                     <button className="text-[10px] font-bold text-slate-700 px-2 uppercase">
-<<<<<<< HEAD
-                      Done
-=======
                       Selesai
->>>>>>> cbba226 (feat(core): add AI waste scan service + implement user authentication flow)
                     </button>
                   </motion.div>
 
