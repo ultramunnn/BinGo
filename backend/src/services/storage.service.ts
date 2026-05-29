@@ -1,4 +1,4 @@
-import { supabase } from "../config/supabase";
+import { supabaseAdmin } from "../config/supabase";
 
 const DEFAULT_BUCKET = "avatars";
 
@@ -11,7 +11,7 @@ export async function uploadPhoto(
   const ext = mimeType.split("/")[1] || "jpg";
   const filePath = `${userId}/${Date.now()}.${ext}`;
 
-  const { error } = await supabase.storage
+  const { error } = await supabaseAdmin.storage
     .from(bucket)
     .upload(filePath, fileBuffer, {
       contentType: mimeType,
@@ -20,7 +20,7 @@ export async function uploadPhoto(
 
   if (error) return null;
 
-  const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
+  const { data } = supabaseAdmin.storage.from(bucket).getPublicUrl(filePath);
   return data.publicUrl;
 }
 
@@ -28,5 +28,5 @@ export async function deletePhoto(url: string, bucket: string = DEFAULT_BUCKET):
   const match = url.match(/\/object\/public\/[^/]+\/(.+)$/);
   if (!match) return;
 
-  await supabase.storage.from(bucket).remove([match[1]]);
+  await supabaseAdmin.storage.from(bucket).remove([match[1]]);
 }
