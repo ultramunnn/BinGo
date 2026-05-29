@@ -8,11 +8,21 @@ const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email.trim()) return;
     setError("");
+    setFieldErrors({});
+
+    if (!email.trim()) {
+      setFieldErrors({ email: "Email wajib diisi." });
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      setFieldErrors({ email: "Format email tidak valid." });
+      return;
+    }
     setLoading(true);
     try {
       await forgotPassword(email);
@@ -26,7 +36,6 @@ const ForgotPassword = () => {
 
   return (
     <AuthLayout>
-      {/* Back to Home */}
       <Link
         to="/"
         className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors group mb-8"
@@ -48,27 +57,65 @@ const ForgotPassword = () => {
         Kembali ke Beranda
       </Link>
 
-      {/* Icon */}
       <div className="flex justify-center mb-6">
-        <div className="w-16 h-16 rounded-2xl bg-[#4BAFBC]/10 flex items-center justify-center">
+        <div className="w-20 h-20 flex items-center justify-center">
           <svg
+            height="200px"
+            width="200px"
+            version="1.1"
+            id="Layer_1"
             xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-8 h-8 text-[#4BAFBC]"
+            viewBox="0 0 511.999 511.999"
+            fill="#000000"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
-            />
+            <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+            <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <g>
+                <path
+                  style={{fill: "#f57c00"}}
+                  d="M181.364,224.011h-63.97H86.333c-12.239,0-22.252,10.015-22.252,22.251v232.716 c0,12.238,10.015,22.251,22.252,22.251h339.336c12.234,0,22.249-10.015,22.249-22.251V246.262 c0-12.236-10.011-22.251-22.249-22.251h-31.06h-63.972H181.364L181.364,224.011z M213.351,330.561 c0-23.608,19.095-42.744,42.65-42.744c23.553,0,42.647,19.136,42.647,42.744c0,15.822-8.578,29.634-21.324,37.025l10.66,69.835 h-63.972l10.664-69.835C221.93,360.194,213.351,346.384,213.351,330.561z"
+                />
+                <path
+                  style={{fill: "#565164"}}
+                  d="M256.001,287.816c-23.554,0-42.65,19.136-42.65,42.744c0,15.822,8.579,29.634,21.327,37.025 l-10.664,69.835h63.972l-10.66-69.835c12.745-7.391,21.324-21.202,21.324-37.025C298.647,306.954,279.554,287.816,256.001,287.816z"
+                />
+                <path
+                  style={{fill: "#FFCD85"}}
+                  d="M330.637,133.384v90.628h63.972v-90.628c0-67.438-55.176-122.614-122.614-122.614h-31.989 c-67.437,0-122.614,55.176-122.614,122.614v90.628h63.97v-90.628c0-32.126,26.517-58.643,58.643-58.643h31.989 C304.124,74.74,330.637,101.258,330.637,133.384z"
+                />
+              </g>
+              <g>
+                <path
+                  style={{fill: "#000003"}}
+                  d="M425.669,213.241h-20.29v-79.858C405.379,59.836,345.543,0,271.996,0h-31.989 c-73.548,0-133.383,59.836-133.383,133.384v79.858H86.333c-18.208,0-33.022,14.813-33.022,33.021v232.716 c0,18.208,14.814,33.021,33.022,33.021h339.336c18.206,0,33.019-14.813,33.019-33.021V246.262 C458.688,228.054,443.875,213.241,425.669,213.241z M128.164,133.384c0-61.67,50.172-111.844,111.843-111.844h31.989 c61.671,0,111.844,50.173,111.844,111.844v79.858h-42.432v-79.858c0-38.275-31.137-69.413-69.411-69.413h-31.989 c-38.275,0-69.413,31.138-69.413,69.413v79.858h-42.43v-79.858H128.164z M319.867,213.241H192.134v-79.858 c0-26.397,21.475-47.873,47.873-47.873h31.989c26.396,0,47.871,21.475,47.871,47.873v79.858H319.867z M437.148,478.978 c0,6.33-5.149,11.481-11.479,11.481H86.333c-6.332,0-11.482-5.151-11.482-11.481V246.262c0-6.331,5.15-11.481,11.482-11.481 h339.336c6.33,0,11.479,5.15,11.479,11.481V478.978z"
+                />
+                <path
+                  style={{fill: "#000003"}}
+                  d="M309.417,330.561c0-29.508-23.963-53.514-53.417-53.514c-29.456,0-53.42,24.006-53.42,53.514 c0,16.491,7.674,32.019,20.429,42.084l-9.642,63.15c-0.475,3.105,0.429,6.263,2.476,8.643c2.046,2.383,5.03,3.752,8.17,3.752 h63.972c0.009,0,0.015,0,0.023,0c5.947,0,10.77-4.822,10.77-10.77c0-0.797-0.087-1.578-0.251-2.326l-9.535-62.449 C301.742,362.581,309.417,347.05,309.417,330.561z M271.921,358.268c-3.832,2.223-5.913,6.564-5.244,10.942l8.769,57.44h-38.894 l8.772-57.439c0.669-4.379-1.412-8.722-5.244-10.943c-9.844-5.708-15.958-16.324-15.958-27.708c0-17.631,14.3-31.974,31.88-31.974 c17.577,0,31.877,14.344,31.877,31.974C287.877,341.944,281.763,352.561,271.921,358.268z"
+                />
+                <path
+                  style={{fill: "#000003"}}
+                  d="M405.271,397.343c-5.948,0-10.77,4.824-10.77,10.77v50.467c0,5.947,4.822,10.77,10.77,10.77 s10.77-4.823,10.77-10.77v-50.467C416.041,402.166,411.22,397.343,405.271,397.343z"
+                />
+                <path
+                  style={{fill: "#000003"}}
+                  d="M405.271,365.687c-5.948,0-10.77,4.823-10.77,10.77v0.785c0,5.946,4.822,10.77,10.77,10.77 s10.77-4.824,10.77-10.77v-0.785C416.041,370.51,411.22,365.687,405.271,365.687z"
+                />
+                <path
+                  style={{fill: "#000003"}}
+                  d="M106.729,337.229c-5.947,0-10.77,4.823-10.77,10.77v0.784c0,5.948,4.823,10.77,10.77,10.77 s10.77-4.822,10.77-10.77v-0.784C117.499,342.052,112.678,337.229,106.729,337.229z"
+                />
+                <path
+                  style={{fill: "#000003"}}
+                  d="M106.729,255.891c-5.947,0-10.77,4.822-10.77,10.77v50.465c0,5.948,4.823,10.77,10.77,10.77 s10.77-4.822,10.77-10.77v-50.465C117.499,260.711,112.678,255.891,106.729,255.891z"
+                />
+              </g>
+            </g>
           </svg>
         </div>
       </div>
 
-      {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold text-[#333c4d] mb-2">
           Lupa Kata Sandi?
@@ -79,14 +126,15 @@ const ForgotPassword = () => {
         </p>
       </div>
 
-      {/* Error */}
       {error && (
-        <div className="mb-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600">
+        <div
+          onClick={() => setError("")}
+          className="mb-4 px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600 cursor-pointer hover:bg-red-100 transition-colors"
+        >
           {error}
         </div>
       )}
 
-      {/* Form */}
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div>
           <label className="block text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-[0.1em]">
@@ -95,11 +143,19 @@ const ForgotPassword = () => {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setFieldErrors({});
+            }}
             placeholder="contoh@email.com"
-            required
-            className="w-full px-5 py-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC] transition-all text-gray-700 bg-white placeholder:text-gray-200"
+            autoComplete="email"
+            className={`w-full px-5 py-4 rounded-xl border ${fieldErrors.email ? "border-red-400 focus:ring-red-200 focus:border-red-400" : "border-gray-200 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC]"} focus:outline-none focus:ring-2 transition-all text-gray-700 bg-white placeholder:text-gray-200`}
           />
+          {fieldErrors.email && (
+            <p className="text-xs text-red-500 mt-1 ml-1">
+              {fieldErrors.email}
+            </p>
+          )}
         </div>
 
         <button
@@ -111,7 +167,6 @@ const ForgotPassword = () => {
         </button>
       </form>
 
-      {/* Back to Login */}
       <div className="text-center mt-8">
         <p className="text-sm text-gray-400">
           Ingat kata sandi?{" "}

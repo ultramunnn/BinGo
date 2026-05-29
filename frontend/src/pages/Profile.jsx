@@ -1,18 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NavbarDashboard from "../components/NavbarDashboard";
+import LoadingSkeleton from "../components/LoadingSkeleton";
+import { useAuth } from "../context/AuthContext";
+import { getMyScans } from "../services/scanService";
 
 const IconScan = ({ className = "w-6 h-6" }) => (
-  <svg
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 7V5a2 2 0 0 1 2-2h2" />
     <path d="M17 3h2a2 2 0 0 1 2 2v2" />
     <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
@@ -22,16 +16,7 @@ const IconScan = ({ className = "w-6 h-6" }) => (
 );
 
 const IconTrash = ({ className = "w-6 h-6" }) => (
-  <svg
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M3 6h18" />
     <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
     <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
@@ -41,31 +26,45 @@ const IconTrash = ({ className = "w-6 h-6" }) => (
 );
 
 const IconEdit = ({ className = "w-4 h-4" }) => (
-  <svg
-    className={className}
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
+  <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
     <path d="m15 5 4 4" />
   </svg>
 );
 
-const user = {
-  name: "Ruben George",
-  email: "rubengeo@gmail.com",
-  avatar: "https://i.pravatar.cc/150?u=ruben",
-  totalScans: 8,
-  topMaterial: "Plastik",
-};
-
 const Profile = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [scans, setScans] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchScans = async () => {
+      try {
+        const result = await getMyScans(1, 100);
+        setScans(result.data || []);
+      } catch {
+        // silent
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchScans();
+  }, []);
+
+  const totalScans = scans.length;
+  const topMaterial = (() => {
+    if (!scans.length) return "-";
+    const count = {};
+    scans.forEach((s) => {
+      count[s.waste_type] = (count[s.waste_type] || 0) + 1;
+    });
+    return Object.entries(count).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "-";
+  })();
+
+  const avatarUrl = user?.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.full_name || "U")}&background=4BAFBC&color=fff&size=200`;
+
+  if (loading) return <LoadingSkeleton variant="profile" />;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -85,18 +84,18 @@ const Profile = () => {
 
           <div className="flex flex-col items-center pt-4">
             <img
-              src={user.avatar}
-              alt={user.name}
+              src={avatarUrl}
+              alt={user?.full_name || "User"}
               className="w-24 h-24 rounded-full mx-auto object-cover ring-4 ring-slate-100 shadow-sm"
             />
             <h1 className="mt-4 text-xl font-bold text-slate-900">
-              {user.name}
+              {user?.full_name || "Pengguna"}
             </h1>
-            <p className="mt-1 text-sm text-slate-500">{user.email}</p>
+            <p className="mt-1 text-sm text-slate-500">{user?.email || ""}</p>
           </div>
         </section>
 
-        <section className="mt-6">
+        <section className="mt-6 mb-14 md:mb-2">
           <h2 className="text-lg font-semibold text-slate-900 mb-4">
             Dampak Hijau Kamu
           </h2>
@@ -108,7 +107,7 @@ const Profile = () => {
               </div>
               <div>
                 <p className="text-3xl font-bold text-slate-900 leading-none">
-                  {user.totalScans}
+                  {loading ? "..." : totalScans}
                 </p>
                 <p className="text-sm text-slate-500 mt-1">Kali Scan</p>
               </div>
@@ -120,7 +119,7 @@ const Profile = () => {
               </div>
               <div>
                 <p className="text-3xl font-bold text-slate-900 leading-none">
-                  {user.topMaterial}
+                  {loading ? "..." : topMaterial}
                 </p>
                 <p className="text-sm text-slate-500 mt-1">Sampah Terbanyak</p>
               </div>

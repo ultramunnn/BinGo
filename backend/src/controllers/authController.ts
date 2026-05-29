@@ -33,6 +33,12 @@ export const changePassword = async (req: Request, res: Response, next: NextFunc
   res.json({ success: true, message: "Password changed successfully" });
 };
 
+export const updatePassword = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  const { current_password, new_password } = req.body;
+  await AuthService.updatePassword(req.user!.id, current_password, new_password);
+  res.json({ success: true, message: "Password berhasil diperbarui" });
+};
+
 export const getMe = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const user = await AuthService.getProfile(req.user!.id);
   res.json({ success: true, user });

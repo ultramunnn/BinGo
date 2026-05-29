@@ -50,6 +50,11 @@ export const validateChangePassword = validate([
   { field: "new_password", required: true, minLength: 6 },
 ]);
 
+export const validateUpdatePassword = validate([
+  { field: "current_password", required: true },
+  { field: "new_password", required: true, minLength: 6 },
+]);
+
 export const validateUpdateProfile = (
   req: Request,
   res: Response,

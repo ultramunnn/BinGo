@@ -5,23 +5,21 @@ const api = axios.create({
   baseURL: "/api",
 });
 
-// Attach JWT token to every request
 api.interceptors.request.use((config) => {
   const token = getToken();
-  console.log("[API] Request:", config.method?.toUpperCase(), config.url, "Token:", token ? token.substring(0, 20) + "..." : "MISSING");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// Handle 401 responses globally
+const AUTH_ENDPOINTS = ["/auth/login", "/auth/register", "/auth/reset-password", "/auth/change-password"];
+
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
-      console.log("[API] 401 received:", err.response?.data);
-      console.log("[API] Request headers:", err.config?.headers);
+    const isAuthEndpoint = AUTH_ENDPOINTS.some((path) => err.config?.url?.includes(path));
+    if (err.response?.status === 401 && !isAuthEndpoint) {
       removeToken();
       removeUser();
       window.location.href = "/login";

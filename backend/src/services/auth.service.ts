@@ -72,6 +72,22 @@ export async function changePassword(token: string, newPassword: string) {
   await ResetTokenModel.markUsed(token);
 }
 
+export async function updatePassword(userId: string, currentPassword: string, newPassword: string) {
+  const user = await UserModel.findByEmail(
+    (await UserModel.getSanitized(userId))?.email || ""
+  );
+  if (!user) {
+    throw new AuthError(404, "User not found");
+  }
+
+  const valid = await UserModel.verifyPassword(user, currentPassword);
+  if (!valid) {
+    throw new AuthError(401, "Password saat ini salah");
+  }
+
+  await UserModel.updatePassword(userId, newPassword);
+}
+
 export async function getProfile(userId: string) {
   const user = await UserModel.getSanitized(userId);
   if (!user) {
