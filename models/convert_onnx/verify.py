@@ -12,7 +12,7 @@ CLASS_NAMES = ["glass", "metal", "paper", "plastic", "textile"]
 
 
 def verify_cv():
-    path = os.path.join(ONNX_DIR, "waste_classifier.onnx")
+    path = os.path.join(ONNX_DIR, "waste_classifier_v1.onnx")
     print(f"\n{'='*50}")
     print(f"CV Model: {path}")
     print(f"{'='*50}")
