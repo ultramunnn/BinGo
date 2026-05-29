@@ -1,19 +1,33 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '../../layouts/AuthLayout';
-import { login } from '../../services/authService';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setFieldErrors({});
+
+    const errors = {};
+    if (!email.trim()) errors.email = 'Email wajib diisi.';
+    else if (!/\S+@\S+\.\S+/.test(email)) errors.email = 'Format email tidak valid.';
+    if (!password) errors.password = 'Kata sandi wajib diisi.';
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      return;
+    }
+
     setLoading(true);
     try {
       await login(email, password);
@@ -44,7 +58,16 @@ const Login = () => {
         </p>
       </div>
 
-      <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        {error && (
+          <div
+            onClick={() => setError("")}
+            className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600 cursor-pointer hover:bg-red-100 transition-colors"
+          >
+            {error}
+          </div>
+        )}
+
         <div>
           <label className="block text-xs font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">
             Email
@@ -52,11 +75,12 @@ const Login = () => {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { setEmail(e.target.value); setFieldErrors((prev) => ({ ...prev, email: '' })); }}
             placeholder="contoh@email.com"
-            required
-            className="w-full px-5 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4BAFBC]/20 focus:border-[#4BAFBC] transition-all text-gray-700 bg-white placeholder:text-gray-300"
+            autoComplete="email"
+            className={`w-full px-5 py-3 rounded-xl border ${fieldErrors.email ? 'border-red-400 focus:ring-red-200 focus:border-red-400' : 'border-gray-200 focus:ring-[#4BAFBC]/20 focus:border-[#4BAFBC]'} focus:outline-none focus:ring-2 transition-all text-gray-700 bg-white placeholder:text-gray-300`}
           />
+          {fieldErrors.email && <p className="text-xs text-red-500 mt-1 ml-1">{fieldErrors.email}</p>}
         </div>
 
         <div className="relative">
@@ -66,11 +90,12 @@ const Login = () => {
           <input
             type={showPassword ? 'text' : 'password'}
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => { setPassword(e.target.value); setFieldErrors((prev) => ({ ...prev, password: '' })); }}
             placeholder="Masukkan kata sandi"
-            required
-            className="w-full px-5 py-3 pr-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4BAFBC]/20 focus:border-[#4BAFBC] transition-all text-gray-700 bg-white placeholder:text-gray-300"
+            autoComplete="current-password"
+            className={`w-full px-5 py-3 pr-12 rounded-xl border ${fieldErrors.password ? 'border-red-400 focus:ring-red-200 focus:border-red-400' : 'border-gray-200 focus:ring-[#4BAFBC]/20 focus:border-[#4BAFBC]'} focus:outline-none focus:ring-2 transition-all text-gray-700 bg-white placeholder:text-gray-300`}
           />
+          {fieldErrors.password && <p className="text-xs text-red-500 mt-1 ml-1">{fieldErrors.password}</p>}
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
@@ -95,8 +120,12 @@ const Login = () => {
           </Link>
         </div>
 
-        <button className="w-full bg-[#333c4d] text-white py-3.5 rounded-xl font-bold text-sm hover:bg-[#28303f] active:scale-[0.98] transition-all shadow-sm">
-          Masuk
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[#333c4d] text-white py-3.5 rounded-xl font-bold text-sm hover:bg-[#28303f] active:scale-[0.98] disabled:bg-gray-300 disabled:cursor-not-allowed transition-all shadow-sm"
+        >
+          {loading ? "Masuk..." : "Masuk"}
         </button>
       </form>
 

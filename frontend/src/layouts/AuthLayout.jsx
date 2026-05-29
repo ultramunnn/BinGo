@@ -10,7 +10,7 @@ const AuthLayout = ({ children }) => {
           alt="Beach illustration"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/40 z-1" />\
+        <div className="absolute inset-0 bg-black/40 z-1" />
         <div className="relative z-20 flex flex-col justify-between h-full px-10 py-8">
           <Link to="/" className="flex items-center gap-2 w-fit">
             <img
@@ -40,7 +40,7 @@ const AuthLayout = ({ children }) => {
       </div>
 
       <div className="w-full lg:w-1/2 h-full flex flex-col relative">
-        <div className="lg:hidden flex items-center ml-8 justify-between px-6 py-5">
+        <div className="lg:hidden flex items-center justify-between px-6 py-5">
           <Link to="/" className="flex items-center gap-2 w-fit">
             <img
               src="/assets/images/logo-black.svg"

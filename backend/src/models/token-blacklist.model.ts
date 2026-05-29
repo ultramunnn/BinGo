@@ -1,11 +1,11 @@
-import { supabase } from "../config/supabase";
+import { supabaseAdmin } from "../config/supabase";
 import { decodeToken } from "../services/jwt.service";
 
 export async function addToBlacklist(token: string): Promise<boolean> {
   const decoded = decodeToken(token);
   if (!decoded?.exp) return false;
 
-  const { error } = await supabase.from("token_blacklist").insert({
+  const { error } = await supabaseAdmin.from("token_blacklist").insert({
     token,
     expires_at: new Date(decoded.exp * 1000).toISOString(),
   });
@@ -14,7 +14,7 @@ export async function addToBlacklist(token: string): Promise<boolean> {
 }
 
 export async function isBlacklisted(token: string): Promise<boolean> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from("token_blacklist")
     .select("token")
     .eq("token", token)
@@ -25,7 +25,7 @@ export async function isBlacklisted(token: string): Promise<boolean> {
 }
 
 export async function cleanExpired(): Promise<void> {
-  await supabase
+  await supabaseAdmin
     .from("token_blacklist")
     .delete()
     .lt("expires_at", new Date().toISOString());

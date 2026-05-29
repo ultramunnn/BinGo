@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import NavbarDashboard from "../components/NavbarDashboard";
+import LoadingSkeleton from "../components/LoadingSkeleton";
 import { getMyScans } from "../services/scanService";
 import { isAuthenticated } from "../services/authService";
 
@@ -141,6 +142,8 @@ const History = () => {
     return Object.entries(count).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "-";
   })();
 
+  if (loading) return <LoadingSkeleton variant="history" />;
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
       <NavbarDashboard />
@@ -152,7 +155,7 @@ const History = () => {
         </div>
 
         {/* Stats */}
-        {!loading && !error && (
+        {!error && (
           <div className="grid grid-cols-2 gap-3 mb-6">
             <StatBox label="Total Scan" value={totalScans} />
             <StatBox label="Material Terbanyak" value={topMaterial} highlight />
@@ -202,14 +205,14 @@ const History = () => {
         )}
 
         {/* Cards */}
-        {!loading && !error && filteredData.length > 0 && (
+        {!error && filteredData.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {filteredData.map((item) => <HistoryCard key={item.id} item={item} />)}
           </div>
         )}
 
         {/* Empty */}
-        {!loading && !error && filteredData.length === 0 && (
+        {!error && filteredData.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
               <IconScan className="w-8 h-8 text-slate-300" />

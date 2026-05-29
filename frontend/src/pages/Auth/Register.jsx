@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout";
-import { register } from "../../services/authService";
+import { useAuth } from "../../context/AuthContext";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { register } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -13,22 +14,26 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setFieldErrors({});
 
-    if (password !== confirmPassword) {
-      setError("Kata sandi dan konfirmasi tidak cocok.");
-      return;
-    }
-    if (password.length < 6) {
-      setError("Kata sandi minimal 6 karakter.");
-      return;
-    }
-    if (!agreed) {
-      setError("Anda harus menyetujui Syarat & Ketentuan.");
+    const errors = {};
+    if (!fullName.trim()) errors.fullName = "Nama lengkap wajib diisi.";
+    if (!email.trim()) errors.email = "Email wajib diisi.";
+    else if (!/\S+@\S+\.\S+/.test(email)) errors.email = "Format email tidak valid.";
+    if (!password) errors.password = "Kata sandi wajib diisi.";
+    else if (password.length < 6) errors.password = "Kata sandi minimal 6 karakter.";
+    if (!confirmPassword) errors.confirmPassword = "Konfirmasi kata sandi wajib diisi.";
+    else if (password !== confirmPassword) errors.confirmPassword = "Kata sandi dan konfirmasi tidak cocok.";
+    if (!agreed) errors.agreed = "Anda harus menyetujui Syarat & Ketentuan.";
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       return;
     }
 
@@ -73,7 +78,16 @@ const Register = () => {
         </p>
       </div>
 
-      <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+      <form className="space-y-5" onSubmit={handleSubmit}>
+        {error && (
+          <div
+            onClick={() => setError("")}
+            className="px-4 py-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600 cursor-pointer hover:bg-red-100 transition-colors"
+          >
+            {error}
+          </div>
+        )}
+
         <div>
           <label className="block text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-[0.1em]">
             Nama Lengkap
@@ -97,9 +111,13 @@ const Register = () => {
             </div>
             <input
               type="text"
+              value={fullName}
+              onChange={(e) => { setFullName(e.target.value); setFieldErrors((prev) => ({ ...prev, fullName: "" })); }}
               placeholder="John Doe"
-              className="w-full pl-10 pr-5 py-3.5 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC] transition-all text-sm text-gray-700 bg-white placeholder:text-gray-300"
+              autoComplete="name"
+              className={`w-full pl-10 pr-5 py-3.5 rounded-xl border ${fieldErrors.fullName ? "border-red-400 focus:ring-red-200 focus:border-red-400" : "border-gray-100 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC]"} focus:outline-none focus:ring-2 transition-all text-sm text-gray-700 bg-white placeholder:text-gray-300`}
             />
+            {fieldErrors.fullName && <p className="text-xs text-red-500 mt-1 ml-1">{fieldErrors.fullName}</p>}
           </div>
         </div>
 
@@ -126,9 +144,13 @@ const Register = () => {
             </div>
             <input
               type="email"
+              value={email}
+              onChange={(e) => { setEmail(e.target.value); setFieldErrors((prev) => ({ ...prev, email: "" })); }}
               placeholder="contoh@email.com"
-              className="w-full pl-10 pr-5 py-3.5 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC] transition-all text-sm text-gray-700 bg-white placeholder:text-gray-300"
+              autoComplete="email"
+              className={`w-full pl-10 pr-5 py-3.5 rounded-xl border ${fieldErrors.email ? "border-red-400 focus:ring-red-200 focus:border-red-400" : "border-gray-100 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC]"} focus:outline-none focus:ring-2 transition-all text-sm text-gray-700 bg-white placeholder:text-gray-300`}
             />
+            {fieldErrors.email && <p className="text-xs text-red-500 mt-1 ml-1">{fieldErrors.email}</p>}
           </div>
         </div>
 
@@ -155,9 +177,13 @@ const Register = () => {
             </div>
             <input
               type={showPassword ? "text" : "password"}
-              placeholder="Minimal 8 karakter"
-              className="w-full pl-10 pr-12 py-3.5 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC] transition-all text-sm text-gray-700 bg-white placeholder:text-gray-300"
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); setFieldErrors((prev) => ({ ...prev, password: "" })); }}
+              placeholder="Minimal 6 karakter"
+              autoComplete="new-password"
+              className={`w-full pl-10 pr-12 py-3.5 rounded-xl border ${fieldErrors.password ? "border-red-400 focus:ring-red-200 focus:border-red-400" : "border-gray-100 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC]"} focus:outline-none focus:ring-2 transition-all text-sm text-gray-700 bg-white placeholder:text-gray-300`}
             />
+            {fieldErrors.password && <p className="text-xs text-red-500 mt-1 ml-1">{fieldErrors.password}</p>}
             <button
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
@@ -221,9 +247,13 @@ const Register = () => {
             </div>
             <input
               type={showConfirm ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => { setConfirmPassword(e.target.value); setFieldErrors((prev) => ({ ...prev, confirmPassword: "" })); }}
               placeholder="Ulangi kata sandi"
-              className="w-full pl-10 pr-12 py-3.5 rounded-xl border border-gray-100 focus:outline-none focus:ring-2 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC] transition-all text-sm text-gray-700 bg-white placeholder:text-gray-300"
+              autoComplete="new-password"
+              className={`w-full pl-10 pr-12 py-3.5 rounded-xl border ${fieldErrors.confirmPassword ? "border-red-400 focus:ring-red-200 focus:border-red-400" : "border-gray-100 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC]"} focus:outline-none focus:ring-2 transition-all text-sm text-gray-700 bg-white placeholder:text-gray-300`}
             />
+            {fieldErrors.confirmPassword && <p className="text-xs text-red-500 mt-1 ml-1">{fieldErrors.confirmPassword}</p>}
             <button
               type="button"
               onClick={() => setShowConfirm((prev) => !prev)}
@@ -268,9 +298,10 @@ const Register = () => {
           <input
             type="checkbox"
             checked={agreed}
-            onChange={() => setAgreed(!agreed)}
+            onChange={() => { setAgreed(!agreed); setFieldErrors((prev) => ({ ...prev, agreed: "" })); }}
             className="w-4 h-4 rounded border-gray-300 text-[#4BAFBC] focus:ring-[#4BAFBC] mt-0.5"
           />
+          <div>
           <p className="text-[12px] text-gray-400 leading-relaxed">
             Saya setuju dengan{" "}
             <Link
@@ -287,10 +318,16 @@ const Register = () => {
               Kebijakan Privasi
             </Link>
           </p>
+          {fieldErrors.agreed && <p className="text-xs text-red-500 mt-1">{fieldErrors.agreed}</p>}
+          </div>
         </div>
 
-        <button className="w-full bg-[#3d4a5d] text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-slate-200 hover:bg-[#2f3948] transition-all">
-          Buat Akun
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[#3d4a5d] text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-slate-200 hover:bg-[#2f3948] disabled:bg-gray-300 disabled:cursor-not-allowed transition-all"
+        >
+          {loading ? "Mendaftar..." : "Buat Akun"}
         </button>
       </form>
 
