@@ -1,4 +1,4 @@
-import { supabase } from "../config/supabase";
+﻿import { supabaseAdmin } from "../config/supabase";
 import type { ClassificationRecord } from "../types/classification";
 
 const TABLE = "classification_history";
@@ -25,7 +25,7 @@ interface PaginatedResult {
 }
 
 export async function create(input: ClassificationCreateInput): Promise<ClassificationRecord | null> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from(TABLE)
     .insert(input)
     .select()
@@ -35,7 +35,7 @@ export async function create(input: ClassificationCreateInput): Promise<Classifi
 }
 
 export async function findById(id: string): Promise<ClassificationRecord | null> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from(TABLE)
     .select()
     .eq("id", id)
@@ -46,7 +46,7 @@ export async function findById(id: string): Promise<ClassificationRecord | null>
 
 export async function findByUserId(userId: string, page = 1, limit = 20): Promise<PaginatedResult> {
   return fetchPaginated(
-    supabase.from(TABLE).select("*", { count: "exact" }).eq("user_id", userId),
+    supabaseAdmin.from(TABLE).select("*", { count: "exact" }).eq("user_id", userId),
     page,
     limit
   );
@@ -54,14 +54,14 @@ export async function findByUserId(userId: string, page = 1, limit = 20): Promis
 
 export async function findAll(page = 1, limit = 20): Promise<PaginatedResult> {
   return fetchPaginated(
-    supabase.from(TABLE).select("*", { count: "exact" }),
+    supabaseAdmin.from(TABLE).select("*", { count: "exact" }),
     page,
     limit
   );
 }
 
 export async function remove(id: string, userId: string): Promise<boolean> {
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from(TABLE)
     .delete()
     .eq("id", id)
