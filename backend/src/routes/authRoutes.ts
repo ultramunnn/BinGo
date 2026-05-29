@@ -8,6 +8,7 @@ import {
   getMe,
   updateProfile,
   uploadPhoto,
+  updatePassword,
 } from "../controllers/authController";
 import { authenticate } from "../middleware/auth";
 import { uploadPhoto as uploadMiddleware } from "../middleware/upload";
@@ -17,6 +18,7 @@ import {
   validateResetPassword,
   validateChangePassword,
   validateUpdateProfile,
+  validateUpdatePassword,
 } from "../middleware/validate";
 
 const router = Router();
@@ -34,6 +36,7 @@ router.post("/change-password", validateChangePassword, wrap(changePassword));
 router.post("/logout", authenticate, wrap(logout));
 router.get("/me", authenticate, wrap(getMe));
 router.put("/profile", authenticate, validateUpdateProfile, wrap(updateProfile));
+router.put("/password", authenticate, validateUpdatePassword, wrap(updatePassword));
 router.post("/photo", authenticate, uploadMiddleware, wrap(uploadPhoto));
 
 export default router;

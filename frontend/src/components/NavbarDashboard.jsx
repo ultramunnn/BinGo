@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getStoredUser, logout, isAuthenticated } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
-// --- Reusable Icons Inside Component ---
 const IconUser = ({ className = "w-4 h-4" }) => (
   <svg
     className={className}
@@ -146,17 +145,15 @@ const navItems = [
 const NavbarDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = getStoredUser();
+  const { user, logout } = useAuth();
   const [profileOpen, setProfileOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const profileRef = useRef(null);
 
-  // Derive active menu from current path
   const activeMenu = navItems.find((item) => item.path === location.pathname)?.name || null;
   const isProfilePage = location.pathname === "/profile";
   const isSettingsPage = location.pathname === "/settings";
 
-  // Menangani penutupan dropdown jika klik di luar area komponen
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
@@ -180,7 +177,6 @@ const NavbarDashboard = () => {
             />
           </div>
 
-          {/* DYNAMIC NAV LINKS — desktop */}
           <nav className="hidden lg:flex items-center gap-1">
             {navItems.map(({ name, path }) => (
               <button
@@ -202,16 +198,14 @@ const NavbarDashboard = () => {
             ))}
           </nav>
 
-          {/* RIGHT ACTIONS UTILITIES */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* USER PROFILE DROPDOWN */}
             <div ref={profileRef} className="relative">
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
                 className="flex items-center gap-2 p-1 cursor-pointer transition-colors"
               >
                 <img
-                  src="https://i.pravatar.cc/150?u=ruben"
+                  src={user?.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.full_name || "U")}&background=4BAFBC&color=fff`}
                   alt="Avatar"
                   className={`w-8 h-8 rounded-full ring-2 shadow-sm transition-all ${
                     isProfilePage ? "ring-slate-900" : "ring-white"
@@ -222,7 +216,6 @@ const NavbarDashboard = () => {
                 />
               </button>
 
-              {/* FLOATING CARD DROPDOWN */}
               <div
                 className={`absolute right-0 top-full mt-2 w-64 bg-white rounded-xl border border-slate-200/60 shadow-lg shadow-slate-200/50 overflow-hidden transition-all duration-200 origin-top-right ${
                   profileOpen
@@ -265,7 +258,7 @@ const NavbarDashboard = () => {
                   <button
                     onClick={async () => {
                       await logout();
-                      navigate("/login");
+                      navigate("/login", { replace: true });
                     }}
                     className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition-colors"
                   >
@@ -278,7 +271,6 @@ const NavbarDashboard = () => {
         </div>
       </header>
 
-      {/* MOBILE BOTTOM NAV */}
       <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/90 backdrop-blur-md border-t border-slate-200/60 safe-area-inset">
         <div className="flex items-center justify-around h-16 px-2">
           {navItems.map(({ name, Icon, path }) => (

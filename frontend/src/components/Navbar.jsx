@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
+  const { isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -101,9 +103,15 @@ const Navbar = () => {
             </ul>
 
             <div className="flex items-center gap-4">
-              <Link to="/login" className="bg-black text-white px-8 py-2.5 rounded-full text-xs font-bold shadow-lg active:scale-95 transition-transform">
-                Masuk
-              </Link>
+              {isAuthenticated ? (
+                <Link to="/dashboard" className="bg-black text-white px-8 py-2.5 rounded-full text-xs font-bold shadow-lg active:scale-95 transition-transform">
+                  Dashboard
+                </Link>
+              ) : (
+                <Link to="/login" className="bg-black text-white px-8 py-2.5 rounded-full text-xs font-bold shadow-lg active:scale-95 transition-transform">
+                  Masuk
+                </Link>
+              )}
               <button 
                 onClick={() => setIsOpen(!isOpen)}
                 className={`p-1 transition-colors ${isFullState ? 'text-black' : 'text-white'}`}
@@ -152,7 +160,7 @@ const Navbar = () => {
 
                     <div className="border border-gray-100 rounded-2xl p-7 flex items-center justify-between gap-6 bg-gray-50 shadow-sm">
                       <div className="flex-1">
-                        <h3 className="text-lg font-bold text-gray-900 leading-tight">
+                        <h3 className="text-lg font-bold font-serif text-gray-900 leading-tight">
                           Pemindaian kini makin penting & mudah diakses.
                         </h3>
                       </div>
