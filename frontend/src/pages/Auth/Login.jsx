@@ -7,7 +7,6 @@ const Login = () => {
 
   return (
     <AuthLayout>
-      {/* Back to Home */}
       <Link
         to="/"
         className="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-gray-600 transition-colors group mb-8"
@@ -18,7 +17,6 @@ const Login = () => {
         Kembali ke Beranda
       </Link>
 
-      {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-[#333c4d] mb-2">Masuk</h1>
         <p className="text-sm text-gray-400">
@@ -26,7 +24,6 @@ const Login = () => {
         </p>
       </div>
 
-      {/* Form */}
       <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
         <div>
           <label className="block text-xs font-medium text-gray-400 mb-1.5 ml-1 uppercase tracking-wider">
@@ -66,20 +63,17 @@ const Login = () => {
           </button>
         </div>
 
-        {/* Forgot Password */}
         <div className="flex justify-end">
           <Link to="/forgot-password" className="text-xs font-medium text-[#4BAFBC] hover:text-[#3a9da9] transition-colors">
             Lupa kata sandi?
           </Link>
         </div>
 
-        {/* Submit Button */}
         <button className="w-full bg-[#333c4d] text-white py-3.5 rounded-xl font-bold text-sm hover:bg-[#28303f] active:scale-[0.98] transition-all shadow-sm">
           Masuk
         </button>
       </form>
 
-      {/* Divider */}
       <div className="relative my-7">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-gray-100"></div>
@@ -89,7 +83,6 @@ const Login = () => {
         </div>
       </div>
 
-      {/* Social Login */}
       <div className="flex gap-3">
         <button className="flex-1 flex items-center justify-center gap-2.5 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 active:scale-[0.98] transition-all text-sm font-medium text-gray-600">
           <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -98,20 +91,10 @@ const Login = () => {
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          Google
-        </button>
-        <button className="flex-1 flex items-center justify-center gap-2.5 py-3 border border-gray-200 rounded-xl hover:bg-gray-50 active:scale-[0.98] transition-all text-sm font-medium text-gray-600">
-          <svg className="w-5 h-5" viewBox="0 0 23 23">
-            <path d="M11 0H0v11h11V0z" fill="#F25022"/>
-            <path d="M23 0H12v11h11V0z" fill="#7FBA00"/>
-            <path d="M11 12H0v11h11V12z" fill="#00A4EF"/>
-            <path d="M23 12H12v11h11V12z" fill="#FFB900"/>
-          </svg>
-          Microsoft
+          Masuk dengan Google
         </button>
       </div>
 
-      {/* Register Link */}
       <div className="text-center mt-8 space-y-3">
         <p className="text-sm text-gray-400">
           Belum punya akun?{' '}

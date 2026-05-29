@@ -6,14 +6,14 @@ import Footer from "../layouts/sections/Footer";
 const Terms = () => {
   return (
     <main className="relative bg-white">
-      <Navbar />
-
-      {/* Content */}
-      <div className="max-w-[800px] mx-auto px-6 md:px-12 pt-32 pb-20 font-sans">
-        {/* Breadcrumb */}
+      <div className="max-w-[800px] mx-auto px-6 md:px-12 pt-10 pb-20 font-sans">
         <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
           <Link to="/" className="hover:text-gray-600 transition-colors">
             Beranda
+          </Link>
+          <span>/</span>
+           <Link to="/privacy" className="hover:text-gray-600 transition-colors">
+            Kebijakan Privasi
           </Link>
           <span>/</span>
           <span className="text-gray-600 font-medium">Syarat & Ketentuan</span>
@@ -165,10 +165,10 @@ const Terms = () => {
               Jika Anda memiliki pertanyaan mengenai syarat dan ketentuan ini,
               silakan hubungi kami melalui email di{" "}
               <a
-                href="mailto:hello@bingo.id"
+                href="mailto:bingoailenscleaner@gmail.com"
                 className="text-[#4BAFBC] hover:underline"
               >
-                hello@bingo.id
+                bingoailenscleaner@gmail.com
               </a>
               .
             </p>

@@ -6,14 +6,14 @@ import Footer from "../layouts/sections/Footer";
 const Privacy = () => {
   return (
     <main className="relative bg-white">
-      <Navbar />
-
-      {/* Content */}
-      <div className="max-w-[800px] mx-auto px-6 md:px-12 pt-32 pb-20 font-sans">
-        {/* Breadcrumb */}
+      <div className="max-w-[800px] mx-auto px-6 md:px-12 pt-10 pb-20 font-sans">
         <div className="flex items-center gap-2 text-sm text-gray-400 mb-8">
           <Link to="/" className="hover:text-gray-600 transition-colors">
             Beranda
+          </Link>
+          <span>/</span>
+          <Link to="/terms" className="hover:text-gray-600 transition-colors">
+            Syarat & Ketentuan
           </Link>
           <span>/</span>
           <span className="text-gray-600 font-medium">Kebijakan Privasi</span>
@@ -74,7 +74,9 @@ const Privacy = () => {
             <h2 className="text-xl font-bold text-[#333c4d] mb-3">
               3. Penggunaan Informasi
             </h2>
-            <p className="mb-3">Informasi yang kami kumpulkan digunakan untuk:</p>
+            <p className="mb-3">
+              Informasi yang kami kumpulkan digunakan untuk:
+            </p>
             <ul className="list-disc list-inside space-y-2">
               <li>Menyediakan dan memelihara layanan BinGo.</li>
               <li>
@@ -82,9 +84,7 @@ const Privacy = () => {
                 AI.
               </li>
               <li>Menampilkan data di peta pantai dan leaderboard.</li>
-              <li>
-                Mengirimkan notifikasi terkait aktivitas akun Anda.
-              </li>
+              <li>Mengirimkan notifikasi terkait aktivitas akun Anda.</li>
               <li>
                 Meningkatkan pengalaman pengguna dan mengembangkan fitur baru.
               </li>
@@ -98,8 +98,8 @@ const Privacy = () => {
             <p>
               Kami menerapkan langkah-langkah keamanan yang wajar untuk
               melindungi informasi pribadi Anda dari akses tidak sah, perubahan,
-              pengungkapan, atau penghancuran. Data Anda disimpan di server
-              yang aman dan hanya dapat diakses oleh personel yang berwenang.
+              pengungkapan, atau penghancuran. Data Anda disimpan di server yang
+              aman dan hanya dapat diakses oleh personel yang berwenang.
             </p>
           </section>
 
@@ -132,18 +132,12 @@ const Privacy = () => {
             <h2 className="text-xl font-bold text-[#333c4d] mb-3">
               7. Hak Anda
             </h2>
-            <p className="mb-3">
-              Sebagai pengguna, Anda memiliki hak untuk:
-            </p>
+            <p className="mb-3">Sebagai pengguna, Anda memiliki hak untuk:</p>
             <ul className="list-disc list-inside space-y-2">
               <li>Mengakses dan melihat data pribadi yang kami simpan.</li>
               <li>Memperbarui atau mengoreksi informasi pribadi Anda.</li>
-              <li>
-                Meminta penghapusan akun dan data pribadi Anda.
-              </li>
-              <li>
-                Menarik persetujuan pengolahan data kapan saja.
-              </li>
+              <li>Meminta penghapusan akun dan data pribadi Anda.</li>
+              <li>Menarik persetujuan pengolahan data kapan saja.</li>
             </ul>
           </section>
 
@@ -177,13 +171,13 @@ const Privacy = () => {
               10. Hubungi Kami
             </h2>
             <p>
-              Jika Anda memiliki pertanyaan atau kekhawatiran mengenai
-              Kebijakan Privasi ini, silakan hubungi kami melalui email di{" "}
-              <a
-                href="mailto:hello@bingo.id"
+              Jika Anda memiliki pertanyaan atau kekhawatiran mengenai Kebijakan
+              Privasi ini, silakan hubungi kami melalui email di{" "}
+               <a
+                href="mailto:bingoailenscleaner@gmail.com"
                 className="text-[#4BAFBC] hover:underline"
               >
-                hello@bingo.id
+                bingoailenscleaner@gmail.com
               </a>
               .
             </p>
