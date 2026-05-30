@@ -154,10 +154,46 @@ const HistoryVariant = () => (
   </div>
 );
 
+const BeachDetailVariant = () => (
+  <div className="animate-pulse">
+    <div className="w-full h-48 bg-slate-200" />
+    <div className="px-5 pt-4 flex flex-col gap-3">
+      <div className="h-4 bg-slate-200 rounded w-3/4" />
+      <div className="flex gap-1">
+        {[1,2,3,4,5].map(i => <div key={i} className="w-4 h-4 bg-slate-200 rounded" />)}
+        <div className="h-3 bg-slate-200 rounded w-16 ml-2" />
+      </div>
+    </div>
+    <div className="px-5 pt-3 pb-4 flex flex-col gap-2">
+      <div className="h-3 bg-slate-200 rounded w-full" />
+  
+      <div className="h-3 bg-slate-200 rounded w-5/6" />
+    </div>
+    <div className="mx-5 border-t border-slate-100" />
+    <div className="px-5 py-4 flex flex-col gap-3">
+      <div className="h-3 bg-slate-200 rounded w-24" />
+      {[1, 2].map((i) => (
+        <div key={i} className="bg-slate-100 rounded-xl p-4 flex flex-col gap-2">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-slate-200 rounded-full" />
+            <div className="flex-1 flex flex-col gap-1">
+              <div className="h-3 bg-slate-200 rounded w-20" />
+              <div className="h-2 bg-slate-200 rounded w-14" />
+            </div>
+          </div>
+          <div className="h-3 bg-slate-200 rounded w-full" />
+          <div className="h-3 bg-slate-200 rounded w-4/5" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 const variants = {
   auth: AuthVariant,
   profile: ProfileVariant,
   history: HistoryVariant,
+  beachDetail: BeachDetailVariant,
 };
 
 const LoadingSkeleton = ({ variant = "auth" }) => {

@@ -9,12 +9,37 @@ import type {
 const BEACHES = "beaches";
 const REVIEWS = "beach_reviews";
 
-// ── Beach CRUD ──
-
 export async function findAll(): Promise<Beach[]> {
   const { data, error } = await supabase
     .from(BEACHES)
     .select()
+    .order("name");
+
+  return error ? [] : (data as Beach[]);
+}
+
+export async function findAllMinimal(): Promise<{ id: string; name: string; latitude: number; longitude: number }[]> {
+  const { data, error } = await supabase
+    .from(BEACHES)
+    .select("id, name, latitude, longitude")
+    .order("name");
+
+  return error ? [] : data;
+}
+
+export async function findAllByBbox(
+  south: number,
+  west: number,
+  north: number,
+  east: number
+): Promise<Beach[]> {
+  const { data, error } = await supabase
+    .from(BEACHES)
+    .select()
+    .gte("latitude", south)
+    .lte("latitude", north)
+    .gte("longitude", west)
+    .lte("longitude", east)
     .order("name");
 
   return error ? [] : (data as Beach[]);
@@ -33,7 +58,6 @@ export async function clearAll(): Promise<void> {
   await supabase.from(BEACHES).delete().neq("id", "00000000-0000-0000-0000-000000000000");
 }
 
-// Haversine distance in km
 function haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -66,7 +90,6 @@ export async function findNearestBeach(
 
   if (error || !data || data.length === 0) return null;
 
-  // Find closest within radius
   let closest: (Beach & { distance: number }) | null = null;
   for (const beach of data as Beach[]) {
     const dist = haversine(latitude, longitude, beach.latitude, beach.longitude);
@@ -95,7 +118,6 @@ export async function findOrCreateByCoords(
   address?: string,
   imageUrl?: string
 ): Promise<Beach | null> {
-  // Check if beach exists within ~100m
   const { data: existing } = await supabase
     .from(BEACHES)
     .select()
@@ -108,7 +130,6 @@ export async function findOrCreateByCoords(
 
   if (existing) return existing as Beach;
 
-  // Insert new beach
   const { data, error } = await supabase
     .from(BEACHES)
     .insert({
@@ -124,7 +145,6 @@ export async function findOrCreateByCoords(
   return error ? null : (data as Beach);
 }
 
-// ── Reviews ──
 
 export async function upsertReview(
   input: BeachReviewCreateInput
