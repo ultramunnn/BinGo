@@ -31,10 +31,8 @@ const SEARCH_QUERIES = [
 ];
 const VIEWBOX = "111.0,-9.0,115.0,-6.5";
 
-// Fetch image from Wikimedia Commons for a beach name
 async function fetchWikiImage(beachName: string): Promise<string | null> {
   try {
-    // Try multiple search queries
     const queries = [beachName, beachName.replace(/^Pantai\s+/i, "").trim()];
 
     for (const q of queries) {
@@ -46,7 +44,6 @@ async function fetchWikiImage(beachName: string): Promise<string | null> {
       const results = searchData?.query?.search;
       if (!results || results.length === 0) continue;
 
-      // Find the first result that's an actual image (jpg/png/jpeg)
       for (const result of results) {
         const fileTitle = result.title;
         const lower = fileTitle.toLowerCase();
@@ -86,10 +83,8 @@ function isBeachResult(item: any): boolean {
   ];
   const isExcluded = excludeWords.some((w) => name.startsWith(w.toLowerCase()));
 
-  // Prefer natural=beach or tourism=beach type
   const isBeachType = (cls === "natural" && osmType === "beach") || (cls === "tourism" && osmType === "beach");
 
-  // Must contain "pantai" in the name
   const hasPantai = name.includes("pantai");
 
   return hasPantai && !isExcluded && isBeachType;
@@ -119,10 +114,8 @@ async function fetchFromOSM(): Promise<void> {
       for (const item of results) {
         if (!item.lat || !item.lon || !item.display_name) continue;
 
-        // Filter: must be a beach, not a road/building
         if (!isBeachResult(item)) continue;
 
-        // Deduplicate by rounded coordinates (~100m)
         const key = `${Math.round(parseFloat(item.lat) * 1000)}_${Math.round(parseFloat(item.lon) * 1000)}`;
         if (seen.has(key)) continue;
         seen.add(key);
@@ -130,7 +123,6 @@ async function fetchFromOSM(): Promise<void> {
         const name = item.namedetails?.name || item.display_name.split(",")[0];
         const address = item.display_name;
 
-        // Fetch Wikipedia image for this beach
         const imageUrl = await fetchWikiImage(name);
 
         await BeachModel.findOrCreateByCoords(
@@ -142,7 +134,6 @@ async function fetchFromOSM(): Promise<void> {
         );
       }
 
-      // Small delay between queries to be nice to Nominatim
       await new Promise((r) => setTimeout(r, 1000));
     } catch (err) {
       console.warn("[Beach] Failed to fetch from OSM:", (err as Error).message);
@@ -163,7 +154,6 @@ export async function getAllBeaches(forceRefresh = false): Promise<BeachWithSumm
     beaches = await BeachModel.findAll();
   }
 
-  // Backfill images for beaches that don't have one
   const missingImages = beaches.filter((b) => !b.image_url);
   if (missingImages.length > 0) {
     console.log(`[Beach] Backfilling images for ${missingImages.length} beaches...`);
@@ -177,7 +167,6 @@ export async function getAllBeaches(forceRefresh = false): Promise<BeachWithSumm
     }
   }
 
-  // Attach average rating to each beach
   const results: BeachWithSummary[] = [];
   for (const beach of beaches) {
     const { average, total } = await BeachModel.getAverageRating(beach.id);
@@ -185,6 +174,27 @@ export async function getAllBeaches(forceRefresh = false): Promise<BeachWithSumm
   }
 
   return results;
+}
+
+export async function getBeachesInBbox(
+  south: number,
+  west: number,
+  north: number,
+  east: number
+): Promise<BeachWithSummary[]> {
+  const beaches = await BeachModel.findAllByBbox(south, west, north, east);
+
+  const results: BeachWithSummary[] = [];
+  for (const beach of beaches) {
+    const { average, total } = await BeachModel.getAverageRating(beach.id);
+    results.push({ ...beach, average_rating: average, total_reviews: total });
+  }
+
+  return results;
+}
+
+export async function getBeachesForMap() {
+  return BeachModel.findAllMinimal();
 }
 
 export async function getBeachDetail(id: string): Promise<BeachDetail> {
@@ -223,7 +233,6 @@ export async function submitReview(
     throw new AuthError(400, "Pesan tidak boleh kosong");
   }
 
-  // Upload image if provided
   let imageUrl: string | undefined;
   if (imageBuffer && imageMime) {
     const url = await uploadPhoto(userId, imageBuffer, imageMime, "scans");
