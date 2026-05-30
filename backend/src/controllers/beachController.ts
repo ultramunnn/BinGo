@@ -3,8 +3,21 @@ import * as BeachService from "../services/beach.service";
 import type { AuthRequest } from "../types/auth";
 
 export async function getBeaches(req: AuthRequest, res: Response) {
+  const { south, west, north, east } = req.query;
+  if (south && west && north && east) {
+    const beaches = await BeachService.getBeachesInBbox(
+      Number(south), Number(west), Number(north), Number(east)
+    );
+    return res.json({ success: true, data: beaches });
+  }
+
   const forceRefresh = req.query.refresh === "true";
   const beaches = await BeachService.getAllBeaches(forceRefresh);
+  res.json({ success: true, data: beaches });
+}
+
+export async function getBeachesMap(req: AuthRequest, res: Response) {
+  const beaches = await BeachService.getBeachesForMap();
   res.json({ success: true, data: beaches });
 }
 

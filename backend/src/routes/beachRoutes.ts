@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from "express";
 import {
   getBeaches,
+  getBeachesMap,
   getBeachDetail,
   submitReview,
   deleteReview,
@@ -19,6 +20,7 @@ const wrap =
   };
 
 // Public
+router.get("/map", wrap(getBeachesMap));
 router.get("/", wrap(getBeaches));
 router.get("/:id", wrap(getBeachDetail));
 
