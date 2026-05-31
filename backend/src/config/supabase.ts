@@ -1,7 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 
-dotenv.config();
+// Only load .env in development (Railway injects env vars directly)
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 export const supabase = createClient(
   process.env.SUPABASE_URL!,
