@@ -1,14 +1,14 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { Request, Response, NextFunction } from "express";
 import morgan from "morgan";
 import cors from "cors";
-import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes";
 import scanRoutes from "./routes/scanRoutes";
 import beachRoutes from "./routes/beachRoutes";
 import { setupSwagger } from "./config/swagger";
 import { AuthError } from "./services/auth.service";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
