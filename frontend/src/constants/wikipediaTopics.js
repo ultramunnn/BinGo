@@ -1,13 +1,3 @@
-/**
- * Wikipedia topics for BinGo educational articles.
- * Each category maps to search queries and display metadata.
- *
- * To add a new topic:
- * 1. Add a new entry to WIKI_TOPICS
- * 2. Set category, label, searchQueries (array of Wikipedia search terms)
- * 3. Optionally set icon and color for the UI
- */
-
 export const WIKI_TOPICS = [
   {
     id: "recycling",
@@ -78,9 +68,6 @@ export const WIKI_TOPICS = [
 
 export const DEFAULT_CATEGORY = "all";
 
-/**
- * Get all unique category labels for filter pills.
- */
 export const getCategoryFilters = () => [
   { id: "all", label: "Semua" },
   ...WIKI_TOPICS.map(({ id, label }) => ({ id, label })),

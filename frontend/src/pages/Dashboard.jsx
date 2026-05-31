@@ -4,16 +4,19 @@ import ScannerViewfinder from "../components/dashboard/ScannerViewfinder";
 import ControlBar from "../components/dashboard/ControlBar";
 import ResultConsole from "../components/dashboard/ResultConsole";
 import PieChartCard from "../components/dashboard/PieChartCard";
+import ChartDetailModal from "../components/dashboard/ChartDetailModal";
 import LeaderboardSection from "../components/dashboard/LeaderboardSection";
 import QuestionnaireModal from "../components/dashboard/QuestionnaireModal";
-import { FOCUS_W, FOCUS_H, leaderboardUsers, leaderboardBeaches } from "../constants/dashboardData";
-import { classifyImage, getQuestionnaire, submitScan } from "../services/scanService";
-import { getAllBeaches } from "../services/beachService";
+import { FOCUS_W, FOCUS_H } from "../constants/dashboardData";
+import { classifyImage, getQuestionnaire, submitScan, getLeaderboard } from "../services/scanService";
+import { getBeachesForMap } from "../services/beachService";
+import { getStoredUser } from "../services/authService";
 
 const Dashboard = () => {
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
+  const user = getStoredUser();
 
   const [scanStep, setScanStep] = useState(1);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -22,29 +25,30 @@ const Dashboard = () => {
   const [capturedImg, setCapturedImg] = useState(null);
   const [capturedFile, setCapturedFile] = useState(null);
 
-  // ── GPS State ──
   const [gpsCoords, setGpsCoords] = useState(null);
   const [gpsError, setGpsError] = useState(null);
   const [locationName, setLocationName] = useState(null);
 
-  // ── Kuesioner Modal State ──
   const [showModal, setShowModal] = useState(false);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [questionnaireQuestions, setQuestionnaireQuestions] = useState([]);
   const [questionnaireAnswers, setQuestionnaireAnswers] = useState({});
   const [questionIndex, setQuestionIndex] = useState(0);
 
-  // ── Scan Result ──
   const [scanResult, setScanResult] = useState(null);
+  const [chartDetailOpen, setChartDetailOpen] = useState(false);
 
-  // ── Category Confirmation State ──
   const [showCategoryConfirm, setShowCategoryConfirm] = useState(false);
+  const [facingMode, setFacingMode] = useState("environment");
 
-  // ── Beach Detection State ──
   const [nearbyBeach, setNearbyBeach] = useState(null);
   const [beachCheckDone, setBeachCheckDone] = useState(false);
 
-  // Haversine distance in km
+  const [leaderboardUsers, setLeaderboardUsers] = useState([]);
+  const [leaderboardBeaches, setLeaderboardBeaches] = useState([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
+  const [currentUserRank, setCurrentUserRank] = useState(null);
+
   function haversine(lat1, lon1, lat2, lon2) {
     const R = 6371;
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -57,7 +61,6 @@ const Dashboard = () => {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
-  // ── GPS auto-capture on mount ──
   useEffect(() => {
     if (!navigator.geolocation) {
       setGpsError("Geolocation tidak didukung browser ini");
@@ -71,7 +74,6 @@ const Dashboard = () => {
         };
         setGpsCoords(coords);
 
-        // Run reverse geocoding and beach fetch in parallel
         const geocodePromise = fetch(
           `https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json&accept-language=id`
         )
@@ -82,13 +84,13 @@ const Dashboard = () => {
         const beachTimeout = new Promise((_, reject) =>
           setTimeout(() => reject(new Error("timeout")), 1000)
         );
-        const beachPromise = Promise.race([getAllBeaches(), beachTimeout])
+        const beachPromise = Promise.race([getBeachesForMap(), beachTimeout])
           .then((beaches) => {
             let closest = null;
             let minDist = Infinity;
             for (const beach of beaches) {
               const dist = haversine(coords.latitude, coords.longitude, beach.latitude, beach.longitude);
-              if (dist <= 3 && dist < minDist) {
+              if (dist <= 1 && dist < minDist) {
                 closest = { ...beach, distance: dist };
                 minDist = dist;
               }
@@ -107,7 +109,31 @@ const Dashboard = () => {
     );
   }, []);
 
-  // ── Camera auto-start ──
+  useEffect(() => {
+    getLeaderboard()
+      .then((data) => {
+        const users = (data.users || []).map((u, i) => ({
+          rank: i + 1,
+          name: u.name || "User",
+          img: u.photo_url || null,
+          score: `${u.score ?? 0} scan`,
+        }));
+        const beaches = (data.beaches || []).map((b, i) => ({
+          rank: i + 1,
+          name: b.name || "Pantai",
+          img: b.image_url || null,
+          score: `${b.score ?? 0}/5`,
+        }));
+        setLeaderboardUsers(users);
+        setLeaderboardBeaches(beaches);
+        if (data.currentUser) {
+          setCurrentUserRank(data.currentUser);
+        }
+      })
+      .catch((err) => console.warn("Leaderboard fetch failed:", err))
+      .finally(() => setLeaderboardLoading(false));
+  }, []);
+
   useEffect(() => {
     let mounted = true;
     const init = async () => {
@@ -133,7 +159,6 @@ const Dashboard = () => {
 
   const triggerFileUpload = () => fileInputRef.current?.click();
 
-  // ── Capture frame from video → File object ──
   const captureFrameAsFile = () => {
     if (!videoRef.current || !streamRef.current) return null;
     const video = videoRef.current;
@@ -165,21 +190,15 @@ const Dashboard = () => {
     });
   };
 
-  // ═══════════════════════════════════════════════════════════════
-  // STEP 1 → STEP 2: Capture → Classify → Fetch Questionnaire → Open Modal
-  // ═══════════════════════════════════════════════════════════════
   const handleStartAnalysis = async (e) => {
     if (isAnalyzing) return;
 
     let photoFile = null;
 
-    // If triggered by file input change event, use the uploaded file
     if (e?.target?.files?.[0]) {
       photoFile = e.target.files[0];
-      // Create preview URL
       setCapturedImg(URL.createObjectURL(photoFile));
     } else {
-      // Capture from camera
       photoFile = await captureFrameAsFile();
       if (photoFile) {
         setCapturedImg(URL.createObjectURL(photoFile));
@@ -190,16 +209,14 @@ const Dashboard = () => {
 
     setCapturedFile(photoFile);
 
-    // Stop camera
     if (streamRef.current) { streamRef.current.getTracks().forEach((t) => t.stop()); streamRef.current = null; }
     if (videoRef.current) videoRef.current.srcObject = null;
     setCameraActive(false);
 
-    // Step 1: Classify image via backend
     setIsAnalyzing(true);
     try {
       const cvResult = await classifyImage(photoFile);
-      const category = cvResult.predicted_class; // e.g. "plastic"
+      const category = cvResult.predicted_class; 
       const categoryUpper = category.toUpperCase();
 
       setCurrentCategory(categoryUpper);
@@ -207,7 +224,6 @@ const Dashboard = () => {
       setShowCategoryConfirm(true);
     } catch (err) {
       console.error("Classification failed:", err);
-      // File size validation error — show alert and reset
       if (err.message?.includes("maksimal 600KB")) {
         alert(err.message);
         handleResetScan();
@@ -221,9 +237,6 @@ const Dashboard = () => {
     }
   };
 
-  // ═══════════════════════════════════════════════════════════════
-  // CONFIRMATION: User confirms category → fetch questionnaire → open modal
-  // ═══════════════════════════════════════════════════════════════
   const handleCategoryConfirm = async () => {
     setShowCategoryConfirm(false);
     setIsAnalyzing(true);
@@ -241,28 +254,19 @@ const Dashboard = () => {
     setIsAnalyzing(false);
   };
 
-  // ═══════════════════════════════════════════════════════════════
-  // REJECTION: User says category is wrong → retake photo
-  // ═══════════════════════════════════════════════════════════════
   const handleCategoryReject = () => {
     handleResetScan();
   };
 
-  // ═══════════════════════════════════════════════════════════════
-  // STEP 2 → STEP 3: Submit questionnaire + photo + GPS → Show results
-  // ═══════════════════════════════════════════════════════════════
   const submitQuestionnaire = async () => {
     setShowModal(false);
     setIsAnalyzing(true);
 
-    // Convert answers to boolean map for backend
-    // Backend expects: is_clean=true, is_dry=false, etc.
     const booleanAnswers = {};
     for (const [field, answer] of Object.entries(questionnaireAnswers)) {
-      // "Yes" → true, "No" → false, keep as-is for other values
       if (answer === "Yes" || answer === "true") booleanAnswers[field] = true;
       else if (answer === "No" || answer === "false") booleanAnswers[field] = false;
-      else booleanAnswers[field] = answer; // e.g. "Hard", "Flexible"
+      else booleanAnswers[field] = answer; 
     }
 
     try {
@@ -293,7 +297,7 @@ const Dashboard = () => {
     setShowCategoryConfirm(false);
     setQuestionnaireQuestions([]);
     setQuestionnaireAnswers({});
-    // Re-start camera
+    if (fileInputRef.current) fileInputRef.current.value = "";
     const init = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
@@ -309,18 +313,28 @@ const Dashboard = () => {
   };
 
   const handleFlipCamera = () => {
+    const newMode = facingMode === "environment" ? "user" : "environment";
+    setFacingMode(newMode);
+
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((t) => t.stop());
     }
+
     const init = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+          video: { facingMode: newMode, width: { ideal: 1280 }, height: { ideal: 720 } },
           audio: false,
         });
         streamRef.current = stream;
-        if (videoRef.current) videoRef.current.srcObject = stream;
-      } catch {}
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.style.transform = newMode === "user" ? "scaleX(-1)" : "scaleX(1)";
+        }
+      } catch (err) {
+        console.error("Camera flip failed:", err);
+        setFacingMode(facingMode);
+      }
     };
     init();
   };
@@ -340,9 +354,14 @@ const Dashboard = () => {
         onSubmit={submitQuestionnaire}
       />
 
+      <ChartDetailModal
+        open={chartDetailOpen}
+        onClose={() => setChartDetailOpen(false)}
+        scanResult={scanResult}
+      />
+
       <main className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 p-4 pb-28 lg:p-6 lg:pb-6 items-start">
 
-        {/* LEFT: CAMERA VIEWFINDER */}
         <div className="lg:col-span-8 flex flex-col h-full">
           <ScannerViewfinder
             videoRef={videoRef}
@@ -371,7 +390,6 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* RIGHT: RESULT CONSOLE */}
         <div id="result-section" className="lg:col-span-4 flex flex-col gap-6 h-full">
           <ResultConsole
             scanStep={scanStep}
@@ -382,10 +400,12 @@ const Dashboard = () => {
             onStepChange={setScanStep}
             onReset={handleResetScan}
           />
-          <PieChartCard />
+          <PieChartCard
+            scanResult={scanResult}
+            onDetailClick={() => setChartDetailOpen(true)}
+          />
         </div>
 
-        {/* BOTTOM: LEADERBOARD */}
         <div className="col-span-full">
           <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col flex-1">
             <div className="flex items-center justify-between mb-8">
@@ -394,8 +414,8 @@ const Dashboard = () => {
               </h2>
             </div>
             <div className="grid grid-cols-2 gap-0">
-              <LeaderboardSection title="User Teraktif" data={leaderboardUsers} type="user" className="pr-3 lg:pr-6 border-r border-slate-200" />
-              <LeaderboardSection title="Pantai Terbersih" data={leaderboardBeaches} type="beach" className="pl-3 lg:pl-6" />
+              <LeaderboardSection title="User Teraktif" data={leaderboardUsers} type="user" loading={leaderboardLoading} currentUser={currentUserRank} userName={user?.full_name} className="pr-3 lg:pr-6 border-r border-slate-200" />
+              <LeaderboardSection title="Pantai Terbersih" data={leaderboardBeaches} type="beach" loading={leaderboardLoading} className="pl-3 lg:pl-6" />
             </div>
           </div>
         </div>

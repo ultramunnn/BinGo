@@ -1,4 +1,4 @@
-import { supabase } from "../config/supabase";
+import { supabase, supabaseAdmin } from "../config/supabase";
 import type {
   Beach,
   BeachReview,
@@ -74,9 +74,9 @@ function haversine(lat1: number, lon1: number, lat2: number, lon2: number): numb
 export async function findNearestBeach(
   latitude: number,
   longitude: number,
-  radiusKm = 3
+  radiusKm = 1
 ): Promise<(Beach & { distance: number }) | null> {
-  // Bounding-box pre-filter (~3km)
+  // Bounding-box pre-filter (~1km)
   const latDelta = radiusKm / 111;
   const lonDelta = radiusKm / (111 * Math.cos((latitude * Math.PI) / 180));
 
@@ -146,12 +146,12 @@ export async function findOrCreateByCoords(
 }
 
 
-export async function upsertReview(
+export async function insertReview(
   input: BeachReviewCreateInput
 ): Promise<BeachReview | null> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from(REVIEWS)
-    .upsert(input, { onConflict: "beach_id,user_id" })
+    .insert(input)
     .select()
     .single();
 
@@ -162,7 +162,7 @@ export async function deleteReview(
   beachId: string,
   userId: string
 ): Promise<boolean> {
-  const { error } = await supabase
+  const { error } = await supabaseAdmin
     .from(REVIEWS)
     .delete()
     .eq("beach_id", beachId)
