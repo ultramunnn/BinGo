@@ -12,14 +12,12 @@ const QuestionnaireModal = ({
 }) => {
   if (!showModal || !currentCategory) return null;
 
-  // Use backend questions if available, otherwise show loading
   const totalQuestions = questions.length;
   const progress = totalQuestions > 0
     ? ((questionIndex + 1) / totalQuestions) * 100
     : 0;
   const currentQ = questions[questionIndex];
 
-  // Map backend field names to user-friendly labels for options
   const formatOption = (field, option) => {
     const optionLabels = {
       Yes: "Ya",
@@ -33,12 +31,9 @@ const QuestionnaireModal = ({
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center p-4">
-      {/* Overlay backdrop */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
 
-      {/* Modal card */}
       <div className="relative bg-white w-full max-w-lg max-h-[85vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col z-10">
-        {/* Header */}
         <div className="px-6 py-4 border-b border-slate-100">
           <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide">
             Kuesioner Pemilahan Sampah
@@ -48,7 +43,6 @@ const QuestionnaireModal = ({
           </p>
         </div>
 
-        {/* Progress indicator */}
         <div className="px-6 pt-3">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-[10px] font-mono text-slate-400">
@@ -66,11 +60,9 @@ const QuestionnaireModal = ({
           </div>
         </div>
 
-        {/* Single question view */}
         <div className="flex-1 px-6 py-6 flex flex-col justify-center">
           {currentQ ? (
             <div key={`${currentQ.field}-${questionIndex}`} className="animate-fade-in">
-              {/* Back & Next navigation */}
               <div className="flex items-center justify-between mb-4 min-h-[20px]">
                 {questionIndex > 0 ? (
                   <button
@@ -132,7 +124,6 @@ const QuestionnaireModal = ({
           )}
         </div>
 
-        {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-100">
           <button
             onClick={onSubmit}

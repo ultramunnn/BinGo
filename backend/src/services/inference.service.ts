@@ -55,7 +55,7 @@ async function ensureModelsLoaded(): Promise<void> {
  */
 export async function classifyImage(
   imageBuffer: Buffer,
-): Promise<{ predictedClass: string; confidence: number }> {
+): Promise<{ predictedClass: string; confidence: number; probabilities: Record<string, number> }> {
   await ensureModelsLoaded();
 
   // Preprocess: resize to 224x224, normalize to [0,1]
@@ -83,9 +83,16 @@ export async function classifyImage(
   const predictedIdx = probs.indexOf(Math.max(...probs));
   const confidence = probs[predictedIdx];
 
+  // Build probability map for all 5 classes
+  const probabilities: Record<string, number> = {};
+  CLASS_NAMES.forEach((name, i) => {
+    probabilities[name] = Math.round(probs[i] * 1000) / 1000;
+  });
+
   return {
     predictedClass: CLASS_NAMES[predictedIdx],
     confidence,
+    probabilities,
   };
 }
 

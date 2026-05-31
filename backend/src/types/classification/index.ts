@@ -49,6 +49,7 @@ export interface MLPredictionResponse {
 export interface HybridPredictionResponse {
   predicted_material: string;
   cv_confidence: number;
+  cv_probabilities?: Record<string, number>;
   recyclable: string;
   treatment_method: string;
   ml_confidence: {
@@ -96,6 +97,7 @@ export interface ClassificationResult {
   waste_type: string;
   confidence: number;
   cv_confidence: number;
+  cv_probabilities?: Record<string, number>;
   latitude: number;
   longitude: number;
   location_name: string | null;
