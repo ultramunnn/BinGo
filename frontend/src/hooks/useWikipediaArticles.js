@@ -5,9 +5,6 @@ import { WIKI_TOPICS } from "../constants/wikipediaTopics";
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 const cache = new Map();
 
-/**
- * Get cached data if still valid.
- */
 function getCached(key) {
   const entry = cache.get(key);
   if (!entry) return null;
@@ -22,13 +19,6 @@ function setCache(key, data) {
   cache.set(key, { data, timestamp: Date.now() });
 }
 
-/**
- * Custom hook to fetch Wikipedia articles by category.
- *
- * @param {string} activeTopicId - Topic ID from WIKI_TOPICS, or "all"
- * @param {number} articlesPerTopic - How many articles per topic (default 2)
- * @returns {{ articles: Array, loading: boolean, error: string|null, refetch: Function }}
- */
 export function useWikipediaArticles(activeTopicId = "all", articlesPerTopic = 2) {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +26,6 @@ export function useWikipediaArticles(activeTopicId = "all", articlesPerTopic = 2
   const abortRef = useRef(null);
 
   const fetchArticles = useCallback(async () => {
-    // Cancel previous request
     if (abortRef.current) abortRef.current.abort();
     const controller = new AbortController();
     abortRef.current = controller;

@@ -64,8 +64,8 @@ export async function scan(
     );
   }
 
-  // 5. Detect nearby beach (within 3km)
-  const nearbyBeach = await BeachModel.findNearestBeach(latitude, longitude, 3);
+  // 5. Detect nearby beach (within 1km)
+  const nearbyBeach = await BeachModel.findNearestBeach(latitude, longitude, 1);
   const beachId = nearbyBeach?.id || undefined;
   const resolvedLocationName = nearbyBeach ? nearbyBeach.name : locationName;
 
@@ -90,6 +90,7 @@ export async function scan(
     ...toResult(record),
     beach_name: nearbyBeach?.name || null,
     ai_recommendation: result.ai_recommendation,
+    cv_probabilities: result.cv_probabilities || {},
   };
 }
 
