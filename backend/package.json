@@ -25,7 +25,7 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "build": "tsc",
-    "start": "nodemon dist/server.js",
+    "start": "node dist/server.js",
     "swagger": "swagger-ui-watcher swagger.yaml"
   },
   "keywords": [],

@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 // Paths to ONNX models and encoders
-const MODELS_DIR = path.resolve(__dirname, "../../../models");
+const MODELS_DIR = path.resolve(__dirname, "../../models");
 const CV_MODEL_PATH = path.join(MODELS_DIR, "onnx/waste_classifier_v1.onnx");
 const TABULAR_MODEL_PATH = path.join(MODELS_DIR, "onnx/bingo_model.onnx");
 const ENCODERS_PATH = path.join(MODELS_DIR, "label/label_encoders.json");
