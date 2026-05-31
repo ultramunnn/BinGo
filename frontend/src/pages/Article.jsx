@@ -11,215 +11,119 @@ import { useWikipediaArticles } from "../hooks/useWikipediaArticles";
 
 const filters = getCategoryFilters();
 
-const IconBottle = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="w-5 h-5"
-  >
-    <path d="M10 2h4v3.5l2 2V22H8V7.5l2-2V2z" />
-    <path d="M8 12h8" />
-  </svg>
-);
-
-const IconCan = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="w-5 h-5"
-  >
-    <rect x="6" y="4" width="12" height="16" rx="2" />
-    <path d="M6 8h12M6 12h12M6 16h12" />
-    <path d="M10 4V2m4 2V2" />
-  </svg>
-);
-
-const IconGlass = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="w-5 h-5"
-  >
-    <path d="M8 2l1 8c0 2.21 1.79 4 4 4s4-1.79 4-4l1-8H8z" />
-    <path d="M6 2h12" />
-    <path d="M9 14v8h6v-8" />
-  </svg>
-);
-
-const IconSachet = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="w-5 h-5"
-  >
-    <path d="M7 3h10l1 4v14a1 1 0 01-1 1H7a1 1 0 01-1-1V7l1-4z" />
-    <path d="M6 7h12" />
-    <path d="M9 3l-1 4m7-4l1 4" />
-    <path d="M10 12h4m-4 3h4" />
-  </svg>
-);
-
-const IconArrowRight = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="w-5 h-5"
-  >
-    <path d="M5 12h14m-4-4l4 4-4 4" />
-  </svg>
-);
-
-const IconScan = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="w-6 h-6"
-  >
-    <path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2" />
-    <path d="M7 12h10" />
-    <circle cx="12" cy="12" r="1" fill="currentColor" />
-  </svg>
-);
-
-const IconCheck = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="w-4 h-4"
-  >
-    <path d="M20 6L9 17l-5-5" />
-  </svg>
-);
-
-const IconX = () => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="w-4 h-4"
-  >
-    <path d="M18 6L6 18M6 6l12 12" />
-  </svg>
-);
-
-const WasteItem = ({ icon, label, delay }) => (
-  <div
-    className="flex flex-col items-center gap-1.5 animate-[fadeInUp_0.5s_ease-out_both]"
-    style={{ animationDelay: `${delay}ms` }}
-  >
-    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-white/[0.08] border border-white/[0.12] flex items-center justify-center text-emerald-300/80">
-      {icon}
-    </div>
-    <span className="text-[10px] text-emerald-300/60 font-medium">{label}</span>
-  </div>
-);
-
-const FlowArrow = () => (
-  <div className="flex flex-col items-center gap-1">
-    <div className="flex items-center gap-0.5">
-      <div className="w-4 h-0.5 bg-emerald-400/40 rounded-full" />
-      <div className="w-6 h-0.5 bg-emerald-400/60 rounded-full" />
-      <div className="w-8 h-0.5 bg-emerald-400/80 rounded-full" />
-    </div>
-    <IconArrowRight />
-    <div className="flex items-center gap-0.5">
-      <div className="w-4 h-0.5 bg-emerald-400/40 rounded-full" />
-      <div className="w-6 h-0.5 bg-emerald-400/60 rounded-full" />
-      <div className="w-8 h-0.5 bg-emerald-400/80 rounded-full" />
-    </div>
-  </div>
-);
-
-const OutputBox = ({ type, title, items }) => {
-  const isRecyclable = type === "recyclable";
-
-  return (
-    <div
-      className={`flex-1 rounded-lg p-3 sm:p-4 border ${
-        isRecyclable
-          ? "bg-emerald-900/50 border-emerald-500/50"
-          : "bg-rose-950/50 border-rose-500/50"
-      }`}
-    >
-      <div className="flex items-center gap-2 mb-2.5">
-        <div
-          className={`w-5 h-5 rounded-full flex items-center justify-center ${
-            isRecyclable ? "bg-emerald-500/30" : "bg-rose-500/30"
-          }`}
-        >
-          {isRecyclable ? <IconCheck /> : <IconX />}
-        </div>
-        <span
-          className={`text-[11px] font-bold tracking-wider uppercase ${
-            isRecyclable ? "text-emerald-300" : "text-rose-300"
-          }`}
-        >
-          {title}
-        </span>
-      </div>
-      <ul className="space-y-1">
-        {items.map((item, i) => (
-          <li
-            key={i}
-            className={`flex items-center gap-2 text-[12px] ${
-              isRecyclable ? "text-emerald-200/70" : "text-rose-200/70"
-            }`}
-          >
-            <span
-              className={`w-1 h-1 rounded-full ${
-                isRecyclable ? "bg-emerald-400/60" : "bg-rose-400/60"
-              }`}
-            />
-            {item}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
 const HeroSection = () => (
   <section className="relative mb-10">
-    <div className="relative rounded-md overflow-hidden bg-linear-to-br from-slate-950 to-teal-950">
-      <div className="absolute inset-0 opacity-[0.06] bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%221%22%3E%3Ccircle%20cx%3D%223%22%20cy%3D%223%22%20r%3D%221%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')]" />
-      <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-slate-500/[0.06]" />
-      <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-teal-500/[0.05]" />
+    <div className="relative rounded-md overflow-hidden">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="absolute inset-0 w-full h-full"
+        preserveAspectRatio="xMidYMid slice"
+        viewBox="0 50 1300 440"
+      >
+        <rect fill="#020618" width="540" height="450" />
+        <defs>
+          <linearGradient
+            id="a"
+            gradientUnits="userSpaceOnUse"
+            x1="0"
+            x2="0"
+            y1="0"
+            y2="100%"
+            gradientTransform="rotate(205,640,316)"
+          >
+            <stop offset="0" stop-color="#020618" />
+            <stop offset="1" stop-color="#022F2E" />
+          </linearGradient>
+          <pattern
+            patternUnits="userSpaceOnUse"
+            id="b"
+            width="402"
+            height="335"
+            x="0"
+            y="0"
+            viewBox="0 0 1080 900"
+          >
+            <g fill-opacity="0.03">
+              <polygon fill="#444" points="90 150 0 300 180 300" />
+              <polygon points="90 150 180 0 0 0" />
+              <polygon fill="#AAA" points="270 150 360 0 180 0" />
+              <polygon fill="#DDD" points="450 150 360 300 540 300" />
+              <polygon fill="#999" points="450 150 540 0 360 0" />
+              <polygon points="630 150 540 300 720 300" />
+              <polygon fill="#DDD" points="630 150 720 0 540 0" />
+              <polygon fill="#444" points="810 150 720 300 900 300" />
+              <polygon fill="#FFF" points="810 150 900 0 720 0" />
+              <polygon fill="#DDD" points="990 150 900 300 1080 300" />
+              <polygon fill="#444" points="990 150 1080 0 900 0" />
+              <polygon fill="#DDD" points="90 450 0 600 180 600" />
+              <polygon points="90 450 180 300 0 300" />
+              <polygon fill="#666" points="270 450 180 600 360 600" />
+              <polygon fill="#AAA" points="270 450 360 300 180 300" />
+              <polygon fill="#DDD" points="450 450 360 600 540 600" />
+              <polygon fill="#999" points="450 450 540 300 360 300" />
+              <polygon fill="#999" points="630 450 540 600 720 600" />
+              <polygon fill="#FFF" points="630 450 720 300 540 300" />
+              <polygon points="810 450 720 600 900 600" />
+              <polygon fill="#DDD" points="810 450 900 300 720 300" />
+              <polygon fill="#AAA" points="990 450 900 600 1080 600" />
+              <polygon fill="#444" points="990 450 1080 300 900 300" />
+              <polygon fill="#222" points="90 750 0 900 180 900" />
+              <polygon points="270 750 180 900 360 900" />
+              <polygon fill="#DDD" points="270 750 360 600 180 600" />
+              <polygon points="450 750 540 600 360 600" />
+              <polygon points="630 750 540 900 720 900" />
+              <polygon fill="#444" points="630 750 720 600 540 600" />
+              <polygon fill="#AAA" points="810 750 720 900 900 900" />
+              <polygon fill="#666" points="810 750 900 600 720 600" />
+              <polygon fill="#999" points="990 750 900 900 1080 900" />
+              <polygon fill="#999" points="180 0 90 150 270 150" />
+              <polygon fill="#444" points="360 0 270 150 450 150" />
+              <polygon fill="#FFF" points="540 0 450 150 630 150" />
+              <polygon points="900 0 810 150 990 150" />
+              <polygon fill="#222" points="0 300 -90 450 90 450" />
+              <polygon fill="#FFF" points="0 300 90 150 -90 150" />
+              <polygon fill="#FFF" points="180 300 90 450 270 450" />
+              <polygon fill="#666" points="180 300 270 150 90 150" />
+              <polygon fill="#222" points="360 300 270 450 450 450" />
+              <polygon fill="#FFF" points="360 300 450 150 270 150" />
+              <polygon fill="#444" points="540 300 450 450 630 450" />
+              <polygon fill="#222" points="540 300 630 150 450 150" />
+              <polygon fill="#AAA" points="720 300 630 450 810 450" />
+              <polygon fill="#666" points="720 300 810 150 630 150" />
+              <polygon fill="#FFF" points="900 300 810 450 990 450" />
+              <polygon fill="#999" points="900 300 990 150 810 150" />
+              <polygon points="0 600 -90 750 90 750" />
+              <polygon fill="#666" points="0 600 90 450 -90 450" />
+              <polygon fill="#AAA" points="180 600 90 750 270 750" />
+              <polygon fill="#444" points="180 600 270 450 90 450" />
+              <polygon fill="#444" points="360 600 270 750 450 750" />
+              <polygon fill="#999" points="360 600 450 450 270 450" />
+              <polygon fill="#666" points="540 600 630 450 450 450" />
+              <polygon fill="#222" points="720 600 630 750 810 750" />
+              <polygon fill="#FFF" points="900 600 810 750 990 750" />
+              <polygon fill="#222" points="900 600 990 450 810 450" />
+              <polygon fill="#DDD" points="0 900 90 750 -90 750" />
+              <polygon fill="#444" points="180 900 270 750 90 750" />
+              <polygon fill="#FFF" points="360 900 450 750 270 750" />
+              <polygon fill="#AAA" points="540 900 630 750 450 750" />
+              <polygon fill="#FFF" points="720 900 810 750 630 750" />
+              <polygon fill="#222" points="900 900 990 750 810 750" />
+              <polygon fill="#222" points="1080 300 990 450 1170 450" />
+              <polygon fill="#FFF" points="1080 300 1170 150 990 150" />
+              <polygon points="1080 600 990 750 1170 750" />
+              <polygon fill="#666" points="1080 600 1170 450 990 450" />
+              <polygon fill="#DDD" points="1080 900 1170 750 990 750" />
+            </g>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" fill="url(#a)" width="100%" height="100%" />
+        <rect x="0" y="0" fill="url(#b)" width="100%" height="100%" />
+      </svg>
 
       <div className="relative px-5 sm:px-8 lg:px-10 py-8 sm:py-10 lg:py-12">
         <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white text-center leading-[1.2] tracking-tight mb-3 max-w-3xl mx-auto">
           MEMAHAMI JALUR SAMPAH:{" "}
-          <span className="text-slate-400">JANGAN SALAH PILIH,</span> JANGAN
+          <span className="text-slate-500">JANGAN SALAH PILIH,</span> JANGAN
           SAMPAI JADI RESIDU!
         </h1>
 
@@ -264,7 +168,7 @@ const Article = () => {
 
   const uniqueArticles = useMemo(
     () => Array.from(new Map(articles.map((a) => [a.id, a])).values()),
-    [articles]
+    [articles],
   );
 
   useEffect(() => {
