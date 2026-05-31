@@ -14,7 +14,6 @@ const ControlBar = ({
     <div className="bg-slate-900 rounded-b-2xl px-5 py-4 flex items-center justify-between">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={onFileChange} />
 
-      {/* Left: Upload */}
       <button
         onClick={onUploadClick}
         disabled={isAnalyzing}
@@ -24,7 +23,6 @@ const ControlBar = ({
         <span className="hidden sm:inline">UNGGAH</span>
       </button>
 
-      {/* Center: Shutter */}
       <div className="relative group">
         <button
           onClick={onShutter}
@@ -40,7 +38,6 @@ const ControlBar = ({
         )}
       </div>
 
-      {/* Right: Flip */}
       <button
         onClick={onFlip}
         disabled={isAnalyzing}
