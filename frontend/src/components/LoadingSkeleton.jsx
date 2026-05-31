@@ -189,11 +189,39 @@ const BeachDetailVariant = () => (
   </div>
 );
 
+const LeaderboardVariant = () => (
+  <div className="animate-pulse">
+    <div className="flex items-end justify-center gap-2 pb-4">
+      {[2, 1, 3].map((rank) => (
+        <div key={rank} className="flex flex-col items-center flex-1 max-w-32">
+          <div className="flex flex-col items-center mb-3 h-24">
+            <div className={`rounded-full bg-slate-200 ${rank === 1 ? "w-14 h-14" : "w-12 h-12"}`} />
+            <div className="mt-2 h-3 bg-slate-200 rounded w-16" />
+            <div className="mt-1 h-2 bg-slate-200 rounded w-10" />
+          </div>
+          <div className={`${rank === 1 ? "h-36" : rank === 2 ? "h-28" : "h-20"} w-full rounded-xl bg-slate-200`} />
+        </div>
+      ))}
+    </div>
+    <div className="mt-4 flex flex-col gap-2">
+      {Array.from({ length: 7 }).map((_, i) => (
+        <div key={i} className="flex items-center gap-3 px-3 py-1.5">
+          <div className="w-4 h-3 bg-slate-200 rounded" />
+          <div className="w-6 h-6 rounded-full bg-slate-200" />
+          <div className="flex-1 h-3 bg-slate-200 rounded w-20" />
+          <div className="h-3 bg-slate-200 rounded w-10" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 const variants = {
   auth: AuthVariant,
   profile: ProfileVariant,
   history: HistoryVariant,
   beachDetail: BeachDetailVariant,
+  leaderboard: LeaderboardVariant,
 };
 
 const LoadingSkeleton = ({ variant = "auth" }) => {

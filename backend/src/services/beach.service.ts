@@ -1,3 +1,4 @@
+import sharp from "sharp";
 import * as BeachModel from "../models/beach.model";
 import { uploadPhoto } from "./storage.service";
 import type {
@@ -235,11 +236,20 @@ export async function submitReview(
 
   let imageUrl: string | undefined;
   if (imageBuffer && imageMime) {
-    const url = await uploadPhoto(userId, imageBuffer, imageMime, "scans");
-    if (url) imageUrl = url;
+    try {
+      // Compress image to max ~200KB before upload
+      const compressed = await sharp(imageBuffer)
+        .resize(800, 800, { fit: "inside", withoutEnlargement: true })
+        .jpeg({ quality: 80 })
+        .toBuffer();
+      const url = await uploadPhoto(userId, compressed, "image/jpeg", "image_review");
+      if (url) imageUrl = url;
+    } catch (err) {
+      console.warn("[Beach] Image upload failed, saving review without image:", (err as Error).message);
+    }
   }
 
-  const review = await BeachModel.upsertReview({
+  const review = await BeachModel.insertReview({
     beach_id: beachId,
     user_id: userId,
     rating,

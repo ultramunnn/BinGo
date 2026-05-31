@@ -4,7 +4,6 @@ import LoadingSkeleton from "../components/LoadingSkeleton";
 import { getMyScans } from "../services/scanService";
 import { isAuthenticated } from "../services/authService";
 
-// ── SVG Icon Components ──────────────────────────────────────────
 
 const IconSearch = ({ className = "w-4 h-4" }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -39,7 +38,6 @@ const MATERIAL_OPTIONS = [
   { value: "Textile", label: "Tekstil" },
 ];
 
-// ── Sub-Components ───────────────────────────────────────────────
 
 const StatBox = ({ label, value, highlight = false }) => (
   <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-xs">
@@ -92,7 +90,6 @@ const HistoryCard = ({ item }) => {
   );
 };
 
-// ── Main Page Component ──────────────────────────────────────────
 
 const History = () => {
   const [search, setSearch] = useState("");
@@ -154,7 +151,6 @@ const History = () => {
           <p className="text-sm text-slate-500 mt-1">Catatan seluruh aktivitas pemindaian sampahmu</p>
         </div>
 
-        {/* Stats */}
         {!error && (
           <div className="grid grid-cols-2 gap-3 mb-6">
             <StatBox label="Total Scan" value={totalScans} />
@@ -162,7 +158,6 @@ const History = () => {
           </div>
         )}
 
-        {/* Filter & Search */}
         <div className="flex flex-row items-center justify-between gap-3 mb-6">
           <div className="relative flex-1 min-w-0">
             <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -186,7 +181,6 @@ const History = () => {
           </div>
         </div>
 
-        {/* Loading */}
         {loading && (
           <div className="flex flex-col items-center justify-center py-20">
             <div className="w-10 h-10 border-2 border-slate-200 border-t-slate-600 rounded-full animate-spin" />
@@ -194,7 +188,6 @@ const History = () => {
           </div>
         )}
 
-        {/* Error */}
         {error && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
@@ -204,14 +197,12 @@ const History = () => {
           </div>
         )}
 
-        {/* Cards */}
         {!error && filteredData.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {filteredData.map((item) => <HistoryCard key={item.id} item={item} />)}
           </div>
         )}
 
-        {/* Empty */}
         {!error && filteredData.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">

@@ -7,8 +7,9 @@ import {
   getAllScans,
   deleteScan,
   getQuestionnaire,
+  getLeaderboard,
 } from "../controllers/classificationController";
-import { authenticate } from "../middleware/auth";
+import { authenticate, optionalAuth } from "../middleware/auth";
 import { uploadPhoto as uploadMiddleware } from "../middleware/upload";
 
 const router = Router();
@@ -32,6 +33,9 @@ router.get("/me", authenticate, wrap(getMyScans));
 
 // Public: get all scans (feed)
 router.get("/", wrap(getAllScans));
+
+// Public: get leaderboard (top users + top beaches + current user rank if logged in)
+router.get("/leaderboard", optionalAuth, wrap(getLeaderboard));
 
 // Public: get single scan by ID
 router.get("/:id", wrap(getScan));

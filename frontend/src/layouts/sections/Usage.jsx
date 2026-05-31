@@ -28,11 +28,9 @@ const Usage = () => {
   );
   const phoneY = useTransform(smoothProgress, [0, 0.06], [650, 0]);
 
-  // ── Text 1: muncul pertama, stay ──
   const textX = useTransform(smoothProgress, [0, 0.08], [-315, 0]);
   const textOpacity = useTransform(smoothProgress, [0, 0.08], [0, 1]);
 
-  // ── Scan phase (setelah text 1) ──
   const cornerSize = useTransform(
     smoothProgress,
     [0.1, 0.14, 0.2, 0.24],

@@ -2,6 +2,7 @@ import { Response, NextFunction } from "express";
 import * as ClassificationService from "../services/classification.service";
 import * as ClassificationModel from "../models/classification.model";
 import * as MLService from "../services/ml.service";
+import * as LeaderboardService from "../services/leaderboard.service";
 import { AuthRequest } from "../types/auth";
 import type { QuestionnaireInput } from "../types/classification";
 
@@ -109,6 +110,12 @@ export const getQuestionnaire = async (req: AuthRequest, res: Response) => {
 
   const result = MLService.getQuestionnaire(category);
   res.json({ success: true, data: result });
+};
+
+export const getLeaderboard = async (req: AuthRequest, res: Response) => {
+  const userId = req.user?.id;
+  const data = await LeaderboardService.getLeaderboard(userId);
+  res.json({ success: true, data });
 };
 
 function parsePagination(query: any): { page: number; limit: number } {
