@@ -144,7 +144,12 @@ const Dashboard = () => {
         });
         if (!mounted) { stream.getTracks().forEach((t) => t.stop()); return; }
         streamRef.current = stream;
-        if (videoRef.current) videoRef.current.srcObject = stream;
+        if (videoRef.current) {
+          // Desktop webcam = mirror. Mobile back camera = no mirror.
+          const isDesktop = window.innerWidth >= 1024;
+          videoRef.current.style.transform = isDesktop ? "scaleX(-1)" : "scaleX(1)";
+          videoRef.current.srcObject = stream;
+        }
         setCameraActive(true);
       } catch {
         if (mounted) { setCameraError("Izin kamera ditolak"); setCameraActive(false); }
@@ -297,6 +302,7 @@ const Dashboard = () => {
     setShowCategoryConfirm(false);
     setQuestionnaireQuestions([]);
     setQuestionnaireAnswers({});
+    setFacingMode("environment");
     if (fileInputRef.current) fileInputRef.current.value = "";
     const init = async () => {
       try {
@@ -305,7 +311,11 @@ const Dashboard = () => {
           audio: false,
         });
         streamRef.current = stream;
-        if (videoRef.current) videoRef.current.srcObject = stream;
+        if (videoRef.current) {
+          const isDesktop = window.innerWidth >= 1024;
+          videoRef.current.style.transform = isDesktop ? "scaleX(-1)" : "scaleX(1)";
+          videoRef.current.srcObject = stream;
+        }
         setCameraActive(true);
       } catch { setCameraError("Izin kamera ditolak"); }
     };
@@ -328,8 +338,8 @@ const Dashboard = () => {
         });
         streamRef.current = stream;
         if (videoRef.current) {
-          videoRef.current.srcObject = stream;
           videoRef.current.style.transform = newMode === "user" ? "scaleX(-1)" : "scaleX(1)";
+          videoRef.current.srcObject = stream;
         }
       } catch (err) {
         console.error("Camera flip failed:", err);

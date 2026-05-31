@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import { toast } from "../Toast";
 
 const ReviewModal = ({ open, onClose, beachName, onSubmit, user }) => {
   const [rating, setRating] = useState(0);
@@ -8,9 +9,25 @@ const ReviewModal = ({ open, onClose, beachName, onSubmit, user }) => {
   const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef(null);
 
+  const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+  const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+
   const handleFile = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      toast.error("Format gambar tidak didukung. Gunakan JPG, JPEG, atau PNG.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_SIZE) {
+      toast.error(`Ukuran gambar terlalu besar (${(file.size / 1024 / 1024).toFixed(2)}MB). Maksimal 1MB.`);
+      e.target.value = "";
+      return;
+    }
+
     if (image) URL.revokeObjectURL(image.url);
     setImage({ file, url: URL.createObjectURL(file) });
     e.target.value = "";
@@ -31,7 +48,8 @@ const ReviewModal = ({ open, onClose, beachName, onSubmit, user }) => {
       removeImage();
       onClose();
     } catch (err) {
-      alert(err.message || "Gagal mengirim ulasan");
+      const msg = err?.response?.data?.error || err?.message || "Gagal mengirim ulasan";
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -40,7 +58,7 @@ const ReviewModal = ({ open, onClose, beachName, onSubmit, user }) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-9999 flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-black/50 backdrop-blur-xs" />
       <div
         className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in"
