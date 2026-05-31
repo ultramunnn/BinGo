@@ -32,7 +32,7 @@ export async function submitReview(req: AuthRequest, res: Response) {
   const review = await BeachService.submitReview(
     req.params.id as string,
     req.user!.id,
-    rating,
+    Number(rating),
     message,
     file?.buffer,
     file?.mimetype

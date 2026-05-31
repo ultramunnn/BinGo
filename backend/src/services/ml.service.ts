@@ -140,6 +140,7 @@ export async function predictHybrid(
   return {
     predicted_material: category,
     cv_confidence: cvConfidence,
+    cv_probabilities: cvResult.probabilities,
     recyclable: tabResult.recyclable,
     treatment_method: tabResult.treatment,
     ml_confidence: {

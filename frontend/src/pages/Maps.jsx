@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-markercluster/styles";
@@ -109,6 +110,8 @@ const MOBILE_MIN = 50;
 const MOBILE_MAX = 85;
 
 const Maps = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [beaches, setBeaches] = useState([]);
   const [selectedBeachId, setSelectedBeachId] = useState(null);
   const [beachDetail, setBeachDetail] = useState(null);
@@ -117,11 +120,13 @@ const Maps = () => {
   const [dragging, setDragging] = useState(false);
   const [mobileHeight, setMobileHeight] = useState(MOBILE_MIN);
   const [reviewOpen, setReviewOpen] = useState(false);
+  const reviewDone = useRef(false);
   const touchStart = useRef({ y: 0, h: 0 });
   const scrollRef = useRef(null);
 
   const user = getStoredUser();
   const panelOpen = selectedBeachId !== null;
+  const fromScan = !!searchParams.get("beach") && !reviewDone.current;
 
   useEffect(() => {
     let cancelled = false;
@@ -132,6 +137,30 @@ const Maps = () => {
       .catch((err) => console.error("Failed to load beaches:", err));
     return () => { cancelled = true; };
   }, []);
+
+  // Auto-open beach detail from ?beach={id} query param (from Dashboard scan result)
+  useEffect(() => {
+    const beachId = searchParams.get("beach");
+    if (beachId && beaches.length > 0) {
+      const beach = beaches.find((b) => b.id === beachId);
+      if (beach) handleMarkerClick(beach);
+    }
+  }, [searchParams, beaches]);
+
+  // Auto-open review modal after detail loads (when coming from scan)
+  useEffect(() => {
+    if (fromScan && beachDetail && !loadingDetail && !reviewDone.current) {
+      const timer = setTimeout(() => setReviewOpen(true), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [fromScan, beachDetail, loadingDetail]);
+
+  // Clear review mode — remove ?beach= from URL so user can't re-trigger
+  const clearReviewMode = useCallback(() => {
+    reviewDone.current = true;
+    setReviewOpen(false);
+    navigate("/maps", { replace: true });
+  }, [navigate]);
 
   const handleMarkerClick = useCallback(async (beach) => {
     setSelectedBeachId(beach.id);
@@ -147,11 +176,12 @@ const Maps = () => {
     }
   }, []);
 
-  const handleSubmitReview = async ({ rating, message, image }) => {
+  const handleSubmitReview = useCallback(async ({ rating, message, image }) => {
     await submitReview(selectedBeachId, { rating, message, image });
     const detail = await getBeachDetail(selectedBeachId);
     setBeachDetail(detail);
-  };
+    clearReviewMode();
+  }, [selectedBeachId, clearReviewMode]);
 
   const handleClose = useCallback(() => {
     setSelectedBeachId(null);
@@ -342,17 +372,6 @@ const Maps = () => {
                   <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
                     Ulasan Relawan
                   </h4>
-                  {user && (
-                    <button
-                      onClick={() => setReviewOpen(true)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-[10px] font-semibold transition-colors cursor-pointer"
-                    >
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M12 20h9" /><path d="M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z" />
-                      </svg>
-                      Tulis Ulasan
-                    </button>
-                  )}
                 </div>
 
                 {beachDetail.reviews?.length > 0 ? (
@@ -404,13 +423,15 @@ const Maps = () => {
         </div>
       </aside>
 
-      <ReviewModal
-        open={reviewOpen}
-        onClose={() => setReviewOpen(false)}
-        beachName={beachDetail?.name || ""}
-        onSubmit={handleSubmitReview}
-        user={user}
-      />
+      {fromScan && (
+        <ReviewModal
+          open={reviewOpen}
+          onClose={clearReviewMode}
+          beachName={beachDetail?.name || ""}
+          onSubmit={handleSubmitReview}
+          user={user}
+        />
+      )}
     </div>
   );
 };

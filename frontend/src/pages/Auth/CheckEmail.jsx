@@ -98,7 +98,6 @@ const CheckEmail = () => {
         )}
       </div>
 
-      {/* Back to Login */}
       <div className="text-center mt-8">
         <p className="text-sm text-gray-400">
           Ingat kata sandi?{" "}

@@ -1,8 +1,6 @@
-// ── Focus Box Dimensions (percentage of viewport) ──
 export const FOCUS_W = 64;
 export const FOCUS_H = 78;
 
-// ── Kuesioner Data Dictionaries ──
 export const QUESTION_POOL = {
   hardness: {
     question: "Bagaimana tekstur atau kekerasan sampah ini?",

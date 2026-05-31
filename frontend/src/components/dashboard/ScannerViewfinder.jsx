@@ -20,13 +20,12 @@ const ScannerViewfinder = ({
     <div className="bg-black rounded-t-2xl overflow-hidden relative">
       <div className="w-full aspect-4/5 lg:aspect-video relative overflow-hidden">
 
-        {/* Layer 0: Camera Feed / Captured Image */}
         <video
           ref={videoRef}
           autoPlay
           playsInline
           muted
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 -scale-x-100 ${
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
             cameraActive && scanStep === 1 ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         />
@@ -38,22 +37,18 @@ const ScannerViewfinder = ({
           />
         )}
 
-        {/* ── Layer 1: BLUR MASK — hanya saat live camera ── */}
         {scanStep === 1 && (
           <>
-            {/* Top Panel */}
             <div
               className="absolute top-0 left-0 right-0 backdrop-blur-md bg-black/40 pointer-events-none z-10"
               style={{ height: `${(100 - FOCUS_H) / 2}%` }}
             />
 
-            {/* Bottom Panel */}
             <div
               className="absolute bottom-0 left-0 right-0 backdrop-blur-md bg-black/40 pointer-events-none z-10"
               style={{ height: `${(100 - FOCUS_H) / 2}%` }}
             />
 
-            {/* Middle: Left + Right panels flanking focus box */}
             <div
               className="absolute left-0 right-0 flex pointer-events-none z-10"
               style={{
@@ -74,7 +69,6 @@ const ScannerViewfinder = ({
           </>
         )}
 
-        {/* ── Layer 2: FOCUS BOX ── */}
         {scanStep === 1 && (
           <div
             className="absolute border border-white/10 rounded-xl pointer-events-none z-20"
@@ -85,24 +79,20 @@ const ScannerViewfinder = ({
               height: `${FOCUS_H}%`,
             }}
           >
-            {/* Bracket Corners */}
             <div className="absolute -top-px -left-px w-10 h-10 border-t-[3px] border-l-[3px] border-white rounded-tl-xl" />
             <div className="absolute -top-px -right-px w-10 h-10 border-t-[3px] border-r-[3px] border-white rounded-tr-xl" />
             <div className="absolute -bottom-px -left-px w-10 h-10 border-b-[3px] border-l-[3px] border-white rounded-bl-xl" />
             <div className="absolute -bottom-px -right-px w-10 h-10 border-b-[3px] border-r-[3px] border-white rounded-br-xl" />
 
-            {/* Vertical ticks */}
             <div className="absolute top-1/2 -translate-y-1/2 -left-px w-0.5 h-14 bg-white" />
             <div className="absolute top-1/2 -translate-y-1/2 -right-px w-0.5 h-14 bg-white" />
 
-            {/* Scanning Laser Line */}
             <div className="absolute inset-x-0 overflow-hidden pointer-events-none">
               <div className="h-0.5 bg-linear-to-r from-transparent via-white to-transparent shadow-[0_0_8px_rgba(255,255,255,0.4)] animate-scan" />
             </div>
           </div>
         )}
 
-        {/* Standby text (camera loading / error) */}
         {scanStep === 1 && !isAnalyzing && !cameraActive && (
           <div className="absolute inset-0 flex flex-col items-center justify-center z-30">
             {cameraError ? (
@@ -119,7 +109,6 @@ const ScannerViewfinder = ({
           </div>
         )}
 
-        {/* Beach Detection Badge */}
         {scanStep === 1 && !isAnalyzing && beachCheckDone && (
           <div className="absolute top-3 left-3 right-3 z-30">
             {nearbyBeach ? (
@@ -128,8 +117,7 @@ const ScannerViewfinder = ({
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" />
                 </svg>
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold leading-tight truncate">{nearbyBeach.name}</p>
-                  <p className="text-[9px] opacity-80">{(nearbyBeach.distance * 1000).toFixed(0)}m dari lokasi Anda</p>
+                  <p className="text-[10px] font-bold leading-tight truncate">{nearbyBeach.name} : <span className="text-[9px] opacity-80">{(nearbyBeach.distance * 1000).toFixed(0)}m dari lokasi Anda</span></p>
                 </div>
               </div>
             ) : (
@@ -137,13 +125,12 @@ const ScannerViewfinder = ({
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" />
                 </svg>
-                <p className="text-[10px] font-medium">Tidak ada pantai terdekat dalam radius 3 km</p>
+                <p className="text-[10px] font-medium">Tidak ada pantai terdekat dalam radius 1 km</p>
               </div>
             )}
           </div>
         )}
 
-        {/* Analyzing overlay */}
         {isAnalyzing && (
           <div className="absolute inset-0 flex flex-col items-center justify-center z-30">
             <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin mb-2" />
@@ -151,7 +138,6 @@ const ScannerViewfinder = ({
           </div>
         )}
 
-        {/* ── Category Confirmation Card ── */}
         {showCategoryConfirm && !isAnalyzing && (
           <div className="absolute inset-0 flex items-center justify-center z-40 bg-black/50 backdrop-blur-sm">
             <div className="bg-white rounded-2xl p-6 mx-4 max-w-xs w-full text-center shadow-2xl">
@@ -181,10 +167,8 @@ const ScannerViewfinder = ({
           </div>
         )}
 
-        {/* ── Step 2: Callout Lines + Labels ── */}
         {scanStep === 2 && !showCategoryConfirm && (
           <div className="absolute inset-0 z-40 pointer-events-none">
-            {/* OBJ (Left Side) */}
             <div className="absolute left-[5%] lg:left-[10%] top-[45%] flex items-center z-50 pointer-events-none">
               <div className="bg-white/90 backdrop-blur-sm px-1.5 py-0.5 lg:px-2 lg:py-1 rounded mr-1 lg:mr-2">
                 <span className="text-[6px] lg:text-[8px] font-bold text-black/40 uppercase tracking-widest leading-none block">Objek</span>
@@ -198,7 +182,6 @@ const ScannerViewfinder = ({
               </svg>
             </div>
 
-            {/* CONF (Right Top) */}
             <div className="absolute right-[8%] lg:right-[16%] top-[35%] flex items-center z-50 pointer-events-none">
               <svg width="80" height="40" viewBox="0 0 450 100" fill="none" className="overflow-visible lg:w-55 lg:h-20">
                 <path d="M30 70 L70 10 H450" stroke="black" strokeWidth="5" strokeLinecap="round" />
@@ -212,7 +195,6 @@ const ScannerViewfinder = ({
               </div>
             </div>
 
-            {/* REC (Right Bottom) */}
             <div className="absolute right-[8%] lg:right-[15%] bottom-[30%] flex items-center z-50 pointer-events-none">
               <svg width="80" height="40" viewBox="0 0 450 100" fill="none" className="overflow-visible lg:w-55 lg:h-20">
                 <path d="M30 70 L70 10 H450" stroke="black" strokeWidth="5" strokeLinecap="round" />
@@ -229,7 +211,6 @@ const ScannerViewfinder = ({
         )}
       </div>
 
-      {/* Bouncing scroll arrow — mobile only, after scan */}
       {scanStep >= 2 && !showCategoryConfirm && (
         <button
           onClick={() => document.getElementById('result-section')?.scrollIntoView({ behavior: 'smooth' })}
