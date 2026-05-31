@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import NavbarDashboard from "../components/NavbarDashboard";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import { useAuth } from "../context/AuthContext";
-import { getMyScans } from "../services/scanService";
+import { getMyScans, getLeaderboard } from "../services/scanService";
 
 const IconScan = ({ className = "w-6 h-6" }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -37,6 +37,7 @@ const Profile = () => {
   const { user } = useAuth();
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [leaderboardRank, setLeaderboardRank] = useState(null);
 
   useEffect(() => {
     const fetchScans = async () => {
@@ -50,6 +51,12 @@ const Profile = () => {
       }
     };
     fetchScans();
+
+    getLeaderboard()
+      .then((data) => {
+        if (data.currentUser) setLeaderboardRank(data.currentUser);
+      })
+      .catch(() => {});
   }, []);
 
   const totalScans = scans.length;
@@ -125,6 +132,31 @@ const Profile = () => {
               </div>
             </div>
           </div>
+
+          {/* Leaderboard Position */}
+          {leaderboardRank && (
+            <div className="mt-6 relative">
+              <div className="absolute inset-0 bg-linear-to-r from-amber-400 to-yellow-500 rounded-2xl blur-sm opacity-20" />
+              <div className="relative flex items-center gap-4 px-6 py-5 bg-linear-to-r from-amber-50 to-yellow-50 rounded-2xl border-2 border-amber-200 shadow-sm">
+                <span className="text-amber-500 text-lg">⭐</span>
+                <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-linear-to-br from-amber-400 to-yellow-500 text-white shrink-0">
+                  <span className="text-lg font-black">{leaderboardRank.rank}</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-amber-800">
+                    Peringkat Leaderboard
+                  </p>
+                  <p className="text-xs text-amber-600 mt-0.5">
+                    {leaderboardRank.scan_count} scan • {user?.full_name || "Kamu"}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-black text-amber-700">#{leaderboardRank.rank}</p>
+                  <p className="text-[10px] text-amber-500 font-medium">dari semua user</p>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
       </main>
     </div>
