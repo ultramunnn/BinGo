@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -58,19 +59,19 @@ const CTA = () => {
       ref={sectionRef}
       className="relative w-full h-screen bg-white overflow-x-clip flex items-center"
     >
-      <div className="container mx-auto px-6 md:px-20 h-full flex flex-col md:flex-row items-center justify-between">
+      <div className="container mx-auto px-0 md:px-20 h-full flex flex-col md:flex-row items-stretch justify-between">
         <div
           ref={imgRef}
-          className="w-full md:w-[60%] h-[50%] md:h-full flex items-center justify-start md:right-[7%] md:relative"
+          className="w-full md:w-[55%] h-[50%] md:h-full flex items-stretch justify-center overflow-hidden"
         >
           <img
             src="/assets/images/hand-trash.png"
             alt="Identifikasi Sampah"
-            className="h-full w-auto max-w-none object-contain transform -scale-x-100 md:scale-x-100 scale-110 origin-center"
+            className="h-full w-auto max-w-none object-contain transform -scale-x-100 md:scale-x-100 origin-center"
           />
         </div>
 
-        <div className="w-full md:w-[40%] flex flex-col items-center md:items-end text-center md:text-right z-10">
+        <div className="w-full md:w-[40%] flex flex-col items-center md:items-end text-center justify-center md:text-right z-10">
           <h2
             ref={textRef}
             className="text-4xl md:text-6xl font-serif font-bold text-black leading-[1.1] max-w-2xl"
@@ -81,9 +82,11 @@ const CTA = () => {
           </h2>
 
           <div ref={btnRef} className="mt-8 md:mt-12">
-            <button className="bg-black text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-black hover:bg-gray-900 transition-all shadow-[0_20px_50px_rgba(0,0,0,0.15)] active:scale-95">
-              Mulai Sekarang
-            </button>
+            <Link to="/login">
+              <button className="bg-black text-white px-8 md:px-12 py-4 md:py-5 rounded-2xl text-lg md:text-xl font-black hover:bg-gray-900 transition-all shadow-[0_20px_50px_rgba(0,0,0,0.15)] active:scale-95">
+                Mulai Sekarang
+              </button>
+            </Link>
           </div>
         </div>
       </div>

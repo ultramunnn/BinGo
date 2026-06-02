@@ -148,14 +148,13 @@ const Navbar = () => {
                   <div className="hidden md:grid grid-cols-3 gap-10">
                     <div className="space-y-3">
                       <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Perusahaan</h4>
-                      <a href="#" className="block text-gray-800 text-sm font-medium hover:text-black hover:pl-1 transition-all">Tentang Kami</a>
-                      <a href="#" className="block text-gray-800 text-sm font-medium hover:text-black hover:pl-1 transition-all">Visi & Misi</a>
+                      <a href="#" className="block text-gray-800 text-sm font-medium hover:text-black hover:pl-1 transition-all">Tim Kami</a>
                     </div>
 
                     <div className="space-y-3">
-                      <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Layanan</h4>
-                      <a href="#" className="block text-gray-800 text-sm font-medium hover:text-black hover:pl-1 transition-all">Identifikasi Sampah</a>
-                      <a href="#" className="block text-gray-800 text-sm font-medium hover:text-black hover:pl-1 transition-all">Relawan</a>
+                      <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Dukungan</h4>
+                      <Link to="/privacy" className="block text-gray-800 text-sm font-medium hover:text-black hover:pl-1 transition-all">Kebijakan Privasi</Link>
+                      <Link to="/terms" className="block text-gray-800 text-sm font-medium hover:text-black hover:pl-1 transition-all">Syarat dan Ketentuan</Link>
                     </div>
 
                     <div className="border border-gray-100 rounded-2xl p-7 flex items-center justify-between gap-6 bg-gray-50 shadow-sm">
