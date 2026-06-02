@@ -176,23 +176,37 @@ export async function getReviewsByBeachId(
 ): Promise<BeachReviewWithUser[]> {
   const { data, error } = await supabase
     .from(REVIEWS)
-    .select("*, users(full_name, photo_url)")
+    .select("*")
     .eq("beach_id", beachId)
     .order("created_at", { ascending: false });
 
-  if (error || !data) return [];
+  if (error || !data || data.length === 0) return [];
 
-  return data.map((r: any) => ({
-    id: r.id,
-    beach_id: r.beach_id,
-    user_id: r.user_id,
-    rating: r.rating,
-    message: r.message,
-    image_url: r.image_url || null,
-    created_at: r.created_at,
-    user_name: r.users?.full_name || "Anonymous",
-    user_avatar: r.users?.photo_url || null,
-  }));
+  // Fetch user info separately (use admin to bypass RLS)
+  const userIds = [...new Set(data.map((r: any) => r.user_id))];
+  const { data: users } = await supabaseAdmin
+    .from("users")
+    .select("id, full_name, photo_url")
+    .in("id", userIds);
+
+  const userMap = new Map(
+    (users || []).map((u: any) => [u.id, u])
+  );
+
+  return data.map((r: any) => {
+    const user = userMap.get(r.user_id);
+    return {
+      id: r.id,
+      beach_id: r.beach_id,
+      user_id: r.user_id,
+      rating: r.rating,
+      message: r.message,
+      image_url: r.image_url || null,
+      created_at: r.created_at,
+      user_name: user?.full_name || "Anonim",
+      user_avatar: user?.photo_url || null,
+    };
+  });
 }
 
 export async function getAverageRating(

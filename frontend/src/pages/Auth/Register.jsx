@@ -113,7 +113,7 @@ const Register = () => {
               type="text"
               value={fullName}
               onChange={(e) => { setFullName(e.target.value); setFieldErrors((prev) => ({ ...prev, fullName: "" })); }}
-              placeholder="John Doe"
+              placeholder="Nama lengkap Anda"
               autoComplete="name"
               className={`w-full pl-10 pr-5 py-3.5 rounded-xl border ${fieldErrors.fullName ? "border-red-400 focus:ring-red-200 focus:border-red-400" : "border-gray-100 focus:ring-[#4BAFBC]/10 focus:border-[#4BAFBC]"} focus:outline-none focus:ring-2 transition-all text-sm text-gray-700 bg-white placeholder:text-gray-300`}
             />

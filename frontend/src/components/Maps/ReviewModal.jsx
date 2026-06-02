@@ -70,13 +70,21 @@ const ReviewModal = ({ open, onClose, beachName, onSubmit, user }) => {
 
         <div className="px-5 py-4 flex flex-col gap-4 max-h-[65vh] overflow-y-auto">
           <div className="flex items-center gap-3">
-            <img
-              src={user?.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.full_name || "User")}&background=0f172a&color=fff`}
-              alt="Avatar"
-              className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-sm"
-            />
+            {user?.photo_url ? (
+              <img
+                src={user.photo_url}
+                alt={user.full_name}
+                className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-sm"
+              />
+            ) : (
+              <div className="w-9 h-9 rounded-full bg-slate-800 text-white flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-sm shrink-0">
+                {(user?.full_name || "??").trim().split(/\s+/).length >= 2
+                  ? ((user.full_name.trim().split(/\s+/)[0][0] + user.full_name.trim().split(/\s+/)[1][0]).toUpperCase())
+                  : (user?.full_name || "??").slice(0, 2).toUpperCase()}
+              </div>
+            )}
             <div>
-              <p className="text-xs font-bold text-slate-800">{user?.full_name || "User"}</p>
+              <p className="text-xs font-bold text-slate-800">{user?.full_name || "Anonim"}</p>
               <p className="text-[10px] text-slate-400">Ulasan publik</p>
             </div>
           </div>

@@ -381,14 +381,22 @@ const Maps = () => {
                       className="bg-slate-50 rounded-xl p-4 border border-slate-100 mb-3"
                     >
                       <div className="flex items-center gap-3 mb-3">
-                        <img
-                          src={review.user_avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(review.user_name || "User")}&background=0f172a&color=fff`}
-                          alt={review.user_name}
-                          className="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm"
-                        />
+                        {review.user_avatar ? (
+                          <img
+                            src={review.user_avatar}
+                            alt={review.user_name}
+                            className="w-8 h-8 rounded-full object-cover ring-2 ring-white shadow-sm"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-slate-800 text-white flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-sm shrink-0">
+                            {(review.user_name || "??").trim().split(/\s+/).length >= 2
+                              ? ((review.user_name.trim().split(/\s+/)[0][0] + review.user_name.trim().split(/\s+/)[1][0]).toUpperCase())
+                              : (review.user_name || "??").slice(0, 2).toUpperCase()}
+                          </div>
+                        )}
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-bold text-slate-800 truncate">
-                            {review.user_name || "User"}
+                            {review.user_name || "Anonim"}
                           </p>
                           <div className="flex items-center gap-2">
                             <StarRating rating={review.rating} size="w-3 h-3" />
