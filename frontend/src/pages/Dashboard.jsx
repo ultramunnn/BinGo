@@ -11,6 +11,7 @@ import { FOCUS_W, FOCUS_H } from "../constants/dashboardData";
 import { classifyImage, getQuestionnaire, submitScan, getLeaderboard } from "../services/scanService";
 import { getBeachesForMap } from "../services/beachService";
 import { getStoredUser } from "../services/authService";
+import OnboardingTour from "../components/onboarding/OnboardingTour";
 
 const Dashboard = () => {
   const fileInputRef = useRef(null);
@@ -351,6 +352,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
+      <OnboardingTour />
       <NavbarDashboard />
 
       <QuestionnaireModal
@@ -416,11 +418,11 @@ const Dashboard = () => {
           />
         </div>
 
-        <div className="col-span-full">
+        <div data-tour="leaderboard" className="col-span-full">
           <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col flex-1">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-base font-black text-slate-700 flex items-center gap-2.5">
-                Leaderboard
+                Papan Peringkat
               </h2>
             </div>
             <div className="grid grid-cols-2 gap-0">

@@ -17,7 +17,7 @@ const ScannerViewfinder = ({
   beachCheckDone,
 }) => {
   return (
-    <div className="bg-black rounded-t-2xl overflow-hidden relative">
+    <div data-tour="scanner" className="bg-black rounded-t-2xl overflow-hidden relative">
       <div className="w-full aspect-4/5 lg:aspect-video relative overflow-hidden">
 
         <video
@@ -110,7 +110,7 @@ const ScannerViewfinder = ({
         )}
 
         {scanStep === 1 && !isAnalyzing && beachCheckDone && (
-          <div className="absolute top-3 left-3 right-3 z-30">
+          <div data-tour="beach-badge" className="absolute top-3 left-3 right-3 z-30">
             {nearbyBeach ? (
               <div className="bg-emerald-500/90 backdrop-blur-sm text-white px-3 py-2 rounded-xl flex items-center gap-2">
                 <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
