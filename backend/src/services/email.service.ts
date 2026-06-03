@@ -10,7 +10,6 @@ if (typeof dns.setDefaultResultOrder === "function") {
   dns.setDefaultResultOrder("ipv4first");
 }
 
-
 const smtpPort = Number(process.env.SMTP_PORT) || 587;
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_SERVER || "smtp.gmail.com",
@@ -33,6 +32,34 @@ export async function sendPasswordResetEmail(
     const template = fs.readFileSync(templatePath, "utf8");
     const html = template.replace(/\{\{RESET_LINK\}\}/g, resetLink);
 
+    // If RESEND_API_KEY is present, use Resend's HTTPS REST API (bypasses Railway SMTP port blocking)
+    if (process.env.RESEND_API_KEY) {
+      console.log("[Email] Mengirim email menggunakan Resend API...");
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+        },
+        body: JSON.stringify({
+          from: "BinGo <onboarding@resend.dev>", // Default sender for Resend free tier
+          to: toEmail,
+          subject: "Reset Kata Sandi - BinGo",
+          html,
+        }),
+      });
+
+      const resData: any = await response.json();
+      if (!response.ok) {
+        throw new Error(`Resend API Error: ${resData.message || JSON.stringify(resData)}`);
+      }
+
+      console.log("[Email] Terkirim via Resend ke", toEmail, "- ID:", resData.id);
+      return;
+    }
+
+    // Fallback to Nodemailer SMTP (e.g. for local development or if SMTP ports are open)
+    console.log("[Email] Mengirim email menggunakan SMTP Nodemailer...");
     const info = await transporter.sendMail({
       from: `"BinGo" <${process.env.SMTP_EMAIL || "noreply@bingo.app"}>`,
       to: toEmail,
@@ -40,7 +67,7 @@ export async function sendPasswordResetEmail(
       html,
     });
 
-    console.log("[Email] Terkirim ke", toEmail, "- MessageID:", info.messageId);
+    console.log("[Email] Terkirim via SMTP ke", toEmail, "- MessageID:", info.messageId);
   } catch (error: any) {
     console.error("[Email] Gagal kirim:", error.message);
     throw error;
