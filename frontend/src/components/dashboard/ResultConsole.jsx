@@ -14,7 +14,7 @@ const ResultConsole = ({
 }) => {
   const navigate = useNavigate();
   return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col flex-1">
+    <div data-tour="result-console" className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col flex-1">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm text-slate-600 font-mono font-semibold">
           Konsol Hasil
@@ -133,6 +133,7 @@ const ResultConsole = ({
 
           {scanResult.beach_id && (
             <button
+              data-tour="beach-review"
               onClick={() => navigate(`/maps?beach=${scanResult.beach_id}`)}
               className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 rounded-xl text-xs font-mono transition-all"
             >

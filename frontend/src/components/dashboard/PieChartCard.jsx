@@ -35,7 +35,7 @@ const PieChartCard = ({ scanResult, onDetailClick }) => {
   }
 
   return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col flex-1">
+    <div data-tour="pie-chart" className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm flex flex-col flex-1">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm text-slate-600 font-mono font-semibold">
           Grafik Chart

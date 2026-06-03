@@ -11,7 +11,7 @@ const ControlBar = ({
   cameraError,
 }) => {
   return (
-    <div className="bg-slate-900 rounded-b-2xl px-5 py-4 flex items-center justify-between">
+    <div data-tour="control-bar" className="bg-slate-900 rounded-b-2xl px-5 py-4 flex items-center justify-between">
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={onFileChange} />
 
       <button

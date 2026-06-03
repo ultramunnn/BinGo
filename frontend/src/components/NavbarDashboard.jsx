@@ -166,7 +166,7 @@ const NavbarDashboard = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/50">
+      <header className="sticky top-0 z-10001 bg-white/80 backdrop-blur-md border-b border-slate-200/50">
         <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 lg:px-6">
           <div className="flex items-center gap-2 shrink-0">
             <img
@@ -270,7 +270,7 @@ const NavbarDashboard = () => {
         </div>
       </header>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white/90 backdrop-blur-md border-t border-slate-200/60 safe-area-inset">
+      <nav className="fixed bottom-0 left-0 right-0 z-10001 lg:hidden bg-white/90 backdrop-blur-md border-t border-slate-200/60 safe-area-inset">
         <div className="flex items-center justify-around h-16 px-2">
           {navItems.map(({ name, Icon, path }) => (
             <button
