@@ -39,8 +39,12 @@ const Register = () => {
 
     setLoading(true);
     try {
-      await register(email, password, fullName);
-      navigate("/dashboard");
+      const data = await register(email, password, fullName);
+      if (data && data.requiresVerification) {
+        navigate("/check-email", { state: { email, type: "verification" } });
+      } else {
+        navigate("/dashboard");
+      }
     } catch (err) {
       setError(err.response?.data?.error || "Registrasi gagal. Coba lagi.");
     } finally {

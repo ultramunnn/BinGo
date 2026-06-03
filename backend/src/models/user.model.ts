@@ -7,6 +7,7 @@ export interface User {
   password_hash: string;
   full_name: string | null;
   photo_url: string | null;
+  is_verified: boolean;
   created_at: Date;
   updated_at: Date;
 }
@@ -14,11 +15,12 @@ export interface User {
 export type UserCreateInput = Pick<User, "email"> & {
   password: string;
   full_name?: string;
+  is_verified?: boolean;
 };
 
 export type UserResponse = Omit<User, "password_hash" | "updated_at">;
 
-const SAFE_COLUMNS = "id, email, full_name, photo_url, created_at";
+const SAFE_COLUMNS = "id, email, full_name, photo_url, is_verified, created_at";
 
 export async function findByEmail(email: string): Promise<User | null> {
   const { data, error } = await supabaseAdmin
@@ -59,6 +61,7 @@ export async function create(input: UserCreateInput): Promise<UserResponse | nul
       email: input.email,
       password_hash: hashedPassword,
       full_name: input.full_name || null,
+      is_verified: input.is_verified || false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     })
@@ -108,4 +111,13 @@ export async function getSanitized(id: string): Promise<UserResponse | null> {
 
 export async function verifyPassword(user: User, password: string): Promise<boolean> {
   return bcrypt.compare(password, user.password_hash);
+}
+
+export async function verifyEmail(id: string): Promise<boolean> {
+  const { error } = await supabaseAdmin
+    .from("users")
+    .update({ is_verified: true, updated_at: new Date().toISOString() })
+    .eq("id", id);
+
+  return !error;
 }

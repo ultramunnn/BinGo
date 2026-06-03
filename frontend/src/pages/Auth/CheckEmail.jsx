@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import AuthLayout from "../../layouts/AuthLayout";
-import { forgotPassword } from "../../services/authService";
+import { forgotPassword, resendVerificationEmail } from "../../services/authService";
 
 const CheckEmail = () => {
   const location = useLocation();
   const email = location.state?.email || "";
+  const type = location.state?.type || "reset"; // "reset" or "verification"
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
 
@@ -14,7 +15,11 @@ const CheckEmail = () => {
     setResending(true);
     setResent(false);
     try {
-      await forgotPassword(email);
+      if (type === "verification") {
+        await resendVerificationEmail(email);
+      } else {
+        await forgotPassword(email);
+      }
       setResent(true);
     } catch {
     } finally {
@@ -69,10 +74,12 @@ const CheckEmail = () => {
 
       <div className="text-center mb-8">
         <h1 className="text-2xl font-bold text-[#333c4d] mb-2">
-          Cek Email Anda
+          {type === "verification" ? "Verifikasi Email Anda" : "Cek Email Anda"}
         </h1>
         <p className="text-sm text-gray-400 leading-relaxed">
-          Kami telah mengirimkan link reset kata sandi ke{" "}
+          {type === "verification"
+            ? "Kami telah mengirimkan link verifikasi email ke "
+            : "Kami telah mengirimkan link reset kata sandi ke "}
           {email ? (
             <strong className="text-gray-500">{email}</strong>
           ) : (
@@ -93,7 +100,9 @@ const CheckEmail = () => {
 
         {resent && (
           <p className="text-center text-sm text-green-600">
-            Email reset telah dikirim ulang!
+            {type === "verification"
+              ? "Email verifikasi telah dikirim ulang!"
+              : "Email reset telah dikirim ulang!"}
           </p>
         )}
       </div>

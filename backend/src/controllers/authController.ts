@@ -65,3 +65,30 @@ export const uploadPhoto = async (req: AuthRequest, res: Response, next: NextFun
   const user = await AuthService.updateProfile(userId, { photo_url: photoUrl });
   res.json({ success: true, message: "Photo uploaded", user });
 };
+
+export const googleLogin = async (req: Request, res: Response, next: NextFunction) => {
+  const { accessToken } = req.body;
+  if (!accessToken) {
+    return res.status(400).json({ error: "Google Access Token is required" });
+  }
+  const result = await AuthService.googleLogin(accessToken);
+  res.json({ success: true, message: "Login via Google successful", ...result });
+};
+
+export const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+  const { token } = req.body;
+  if (!token) {
+    return res.status(400).json({ error: "Verification token is required" });
+  }
+  await AuthService.verifyEmail(token);
+  res.json({ success: true, message: "Email verified successfully" });
+};
+
+export const resendVerificationEmail = async (req: Request, res: Response, next: NextFunction) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+  await AuthService.resendVerificationEmail(email);
+  res.json({ success: true, message: "Verification link sent to your inbox" });
+};

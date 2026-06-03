@@ -10,6 +10,15 @@ export async function login(email, password) {
   return data;
 }
 
+export async function googleLogin(accessToken) {
+  const { data } = await api.post("/auth/google", { accessToken });
+  if (data.token) {
+    setToken(data.token);
+    setUser(data.user);
+  }
+  return data;
+}
+
 export async function register(email, password, fullName) {
   const { data } = await api.post("/auth/register", {
     email,
@@ -79,6 +88,16 @@ export async function uploadPhoto(file) {
   if (data.user) {
     setUser(data.user);
   }
+  return data;
+}
+
+export async function verifyEmail(token) {
+  const { data } = await api.post("/auth/verify-email", { token });
+  return data;
+}
+
+export async function resendVerificationEmail(email) {
+  const { data } = await api.post("/auth/resend-verification", { email });
   return data;
 }
 

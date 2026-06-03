@@ -9,6 +9,9 @@ import {
   updateProfile,
   uploadPhoto,
   updatePassword,
+  googleLogin,
+  verifyEmail,
+  resendVerificationEmail,
 } from "../controllers/authController";
 import { authenticate } from "../middleware/auth";
 import { uploadPhoto as uploadMiddleware } from "../middleware/upload";
@@ -31,6 +34,9 @@ const wrap = <Req extends Request>(fn: (req: Req, res: Response, next: NextFunct
 
 router.post("/register", validateRegister, wrap(register));
 router.post("/login", validateLogin, wrap(login));
+router.post("/google", wrap(googleLogin));
+router.post("/verify-email", wrap(verifyEmail));
+router.post("/resend-verification", wrap(resendVerificationEmail));
 router.post("/reset-password", validateResetPassword, wrap(resetPassword));
 router.post("/change-password", validateChangePassword, wrap(changePassword));
 router.post("/logout", authenticate, wrap(logout));

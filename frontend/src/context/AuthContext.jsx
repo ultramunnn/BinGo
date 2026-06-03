@@ -33,9 +33,17 @@ export function AuthProvider({ children }) {
     return data;
   }, []);
 
+  const googleLogin = useCallback(async (accessToken) => {
+    const data = await authService.googleLogin(accessToken);
+    setUser(data.user);
+    return data;
+  }, []);
+
   const register = useCallback(async (email, password, fullName) => {
     const data = await authService.register(email, password, fullName);
-    setUser(data.user);
+    if (data && data.token) {
+      setUser(data.user);
+    }
     return data;
   }, []);
 
@@ -53,6 +61,7 @@ export function AuthProvider({ children }) {
     loading,
     isAuthenticated: !!user,
     login,
+    googleLogin,
     register,
     logout,
     updateUser,
