@@ -424,7 +424,7 @@ const Dashboard = () => {
               </h2>
             </div>
             <div className="grid grid-cols-2 gap-0">
-              <LeaderboardSection title="User Teraktif" data={leaderboardUsers} type="user" loading={leaderboardLoading} currentUser={currentUserRank} userName={user?.full_name} className="pr-3 lg:pr-6 border-r border-slate-200" />
+              <LeaderboardSection title="Relawan Teraktif" data={leaderboardUsers} type="user" loading={leaderboardLoading} currentUser={currentUserRank} userName={user?.full_name} className="pr-3 lg:pr-6 border-r border-slate-200" />
               <LeaderboardSection title="Pantai Terbersih" data={leaderboardBeaches} type="beach" loading={leaderboardLoading} className="pl-3 lg:pl-6" />
             </div>
           </div>

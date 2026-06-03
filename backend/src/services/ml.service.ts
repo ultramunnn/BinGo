@@ -99,11 +99,9 @@ async function generateTips(
 ): Promise<string> {
   const prompt = buildPrompt(category, recyclable, treatment);
 
-  // Try Gemini first
   const geminiResult = await generateFromGemini(prompt);
   if (geminiResult) return geminiResult;
 
-  // Fallback to Groq
   console.log("[Gemini] All models failed, trying Groq...");
   const groqResult = await generateFromGroq(prompt);
   if (groqResult) return groqResult;
@@ -112,9 +110,6 @@ async function generateTips(
   return "";
 }
 
-/**
- * Run CV + Tabular ML prediction locally, then generate Gemini tips.
- */
 export async function predictHybrid(
   imageBuffer: Buffer,
   _mimeType: string,
@@ -127,10 +122,8 @@ export async function predictHybrid(
   const category = cvResult.predictedClass;
   const cvConfidence = cvResult.confidence;
 
-  // Run tabular ML prediction
   const tabResult = await predictTabular(category, features);
 
-  // Generate Gemini tips (graceful fallback if no API key)
   const aiRecommendation = await generateTips(
     category,
     tabResult.recyclable,
@@ -151,10 +144,6 @@ export async function predictHybrid(
   };
 }
 
-/**
- * Dynamic questionnaire based on detected waste category.
- * Pure logic — no external API needed.
- */
 export function getQuestionnaire(
   category: string
 ): QuestionnaireResponse {
@@ -165,13 +154,19 @@ export function getQuestionnaire(
       field: "is_clean",
       label: "Apakah sampah dalam kondisi bersih?",
       type: "radio",
-      options: ["Yes", "No"],
+      options: ["Unknown", "Yes", "No"],
     },
     {
       field: "is_dry",
       label: "Apakah sampah dalam kondisi kering?",
       type: "radio",
-      options: ["Yes", "No"],
+      options: ["Unknown", "Yes", "No"],
+    },
+    {
+      field: "is_hazardous",
+      label: "Apakah sampah ini bekas wadah bahan kimia/medis/berbahaya?",
+      type: "radio",
+      options: ["Unknown", "Yes", "No"],
     },
   ];
 
@@ -192,12 +187,10 @@ export function getQuestionnaire(
     specificQuestions = [
       { field: "is_fragment", label: "Apakah kaca ini berupa pecahan/serpihan?", type: "radio", options: ["Unknown", "Yes", "No"] },
       { field: "is_container", label: "Apakah ini berupa botol/toples utuh?", type: "radio", options: ["Unknown", "Yes", "No"] },
-      { field: "is_hazardous", label: "Apakah sebelumnya ini wadah bahan kimia/berbahaya?", type: "radio", options: ["Unknown", "Yes", "No"] },
     ];
   } else if (categoryLower === "metal") {
     specificQuestions = [
       { field: "is_container", label: "Apakah ini berupa kaleng?", type: "radio", options: ["Unknown", "Yes", "No"] },
-      { field: "is_hazardous", label: "Apakah kaleng ini bekas cat/aerosol kimia?", type: "radio", options: ["Unknown", "Yes", "No"] },
     ];
   } else if (categoryLower === "textile") {
     specificQuestions = [

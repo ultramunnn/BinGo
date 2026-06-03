@@ -7,19 +7,24 @@ const Footer = () => {
   const footerLinks = [
     {
       title: "Layanan",
-      links: ["Identifikasi Sampah", "Peta Pantai", "Leaderboard", "Artikel"],
+      links: [
+        { label: "Misi", href: "#mission" },
+        { label: "Prioritas", href: "#priority" },
+        { label: "Cara Penggunaan", href: "#usage" },
+        { label: "Kontak", href: "#footer" },
+      ],
     },
     {
       title: "Perusahaan",
-      links: ["Tentang Kami", "Visi & Misi", "Tim Kami", "Karir"],
+      links: [
+        { label: "Tim Kami", href: "#" },
+      ],
     },
     {
       title: "Dukungan",
       links: [
-        "Pusat Bantuan",
-        "Kebijakan Privasi",
-        "Syarat & Ketentuan",
-        "Kontak",
+        { label: "Kebijakan Privasi", href: "/privacy" },
+        { label: "Syarat & Ketentuan", href: "/terms" },
       ],
     },
   ];
@@ -50,13 +55,22 @@ const Footer = () => {
                 </h4>
                 <ul className="space-y-3">
                   {section.links.map((link) => (
-                    <li key={link}>
-                      <a
-                        href="#"
-                        className="text-sm text-slate-500 hover:text-white transition-colors"
-                      >
-                        {link}
-                      </a>
+                    <li key={link.label}>
+                      {link.href.startsWith("/") ? (
+                        <Link
+                          to={link.href}
+                          className="text-sm text-slate-500 hover:text-white transition-colors"
+                        >
+                          {link.label}
+                        </Link>
+                      ) : (
+                        <a
+                          href={link.href}
+                          className="text-sm text-slate-500 hover:text-white transition-colors"
+                        >
+                          {link.label}
+                        </a>
+                      )}
                     </li>
                   ))}
                 </ul>
