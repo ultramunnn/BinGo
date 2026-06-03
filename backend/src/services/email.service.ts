@@ -1,6 +1,15 @@
 import nodemailer from "nodemailer";
 import fs from "fs";
 import path from "path";
+import dns from "dns";
+
+// Force Node.js to prioritize IPv4 over IPv6 globally for all DNS lookups.
+// This prevents ENETUNREACH errors on cloud hosting platforms (like Railway)
+// where IPv6 outbound routing is not configured or reachable.
+if (typeof dns.setDefaultResultOrder === "function") {
+  dns.setDefaultResultOrder("ipv4first");
+}
+
 
 const smtpPort = Number(process.env.SMTP_PORT) || 587;
 const transporter = nodemailer.createTransport({
