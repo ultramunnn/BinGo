@@ -42,7 +42,7 @@ export async function sendPasswordResetEmail(
           "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: "BinGo <onboarding@resend.dev>", // Default sender for Resend free tier
+          from: process.env.RESEND_FROM_EMAIL || "BinGo <onboarding@resend.dev>",
           to: toEmail,
           subject: "Reset Kata Sandi - BinGo",
           html,
