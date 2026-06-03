@@ -1,4 +1,6 @@
 import nodemailer from "nodemailer";
+import fs from "fs";
+import path from "path";
 
 const smtpPort = Number(process.env.SMTP_PORT) || 587;
 const transporter = nodemailer.createTransport({
@@ -9,100 +11,19 @@ const transporter = nodemailer.createTransport({
     user: process.env.SMTP_USERNAME || process.env.SMTP_EMAIL,
     pass: process.env.SMTP_PASSWORD,
   },
-});
-
-const RESET_EMAIL_TEMPLATE = `<!doctype html>
-<html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reset Kata Sandi - BinGo</title>
-    <style>
-      body { margin: 0; padding: 0; background: #f4f4f4; font-family: Arial, sans-serif; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
-      table { border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
-      img { border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic; }
-      a { text-decoration: none; }
-      .button { display: inline-block; background: #333333; color: #ffffff; padding: 14px 28px; border-radius: 6px; font-weight: bold; font-size: 15px; line-height: 1.2; }
-    </style>
-  </head>
-  <body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f4f4">
-      <tr>
-        <td align="center" style="padding:40px 20px">
-          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;background:#ffffff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.05);overflow:hidden">
-            <tr>
-              <td align="center" style="background-color:#000000;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 800 800'%3E%3Crect fill='%23000000' width='800' height='800'/%3E%3Cg fill='none' stroke='%23444444' stroke-width='1'%3E%3Cpath d='M769 229L1037 260.9M927 880L731 737 520 660 309 538 40 599 295 764 126.5 879.5 40 599-197 493 102 382-31 229 126.5 79.5-69-63'/%3E%3Cpath d='M-31 229L237 261 390 382 603 493 308.5 537.5 101.5 381.5M370 905L295 764'/%3E%3Cpath d='M520 660L578 842 731 737 840 599 603 493 520 660 295 764 309 538 390 382 539 269 769 229 577.5 41.5 370 105 295 -36 126.5 79.5 237 261 102 382 40 599 -69 737 127 880'/%3E%3Cpath d='M520-140L578.5 42.5 731-63M603 493L539 269 237 261 370 105M902 382L539 269M390 382L102 382'/%3E%3Cpath d='M-222 42L126.5 79.5 370 105 539 269 577.5 41.5 927 80 769 229 902 382 603 493 731 737M295-36L577.5 41.5M578 842L295 764M40-201L127 80M102 382L-261 269'/%3E%3C/g%3E%3Cg fill='%23555555'%3E%3Ccircle cx='769' cy='229' r='5'/%3E%3Ccircle cx='539' cy='269' r='5'/%3E%3Ccircle cx='603' cy='493' r='5'/%3E%3Ccircle cx='731' cy='737' r='5'/%3E%3Ccircle cx='520' cy='660' r='5'/%3E%3Ccircle cx='309' cy='538' r='5'/%3E%3Ccircle cx='295' cy='764' r='5'/%3E%3Ccircle cx='40' cy='599' r='5'/%3E%3Ccircle cx='102' cy='382' r='5'/%3E%3Ccircle cx='127' cy='80' r='5'/%3E%3Ccircle cx='370' cy='105' r='5'/%3E%3Ccircle cx='578' cy='42' r='5'/%3E%3Ccircle cx='237' cy='261' r='5'/%3E%3Ccircle cx='390' cy='382' r='5'/%3E%3C/g%3E%3C/svg%3E&quot;);background-repeat:repeat;background-position:center center;padding:32px 0 24px">
-                <table cellpadding="0" cellspacing="0" border="0">
-                  <tr>
-                    <td style="padding-right:8px"></td>
-                    <td><span style="font-size:24px;font-weight:bold;color:#ffffff">BinGo</span></td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td align="center" style="padding-top:32px;padding-bottom:32px">
-                <img src="{{LOGO_URL}}" width="120" alt="BinGo Logo" style="display:block;margin:0 auto" />
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:0 40px 10px">
-                <h1 style="font-size:26px;font-weight:bold;color:#333333;margin:0 0 16px;text-align:center">Reset Kata Sandi</h1>
-                <p style="font-size:15px;color:#555555;line-height:1.6;margin:0 0 24px;text-align:center">Kami menerima permintaan untuk mengatur ulang kata sandi akun BinGo Anda. Jangan khawatir, Anda dapat membuat kata sandi baru yang aman dengan mengeklik tombol di bawah ini.</p>
-                <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                  <tr>
-                    <td align="center" style="padding-bottom:12px">
-                      <a href="{{RESET_LINK}}" class="button" style="display:inline-block;background:#333333;color:#ffffff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:15px">Atur Ulang Kata Sandi</a>
-                    </td>
-                  </tr>
-                </table>
-                <p style="font-size:13px;color:#777777;line-height:1.5;text-align:center">Link ini akan kedaluwarsa dalam <strong style="color:#333333">1 jam</strong>.</p>
-                <p style="font-size:13px;color:#777777;word-break:break-all;text-align:center">Atau salin link berikut ke browser Anda:<br /><a href="{{RESET_LINK}}" style="color:#666666;text-decoration:underline">{{RESET_LINK}}</a></p>
-              </td>
-            </tr>
-            <tr>
-              <td style="padding:24px 40px 0">
-                <table width="100%" cellpadding="0" cellspacing="0" style="background:#fffbeb;border:1px solid #fde68a;border-radius:6px;margin-bottom:24px">
-                  <tr>
-                    <td style="padding:16px 20px">
-                      <table cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td style="vertical-align:top;padding-right:12px"><span style="font-size:18px;color:#d97706;line-height:1">&#9888;</span></td>
-                          <td><p style="color:#92400e;font-size:12px;line-height:1.5;margin:0"><strong>Tidak meminta reset?</strong> Abaikan email ini. Akun Anda tetap aman dan tidak ada perubahan yang dilakukan.</p></td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td style="background-color:#000000;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 800 800'%3E%3Crect fill='%23000000' width='800' height='800'/%3E%3Cg fill='none' stroke='%23444444' stroke-width='1'%3E%3Cpath d='M769 229L1037 260.9M927 880L731 737 520 660 309 538 40 599 295 764 126.5 879.5 40 599-197 493 102 382-31 229 126.5 79.5-69-63'/%3E%3Cpath d='M-31 229L237 261 390 382 603 493 308.5 537.5 101.5 381.5M370 905L295 764'/%3E%3Cpath d='M520 660L578 842 731 737 840 599 603 493 520 660 295 764 309 538 390 382 539 269 769 229 577.5 41.5 370 105 295 -36 126.5 79.5 237 261 102 382 40 599 -69 737 127 880'/%3E%3Cpath d='M520-140L578.5 42.5 731-63M603 493L539 269 237 261 370 105M902 382L539 269M390 382L102 382'/%3E%3Cpath d='M-222 42L126.5 79.5 370 105 539 269 577.5 41.5 927 80 769 229 902 382 603 493 731 737M295-36L577.5 41.5M578 842L295 764M40-201L127 80M102 382L-261 269'/%3E%3C/g%3E%3Cg fill='%23555555'%3E%3Ccircle cx='769' cy='229' r='5'/%3E%3Ccircle cx='539' cy='269' r='5'/%3E%3Ccircle cx='603' cy='493' r='5'/%3E%3Ccircle cx='731' cy='737' r='5'/%3E%3Ccircle cx='520' cy='660' r='5'/%3E%3Ccircle cx='309' cy='538' r='5'/%3E%3Ccircle cx='295' cy='764' r='5'/%3E%3Ccircle cx='40' cy='599' r='5'/%3E%3Ccircle cx='102' cy='382' r='5'/%3E%3Ccircle cx='127' cy='80' r='5'/%3E%3Ccircle cx='370' cy='105' r='5'/%3E%3Ccircle cx='578' cy='42' r='5'/%3E%3Ccircle cx='237' cy='261' r='5'/%3E%3Ccircle cx='390' cy='382' r='5'/%3E%3C/g%3E%3C/svg%3E&quot;);background-repeat:repeat;background-position:center center;padding:40px 40px">
-                <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                  <tr></tr>
-                  <tr>
-                    <td><p style="font-size:13px;color:#bbbbbb;line-height:1.6;margin:0;text-align:center">Email ini dikirimkan secara otomatis oleh sistem keamanan BinGo. Untuk menjaga keamanan akun Anda, jangan pernah membagikan email atau link di atas kepada siapa pun, termasuk pihak yang mengatasnamakan BinGo.</p></td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </body>
-</html>`;
+  connectionTimeout: 10000, // 10 seconds connection timeout
+  family: 4, // Force IPv4 to prevent IPv6 timeout issue on cloud hosting platforms like Railway
+} as any);
 
 export async function sendPasswordResetEmail(
   toEmail: string,
   resetLink: string
 ): Promise<void> {
-  const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-  const html = RESET_EMAIL_TEMPLATE
-    .replace(/\{\{RESET_LINK\}\}/g, resetLink)
-    .replace(/\{\{LOGO_URL\}\}/g, `${frontendUrl}/assets/images/logo-white.svg`);
-
   try {
+    const templatePath = path.join(process.cwd(), "src/templates/emails/reset-password.html");
+    const template = fs.readFileSync(templatePath, "utf8");
+    const html = template.replace(/\{\{RESET_LINK\}\}/g, resetLink);
+
     const info = await transporter.sendMail({
       from: `"BinGo" <${process.env.SMTP_EMAIL || "noreply@bingo.app"}>`,
       to: toEmail,
