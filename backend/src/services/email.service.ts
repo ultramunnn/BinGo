@@ -32,6 +32,37 @@ export async function sendPasswordResetEmail(
     const template = fs.readFileSync(templatePath, "utf8");
     const html = template.replace(/\{\{RESET_LINK\}\}/g, resetLink);
 
+    // If BREVO_API_KEY is present, use Brevo's HTTPS REST API (bypasses Railway SMTP port blocking)
+    // Brevo allows sending to any email on free tier using a verified Gmail sender, no custom domain required!
+    if (process.env.BREVO_API_KEY) {
+      console.log("[Email] Mengirim email menggunakan Brevo API...");
+      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+        method: "POST",
+        headers: {
+          "accept": "application/json",
+          "api-key": process.env.BREVO_API_KEY,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          sender: {
+            name: process.env.BREVO_SENDER_NAME || "BinGo",
+            email: process.env.BREVO_SENDER_EMAIL || process.env.SMTP_EMAIL || "bingoailenscleaner@gmail.com",
+          },
+          to: [{ email: toEmail }],
+          subject: "Reset Kata Sandi - BinGo",
+          htmlContent: html,
+        }),
+      });
+
+      const resData: any = await response.json();
+      if (!response.ok) {
+        throw new Error(`Brevo API Error: ${resData.message || JSON.stringify(resData)}`);
+      }
+
+      console.log("[Email] Terkirim via Brevo ke", toEmail, "- MessageID:", resData.messageId);
+      return;
+    }
+
     // If RESEND_API_KEY is present, use Resend's HTTPS REST API (bypasses Railway SMTP port blocking)
     if (process.env.RESEND_API_KEY) {
       console.log("[Email] Mengirim email menggunakan Resend API...");
